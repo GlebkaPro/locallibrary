@@ -42,7 +42,8 @@ class Book(models.Model):
     # ManyToManyField used because a genre can contain many books and a Book can cover many genres.
     # Genre class has already been defined so we can specify the object above.
     language = models.ForeignKey('Language', on_delete=models.SET_NULL, null=True)
-    
+    image = models.ImageField(upload_to='books/', blank=True, null=True)
+
     class Meta:
         ordering = ['title', 'author']
 
@@ -82,10 +83,9 @@ class BookInstance(models.Model):
         return bool(self.due_back and date.today() > self.due_back)
 
     LOAN_STATUS = (
-        ('d', 'Maintenance'),
-        ('o', 'On loan'),
-        ('a', 'Available'),
-        ('r', 'Reserved'),
+      ('o', 'На руках'),
+      ('a', 'Доступно'),
+      ('r', 'Зарезервировано'),
     )
 
     status = models.CharField(
