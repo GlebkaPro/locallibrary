@@ -200,3 +200,35 @@ from django.contrib.auth.decorators import login_required
 #         return HttpResponseRedirect(reverse('my-borrowed'))
 #
 #     return render(request, 'renew_book_librarian.html', {'book_instance': book_instance})
+
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required, permission_required
+from django.shortcuts import render, redirect
+from .forms import UserRegistrationForm
+
+@login_required
+@permission_required('auth.add_user', raise_exception=True)
+def create_user(request):
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('index')
+
+    else:
+        form = UserRegistrationForm()
+
+    return render(request, 'registration/create_user.html', {'form': form})
+
+from django.contrib.auth.models import User
+from catalog.models import UserProfile  # Замените 'your_app' на имя вашего приложения
+
+
+def user_list(request):
+  if request.user.is_staff:
+    users = User.objects.all()
+    return render(request, 'catalog/user_list.html', {'users': users})
+  else:
+    return render(request, 'access_denied.html')
+

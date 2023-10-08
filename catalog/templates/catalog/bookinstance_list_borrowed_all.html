@@ -1,38 +1,40 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <h1>Все абонемирования библиотеки</h1>
+    <div class="container">
+        <h1>Все абонемирования библиотеки</h1>
 
-    {% if bookinstance_list %}
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Название книги</th>
-                <th>Абонент</th>
-                <th>Дата абонимирования</th>
-                {% if user.is_staff %}
-                    <th></th>
-                {% endif %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for bookinst in bookinstance_list %}
-            <tr class="{% if bookinst.is_overdue %}text-danger{% endif %}">
-                <td>
-                    <a href="{% url 'book-detail' bookinst.book.pk %}">{{ bookinst.book.title }}</a>
-                </td>
-                <td>{{ bookinst.borrower.username }}</td>
-                <td>{{ bookinst.due_back }}</td>
-                {% if user.is_staff %}
+        {% if bookinstance_list %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Название книги</th>
+                    <th>Абонент</th>
+                    <th>Дата абонимирования</th>
+                    {% if user.is_staff %}
+                        <th></th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for bookinst in bookinstance_list %}
+                <tr class="{% if bookinst.is_overdue %}text-danger{% endif %}">
                     <td>
-                        <a href="{% url 'renew-book-librarian' bookinst.id %}">Продлить</a>
+                        <a href="{% url 'book-detail' bookinst.book.pk %}">{{ bookinst.book.title }}</a>
                     </td>
-                {% endif %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-      <p>There are no books borrowed.</p>
-    {% endif %}
+                    <td>{{ bookinst.borrower.username }}</td>
+                    <td>{{ bookinst.due_back }}</td>
+                    {% if user.is_staff %}
+                        <td>
+                            <a href="{% url 'renew-book-librarian' bookinst.id %}">Продлить</a>
+                        </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p>There are no books borrowed.</p>
+        {% endif %}
+    </div>
 {% endblock %}

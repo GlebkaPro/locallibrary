@@ -42,11 +42,11 @@
       <a class="nav-item nav-link link-body-emphasis" href="{% url 'authors' %}">Все авторы</a>
       {% if user.is_staff and perms.catalog.can_mark_returned %}
       <a class="nav-item nav-link link-body-emphasis" href="{% url 'all-borrowed' %}">Все заимствования</a>
-        <a class="nav-item nav-link link-body-emphasis" href="{% url 'all-borrowed' %}">Все пользователи</a>
+        <a class="nav-item nav-link link-body-emphasis" href="{% url 'user_list' %}">Все пользователи</a>
       {% endif %}
 {#      {% if user.is_staff.false and perms.catalog.can_mark_returned %} для отображения только у обычных пользователей#}
       {% if user.is_authenticated %}
-      <a class="nav-item nav-link link-body-emphasis" href="{% url 'my-borrowed' %}">Мои абонимирования</a>
+      <a class="nav-item nav-link link-body-emphasis" href="{% url 'my-borrowed' %}">Мои книги</a>
 {#      {% endif %}для отображения только у обычных пользователей#}
         <a class="btn btn-sm btn-outline-secondary" href="{% url 'logout' %}?next={{ request.path }}">Выход</a>
       {% else %}
@@ -103,7 +103,7 @@
                 </ul>
             {% endblock %}
         </div>
-        <div class="col-sm-10">
+        <div class="col-sm-12">
             {% block content %}
                 <!-- Main content -->
             {% endblock %}

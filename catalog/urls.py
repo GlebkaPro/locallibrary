@@ -8,8 +8,9 @@ urlpatterns = [
     path('books/', views.BookListView.as_view(), name='books'),
     path('book/<int:pk>', views.BookDetailView.as_view(), name='book-detail'),
     path('authors/', views.AuthorListView.as_view(), name='authors'),
-    path('author/<int:pk>',
-         views.AuthorDetailView.as_view(), name='author-detail'),
+    path('author/<int:pk>',views.AuthorDetailView.as_view(), name='author-detail'),
+    path('create_user/', views.create_user, name='create_user'),  # Добавление пользователя
+    path('user_list/', views.user_list, name='user_list'), # список пользователей
 ]
 
 
@@ -38,3 +39,5 @@ urlpatterns += [
     path('book/<int:pk>/update/', views.BookUpdate.as_view(), name='book-update'),
     path('book/<int:pk>/delete/', views.BookDelete.as_view(), name='book-delete'),
 ]
+
+

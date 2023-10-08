@@ -1,6 +1,8 @@
 from django.db import models
 import uuid  # Необходимо для уникальных экземпляров книг
 from datetime import date
+from django.db import models
+from django.contrib.auth.models import User
 
 from django.contrib.auth.models import User  # Необходимо для назначения пользователя в качестве заемщика
 
@@ -119,3 +121,10 @@ class Author(models.Model):
     def __str__(self):
         """Строка для представления объекта модели."""
         return '{0}, {1}'.format(self.last_name, self.first_name)
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    middle_name = models.CharField(max_length=100)
+    registration_date = models.DateTimeField(auto_now_add=True)
