@@ -1,18 +1,37 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <h1>All Borrowed Books</h1>
+    <h1>Все абонемирования библиотеки</h1>
 
     {% if bookinstance_list %}
-    <ul>
-
-      {% for bookinst in bookinstance_list %}
-      <li class="{% if bookinst.is_overdue %}text-danger{% endif %}">
-        <a href="{% url 'book-detail' bookinst.book.pk %}">{{bookinst.book.title}}</a> ({{ bookinst.due_back }}) {% if user.is_staff %}- {{ bookinst.borrower }}{% endif %} {% if perms.catalog.can_mark_returned %}- <a href="{% url 'renew-book-librarian' bookinst.id %}">Renew</a>  {% endif %}
-      </li>
-      {% endfor %}
-    </ul>
-
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Название книги</th>
+                <th>Абонент</th>
+                <th>Дата абонимирования</th>
+                {% if user.is_staff %}
+                    <th></th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for bookinst in bookinstance_list %}
+            <tr class="{% if bookinst.is_overdue %}text-danger{% endif %}">
+                <td>
+                    <a href="{% url 'book-detail' bookinst.book.pk %}">{{ bookinst.book.title }}</a>
+                </td>
+                <td>{{ bookinst.borrower.username }}</td>
+                <td>{{ bookinst.due_back }}</td>
+                {% if user.is_staff %}
+                    <td>
+                        <a href="{% url 'renew-book-librarian' bookinst.id %}">Продлить</a>
+                    </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     {% else %}
       <p>There are no books borrowed.</p>
     {% endif %}

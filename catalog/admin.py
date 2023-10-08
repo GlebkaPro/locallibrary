@@ -11,25 +11,20 @@ admin.site.register(BookInstance)
 admin.site.register(Genre)
 admin.site.register(Language)
 
-
-
-# admin.site.register(Genre)
-# admin.site.register(Language)
-#
+# admin.site.register(AuthorAdmin)
 #
 # class BooksInline(admin.TabularInline):
-#     """Defines format of inline book insertion (used in AuthorAdmin)"""
+#     """Определяет формат вставки онлайн-книги (используется в Author Admin)"""
 #     model = Book
 #
 #
-# @admin.register(Author)
 # class AuthorAdmin(admin.ModelAdmin):
-#     """Administration object for Author models.
-#     Defines:
-#      - fields to be displayed in list view (list_display)
-#      - orders fields in detail view (fields),
-#        grouping the date fields horizontally
-#      - adds inline addition of books in author view (inlines)
+#     """Объект администрирования для авторских моделей.
+#         Определяет:
+#         - поля, которые будут отображаться в виде списка (list_display)
+#         - поля заказов в подробном представлении (fields),
+#           группирующие поля данных по горизонтали
+#       - - добавляет встроенное добавление книг в режиме просмотра автора (встроенные строки)
 #     """
 #     list_display = ('last_name',
 #                     'first_name', 'date_of_birth', 'date_of_death')
@@ -38,15 +33,15 @@ admin.site.register(Language)
 #
 #
 # class BooksInstanceInline(admin.TabularInline):
-#     """Defines format of inline book instance insertion (used in BookAdmin)"""
+#     """Определяет формат вставки экземпляра онлайн-книги (используется в Book Admin)"""
 #     model = BookInstance
 #
 #
 # class BookAdmin(admin.ModelAdmin):
-#     """Administration object for Book models.
-#     Defines:
-#      - fields to be displayed in list view (list_display)
-#      - adds inline addition of book instances in book view (inlines)
+#     """Объект администрирования для книжных моделей.
+#     Определяет:
+#     - поля, которые будут отображаться в виде списка (list_display)
+#     - - добавляет встроенное добавление экземпляров книги в режиме просмотра книги (встроенные строки)
 #     """
 #     list_display = ('title', 'author', 'display_genre')
 #     inlines = [BooksInstanceInline]
@@ -55,13 +50,12 @@ admin.site.register(Language)
 # admin.site.register(Book, BookAdmin)
 #
 #
-# @admin.register(BookInstance)
 # class BookInstanceAdmin(admin.ModelAdmin):
-#     """Administration object for BookInstance models.
-#     Defines:
-#      - fields to be displayed in list view (list_display)
-#      - filters that will be displayed in sidebar (list_filter)
-#      - grouping of fields into sections (fieldsets)
+#     """Объект администрирования для моделей BookInstance.
+#       Определяет:
+#       - поля, которые будут отображаться в виде списка (list_display)
+#       - фильтры, которые будут отображаться на боковой панели (list_filter)
+#       - группировка полей по разделам (fieldsets)
 #     """
 #     list_display = ('book', 'status', 'borrower', 'due_back', 'id')
 #     list_filter = ('status', 'due_back')
