@@ -35,4 +35,16 @@ class UserRegistrationForm(UserCreationForm):
         model = User
         fields = ('username', 'email', 'password1', 'password2')
 
+from django import forms
+from .models import BookInstance
+from django.core.exceptions import ValidationError
+
+from django import forms
+from .models import BookInstance
+
+class BookInstanceForm(forms.ModelForm):
+    class Meta:
+        model = BookInstance
+        fields = ['book', 'imprint', 'due_back', 'borrower', 'status']
+
 

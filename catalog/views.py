@@ -232,3 +232,19 @@ def user_list(request):
   else:
     return render(request, 'access_denied.html')
 
+from django.shortcuts import render, redirect
+from .models import BookInstance
+
+from django.shortcuts import render, redirect
+from .forms import BookInstanceForm
+
+def add_bookinstance(request):
+    if request.method == 'POST':
+        form = BookInstanceForm(request.POST)
+        if form.is_valid():
+            book_instance = form.save()  # Сохранение данных в базу
+            return redirect('all-borrowed')  # Перенаправление на список арендованных книг
+    else:
+        form = BookInstanceForm()
+
+    return render(request, 'catalog/add_bookinstance.html', {'form': form})

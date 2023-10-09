@@ -11,6 +11,7 @@ urlpatterns = [
     path('author/<int:pk>',views.AuthorDetailView.as_view(), name='author-detail'),
     path('create_user/', views.create_user, name='create_user'),  # Добавление пользователя
     path('user_list/', views.user_list, name='user_list'), # список пользователей
+    path('bookinstance/add/', views.add_bookinstance, name='add-bookinstance'),
 ]
 
 
