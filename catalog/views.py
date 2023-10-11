@@ -121,12 +121,14 @@ def renew_book_librarian(request, pk):
                 proposed_renewal_date = timezone.now() + timezone.timedelta(weeks=1)
                 book_instance.due_back = proposed_renewal_date
             else:
-                book_instance.due_back = form.cleaned_data['renewal_date']
+                proposed_renewal_date = form.cleaned_data['renewal_date']
+                book_instance.renewal_date = proposed_renewal_date  # Обновляем атрибут
                 book_instance.save()
     # Если это GET (или любой другой метод), создаем форму по умолчанию
     else:
-        proposed_renewal_date = datetime.date.today() + datetime.timedelta(weeks=1)
+        proposed_renewal_date = book_instance.due_back + timezone.timedelta(weeks=1)
         form = RenewBookForm(initial={'renewal_date': proposed_renewal_date})
+
 
     context = {
         'form': form,

@@ -41,7 +41,7 @@
       <a class="nav-item nav-link link-body-emphasis" href="{% url 'books' %}">Все книги</a>
       <a class="nav-item nav-link link-body-emphasis" href="{% url 'authors' %}">Все авторы</a>
       {% if user.is_staff and perms.catalog.can_mark_returned %}
-      <a class="nav-item nav-link link-body-emphasis" href="{% url 'all-borrowed' %}">Все заимствования</a>
+      <a class="nav-item nav-link link-body-emphasis" href="{% url 'all-borrowed' %}">Все абонирования</a>
         <a class="nav-item nav-link link-body-emphasis" href="{% url 'user_list' %}">Все пользователи</a>
       {% endif %}
 {#      {% if user.is_staff.false and perms.catalog.can_mark_returned %} для отображения только у обычных пользователей#}

@@ -67,7 +67,7 @@ class Book(models.Model):
     def __str__(self):
         """Строка для представления объекта модели."""
         return self.title
-
+from django.utils import timezone
 class BookInstance(models.Model):
     """Модель, представляющая конкретную копию книги (т. е. которую можно взять в библиотеке)."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4,
@@ -76,7 +76,8 @@ class BookInstance(models.Model):
     imprint = models.CharField(max_length=200)
     due_back = models.DateField(null=True, blank=True)
     borrower = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-
+    renewal_date = models.DateField(null=True, blank=True)
+    current_date = models.DateField(default=timezone.now)
     @property
     def is_overdue(self):
         """Определяет, просрочена ли книга на основе даты возврата и текущей даты."""

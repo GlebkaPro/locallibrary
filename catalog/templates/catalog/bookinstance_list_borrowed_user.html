@@ -8,9 +8,13 @@
         <table class="table">
             <thead>
                 <tr>
+                    <th>Фамилия</th>
+                    <th>Имя</th>
+                    <th>Логин</th>
                     <th>Название книги</th>
-                    <th>Абонент</th>
-                    <th>Дата абонимирования</th>
+                    <th>Дата начала</th>
+                    <th>Дата окончания</th>
+                    <th>Дата продления</th>
                     {% if user.is_staff %}
                         <th></th>
                     {% endif %}
@@ -19,11 +23,16 @@
             <tbody>
                 {% for bookinst in bookinstance_list %}
                 <tr class="{% if bookinst.is_overdue %}text-danger{% endif %}">
+                    <tr class="{% if bookinst.is_overdue %}text-danger{% endif %}">
+                    <td>{{ user.last_name }}</td>
+                    <td>{{ user.first_name }}</td>
+                    <td>{{ bookinst.borrower.username }}</td>
                     <td>
                         <a href="{% url 'book-detail' bookinst.book.pk %}">{{ bookinst.book.title }}</a>
                     </td>
-                    <td>{{ bookinst.borrower.username }}</td>
+                    <td>{{ bookinst.current_date }}</td>
                     <td>{{ bookinst.due_back }}</td>
+                    <td>{{ bookinst.renewal_date }}</td>
                     {% if user.is_staff %}
                         <td>
                             <a href="{% url 'renew-book-librarian' bookinst.id %}">Продлить</a>
