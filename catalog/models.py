@@ -50,7 +50,8 @@ class Book(models.Model):
     # Класс Genre уже был определен, поэтому мы можем указать объект выше.
     language = models.ForeignKey('Language', on_delete=models.SET_NULL, null=True)
     image = models.ImageField(upload_to='books/', blank=True, null=True)
-
+    instances = models.IntegerField(null=True)
+    is_deleted = models.BooleanField(default=False)
     class Meta:
         ordering = ['title', 'author']
 
@@ -67,34 +68,31 @@ class Book(models.Model):
     def __str__(self):
         """Строка для представления объекта модели."""
         return self.title
+
 from django.utils import timezone
 class BookInstance(models.Model):
     """Модель, представляющая конкретную копию книги (т. е. которую можно взять в библиотеке)."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4,
                           help_text="Уникальный идентификатор для этой конкретной книги во всей библиотеке")
-    book = models.ForeignKey('Book', on_delete=models.RESTRICT, null=True)
-    imprint = models.CharField(max_length=200)
-    due_back = models.DateField(null=True, blank=True)
-    borrower = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    renewal_date = models.DateField(null=True, blank=True)
-    current_date = models.DateField(default=timezone.now)
+    book = models.ForeignKey('Book', on_delete=models.RESTRICT, null=True, verbose_name='Книга')
+    imprint = models.CharField(max_length=200, verbose_name='Дата печати', null=True,)
+    due_back = models.DateField(null=True, blank=True, verbose_name='Дата возврата')
+    borrower = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Заёмщик')
+    renewal_date = models.DateField(null=True, blank=True, verbose_name='Дата возврата')
+    current_date = models.DateField(default=timezone.now, verbose_name='Текущая дата')
     @property
     def is_overdue(self):
         """Определяет, просрочена ли книга на основе даты возврата и текущей даты."""
         return bool(self.due_back and date.today() > self.due_back)
 
     LOAN_STATUS = (
-      ('р', 'На руках'),
+      ('р', 'Выдано'),
       ('д', 'Доступно'),
       ('з', 'Зарезервировано'),
     )
 
     status = models.CharField(
-        max_length=1,
-        choices=LOAN_STATUS,
-        blank=True,
-        default='d',
-        help_text='Доступность книги')
+        max_length=1, choices=LOAN_STATUS, blank=True, default='d', help_text='Доступность книги', verbose_name='Статус')
 
     class Meta:
         ordering = ['due_back']
@@ -107,10 +105,10 @@ class BookInstance(models.Model):
 
 class Author(models.Model):
     """Модель, представляющая автора."""
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    date_of_birth = models.DateField(null=True, blank=True)
-    date_of_death = models.DateField('умер', null=True, blank=True)
+    first_name = models.CharField(verbose_name='Имя', max_length=100)
+    last_name = models.CharField(verbose_name='Фамилия',max_length=100)
+    date_of_birth = models.DateField('Дата рождения',null=True, blank=True)
+    date_of_death = models.DateField('Дата смерти', null=True, blank=True)
 
     class Meta:
         ordering = ['last_name', 'first_name']

@@ -1,9 +1,9 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-
-<h1>Author List</h1>
-
+<div class="container">
+<h1>Список авторов</h1>
+  <a href="{% url 'add-author' %}" class="btn btn-primary">Добавить автора</a>
 {% if author_list %}
   <ul>
 
@@ -19,8 +19,5 @@
 {% else %}
   <p>There are no authors available.</p>
 {% endif %}
-        
-        
-        
 {% endblock %}
-
+</div>

@@ -1,0 +1,45 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <div class="container">
+        <h1>Добавление новой книги</h1>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="{{ form.title.id_for_label }}">Название книги</label>
+                {{ form.title }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.author.id_for_label }}">Автор</label>
+                {{ form.author }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.summary.id_for_label }}">Описание</label>
+                {{ form.summary }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.isbn.id_for_label }}">ISBN</label>
+                {{ form.isbn }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.genre.id_for_label }}">Жанр</label>
+                {{ form.genre }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.language.id_for_label }}">Язык</label>
+                {{ form.language }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.image.id_for_label }}">Изображение</label>
+                {{ form.image }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.instances.id_for_label }}">Количество экземпляров</label>
+                {{ form.instances }}
+            </div>
+
+            <button type="submit" class="btn btn-primary">Добавить книгу</button>
+        </form>
+    </div>
+{% endblock %}

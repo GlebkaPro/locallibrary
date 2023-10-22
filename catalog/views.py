@@ -1,9 +1,6 @@
-from django.shortcuts import render
-
 # Создание представлений
 
 from .models import Book, Author, BookInstance, Genre
-
 
 def index(request):
     """Функция представления для домашней страницы сайта."""
@@ -28,9 +25,7 @@ def index(request):
                  'num_visits': num_visits},
     )
 
-
 from django.views import generic
-
 
 class BookListView(generic.ListView):
     """Общий класс-представление для списка книг."""
@@ -70,7 +65,6 @@ class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
             .order_by('due_back')
         )
 
-
 # Добавлено в рамках задания!
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
@@ -85,11 +79,6 @@ class LoanedBooksAllListView(PermissionRequiredMixin, generic.ListView):
     def get_queryset(self):
         return BookInstance.objects.filter(status__exact='р').order_by('due_back') # Книги на руках (статус = 'р')
 
-
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-import datetime
 from django.contrib.auth.decorators import login_required, permission_required
 
 # from .forms import RenewBookForm
@@ -108,14 +97,6 @@ def renew_book_librarian(request, pk):
         # Создаем экземпляр формы и заполняем его данными из запроса (привязка):
         form = RenewBookForm(request.POST)
 
-        # # Проверяем, действительна ли форма:
-        # if form.is_valid():
-        #     # Обрабатываем данные в form.cleaned_data, как требуется (здесь мы просто записываем их в поле due_back модели)
-        #     book_instance.due_back = form.cleaned_data['renewal_date']
-        #     book_instance.save()
-        #
-        #     # Перенаправляем на новый URL:
-        #     return HttpResponseRedirect(reverse('all-borrowed'))
         if form.is_valid():
             if not book_instance.due_back:  # Проверка, была ли книга продлена ранее
                 proposed_renewal_date = timezone.now() + timezone.timedelta(weeks=1)
@@ -180,32 +161,8 @@ class BookDelete(PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy('books')
     permission_required = 'catalog.can_mark_returned'
 
-
-
-from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-from django.contrib.auth.decorators import login_required
-
-# @login_required
-# def renew_book_librarian(request, bookinst_id):
-#     book_instance = get_object_or_404(BookInstance, id=bookinst_id)
-#
-#     # Проверка прав доступа (только пользователь, который арендует книгу, может продлить)
-#     if request.user != book_instance.borrower:
-#         return render(request, 'error_page.html', {'message': 'У вас нет прав на продление этой книги.'})
-#
-#     # Процесс продления аренды
-#     if request.method == 'POST':
-#         book_instance.due_back += timedelta(weeks=1)  # Продлеваем на неделю (или другой установленный срок)
-#         book_instance.save()
-#         return HttpResponseRedirect(reverse('my-borrowed'))
-#
-#     return render(request, 'renew_book_librarian.html', {'book_instance': book_instance})
-
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required, permission_required
-from django.shortcuts import render, redirect
 from .forms import UserRegistrationForm
 
 @login_required
@@ -224,8 +181,6 @@ def create_user(request):
     return render(request, 'registration/create_user.html', {'form': form})
 
 from django.contrib.auth.models import User
-from catalog.models import UserProfile  # Замените 'your_app' на имя вашего приложения
-
 
 def user_list(request):
   if request.user.is_staff:
@@ -234,19 +189,107 @@ def user_list(request):
   else:
     return render(request, 'access_denied.html')
 
-from django.shortcuts import render, redirect
-from .models import BookInstance
-
-from django.shortcuts import render, redirect
 from .forms import BookInstanceForm
 
 def add_bookinstance(request):
-    if request.method == 'POST':
-        form = BookInstanceForm(request.POST)
-        if form.is_valid():
-            book_instance = form.save()  # Сохранение данных в базу
-            return redirect('all-borrowed')  # Перенаправление на список арендованных книг
-    else:
-        form = BookInstanceForm()
+  if request.method == 'POST':
+    form = BookInstanceForm(request.POST)
+    if form.is_valid():
+      book = form.cleaned_data['book']
+      due_back = form.cleaned_data['due_back']
 
-    return render(request, 'catalog/add_bookinstance.html', {'form': form})
+      # Проверьте, сколько экземпляров книги еще доступны
+      if book.instances > 0:
+        # Создайте новый экземпляр
+        book_instance = form.save()
+
+        # Уменьшите количество доступных экземпляров в модели Book
+        book.instances -= 1
+        book.save()
+
+        return redirect('all-borrowed')  # Перенаправление на список арендованных книг
+
+  else:
+    form = BookInstanceForm()
+
+  return render(request, 'catalog/add_bookinstance.html', {'form': form})
+
+
+from .forms import AddBookForm
+from .models import Book, BookInstance
+
+
+def add_book(request):
+  if request.method == 'POST':
+    form = AddBookForm(request.POST, request.FILES)
+    if form.is_valid():
+      title = form.cleaned_data['title']
+      author_name = form.cleaned_data['author']
+      summary = form.cleaned_data['summary']
+      isbn = form.cleaned_data['isbn']
+      genre = form.cleaned_data['genre']
+      language = form.cleaned_data['language']
+      image = form.cleaned_data['image']
+      instances = form.cleaned_data['instances']
+
+      # Создайте новую книгу
+      book = Book(title=title, summary=summary, isbn=isbn, language=language, image=image, instances=instances)
+      book.save()
+
+      return redirect('books')  # Перенаправление на список книг или другую страницу
+  else:
+    form = AddBookForm()
+
+  return render(request, 'catalog/add_book.html', {'form': form})
+
+from .forms import BookForm
+
+
+def edit_book(request, book_id):
+  book = get_object_or_404(Book, pk=book_id)
+
+  if request.method == "POST":
+    form = BookForm(request.POST, instance=book)
+    if form.is_valid():
+      form.save()
+
+
+      return redirect('book-detail', book_id)
+  else:
+    initial_data = {
+      'instances': book.instances,
+      'author': book.author,  # Подставляем автора из модели
+      'genre': book.genre.all(),  # Подставляем жанры из модели
+    }
+    form = BookForm(instance=book, initial=initial_data)
+
+  return render(request, 'catalog/edit-book.html', {'book': book, 'form': form})
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Book
+
+def delete_book(request, book_id):
+    book = get_object_or_404(Book, pk=book_id)
+
+    if request.method == 'POST':
+        # Удаляем книгу
+        book.is_deleted = True
+        book.save()
+        return redirect('books')  # Перенаправление на список книг или другую страницу
+
+    return render(request, 'catalog/delete_book_confirm.html', {'book': book})
+
+from django.shortcuts import render, redirect
+from .models import Author
+from .forms import AuthorForm
+
+def add_author(request):
+    if request.method == 'POST':
+        form = AuthorForm(request.POST)
+        if form.is_valid():
+            author = form.save()
+            return redirect('author-detail', author_id=author.id)
+    else:
+        form = AuthorForm()
+
+    return render(request, 'catalog/add_authors.html', {'form': form})

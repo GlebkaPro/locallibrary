@@ -36,10 +36,14 @@ class UserRegistrationForm(UserCreationForm):
         fields = ('username', 'email', 'password1', 'password2')
 
 from django import forms
-from .models import BookInstance
+from .models import BookInstance, Genre, Language, Author
 from django.core.exceptions import ValidationError
 
 from django import forms
+from .models import BookInstance
+
+from django import forms
+from django.core.exceptions import ValidationError
 from .models import BookInstance
 
 class BookInstanceForm(forms.ModelForm):
@@ -47,4 +51,48 @@ class BookInstanceForm(forms.ModelForm):
         model = BookInstance
         fields = ['book', 'imprint', 'due_back', 'borrower', 'status']
 
+    def clean(self):
+        cleaned_data = super().clean()
+        book = cleaned_data.get('book')
+        due_back = cleaned_data.get('due_back')
 
+        if book:
+            # Проверьте, остались ли доступные экземпляры книги
+            if book.instances <= 0:
+                raise ValidationError('Нет доступных экземпляров книги для аренды.')
+
+            # Другие проверки здесь (например, проверка даты)
+
+        return cleaned_data
+
+
+# Ваш файл forms.py
+
+from django import forms
+
+# Ваш файл forms.py
+
+from django import forms
+
+from django import forms
+from .models import Book
+
+class AddBookForm(forms.ModelForm):
+    class Meta:
+        model = Book
+        fields = ['title', 'author', 'summary', 'isbn', 'genre', 'language', 'image', 'instances']
+
+
+from django import forms
+from .models import Book
+
+
+class BookForm(forms.ModelForm):
+  class Meta:
+    model = Book
+    fields = ['title', 'author', 'summary', 'isbn', 'genre', 'language', 'image', 'instances']
+
+class AuthorForm(forms.ModelForm):
+  class Meta:
+    model = Author
+    fields = ['first_name', 'last_name', 'date_of_birth', 'date_of_death']

@@ -12,6 +12,10 @@ urlpatterns = [
     path('create_user/', views.create_user, name='create_user'),  # Добавление пользователя
     path('user_list/', views.user_list, name='user_list'), # список пользователей
     path('bookinstance/add/', views.add_bookinstance, name='add-bookinstance'),
+    path('add-book/', views.add_book, name='add-book'),
+    path('book/<int:book_id>/edit/', views.edit_book, name='edit-book'),
+    path('book/<int:book_id>/delete/', views.delete_book, name='delete-book'),
+    path('author/add/', views.add_author, name='add-author'),
 ]
 
 

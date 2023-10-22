@@ -1,9 +1,15 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
+<div class="container">
 
 <h1>Название: {{ book.title }}</h1>
-
+<form method="get" action="{% url 'edit-book' book_id=book.id %}">
+    <button type="submit" class="btn btn-primary">Редактировать книгу</button>
+</form>
+<form method="get" action="{% url 'delete-book' book_id=book.id %}">
+    <button type="submit" class="btn btn-danger">Удалить книгу</button>
+</form>
 <p><strong>Автор:</strong> <a href="{{ book.author.get_absolute_url }}">{{ book.author }}</a></p>
 <p><strong>Описание:</strong> {{ book.summary }}</p>
 <p><strong>ISBN:</strong> {{ book.isbn }}</p>
@@ -19,8 +25,8 @@
 {% if copy.status != 'a' %}<p><strong>Подлежит возврату:</strong> {{copy.due_back}}</p>{% endif %}
 <p><strong>Выход в печать:</strong> {{copy.imprint}}</p>
 <p class="text-muted"><strong>Id:</strong> {{copy.id}}</p>
-
-{% endfor %}
 </div>
-{% endblock %}
+{% endfor %}
 
+{% endblock %}
+</div>
