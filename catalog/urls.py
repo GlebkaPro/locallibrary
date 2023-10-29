@@ -19,6 +19,7 @@ urlpatterns = [
     path('return/<uuid:book_instance_id>/', views.return_book, name='return-book'),
     path('author/<int:pk>/update/', views.AuthorUpdate.as_view(), name='author-update'),
     path('author/<int:pk>/delete/', views.AuthorDelete.as_view(), name='author-delete'),
+    path('book/<int:book_id>/reserve/', views.reserve_book, name='reserve-book'),
 ]
 
 

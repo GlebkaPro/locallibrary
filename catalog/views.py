@@ -246,6 +246,11 @@ def add_book(request):
       book = Book(title=title, summary=summary, isbn=isbn, language=language, image=image, instances=instances)
       book.save()
 
+      # Создайте экземпляры книги и установите статус "доступно" для каждого
+      for _ in range(instances):
+        book_instance = BookInstance(book=book)
+        book_instance.save()
+
       return redirect('books')  # Перенаправление на список книг или другую страницу
   else:
     form = AddBookForm()
@@ -330,3 +335,28 @@ def return_book(request, book_instance_id):
     return redirect('all-borrowed')
     # return ()  # Перенаправление на страницу после возврата книги
     # return redirect('your-return-success-url')
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Book, BookInstance
+
+@login_required
+def reserve_book(request, book_id):
+    book = get_object_or_404(Book, pk=book_id)
+    user = request.user
+
+    # Проверка наличия доступных экземпляров для резервации
+    available_copy = book.bookinstance_set.filter(status='d').first()
+
+    if available_copy:
+        # Создание нового экземпляра для резервации
+        new_copy = BookInstance(book=book, borrower=user)
+        new_copy.save()
+        return redirect('book-detail', pk=book_id)
+    else:
+        # Обработка случая, когда нет доступных экземпляров
+        # Вы можете добавить соответствующее сообщение об ошибке
+        return redirect('book-detail', pk=book_id)
+
+
+
+

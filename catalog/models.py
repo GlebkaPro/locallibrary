@@ -126,3 +126,4 @@ class UserProfile(models.Model):
     last_name = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=100)
     registration_date = models.DateTimeField(auto_now_add=True)
+
