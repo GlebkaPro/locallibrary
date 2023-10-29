@@ -49,7 +49,7 @@ from .models import BookInstance
 class BookInstanceForm(forms.ModelForm):
     class Meta:
         model = BookInstance
-        fields = ['book', 'imprint', 'due_back', 'borrower', 'status']
+        fields = ['book', 'due_back', 'borrower', 'status']
 
     def clean(self):
         cleaned_data = super().clean()
@@ -64,15 +64,6 @@ class BookInstanceForm(forms.ModelForm):
             # Другие проверки здесь (например, проверка даты)
 
         return cleaned_data
-
-
-# Ваш файл forms.py
-
-from django import forms
-
-# Ваш файл forms.py
-
-from django import forms
 
 from django import forms
 from .models import Book

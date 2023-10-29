@@ -33,6 +33,9 @@
                         <td>
                             <a href="{% url 'renew-book-librarian' bookinst.id %}">Продлить</a>
                         </td>
+                        <td>
+                            <a href="{% url 'return-book' bookinst.id %}">Возврат</a>
+                        </td>
 
                 </tr>
                 {% endfor %}

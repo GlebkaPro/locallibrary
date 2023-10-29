@@ -75,7 +75,6 @@ class BookInstance(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4,
                           help_text="Уникальный идентификатор для этой конкретной книги во всей библиотеке")
     book = models.ForeignKey('Book', on_delete=models.RESTRICT, null=True, verbose_name='Книга')
-    imprint = models.CharField(max_length=200, verbose_name='Дата печати', null=True,)
     due_back = models.DateField(null=True, blank=True, verbose_name='Дата возврата')
     borrower = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Заёмщик')
     renewal_date = models.DateField(null=True, blank=True, verbose_name='Дата возврата')

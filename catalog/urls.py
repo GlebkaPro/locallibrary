@@ -16,6 +16,9 @@ urlpatterns = [
     path('book/<int:book_id>/edit/', views.edit_book, name='edit-book'),
     path('book/<int:book_id>/delete/', views.delete_book, name='delete-book'),
     path('author/add/', views.add_author, name='add-author'),
+    path('return/<uuid:book_instance_id>/', views.return_book, name='return-book'),
+    path('author/<int:pk>/update/', views.AuthorUpdate.as_view(), name='author-update'),
+    path('author/<int:pk>/delete/', views.AuthorDelete.as_view(), name='author-delete'),
 ]
 
 

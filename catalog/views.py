@@ -81,7 +81,6 @@ class LoanedBooksAllListView(PermissionRequiredMixin, generic.ListView):
 
 from django.contrib.auth.decorators import login_required, permission_required
 
-# from .forms import RenewBookForm
 from catalog.forms import RenewBookForm
 from django.utils import timezone
 
@@ -135,13 +134,24 @@ class AuthorUpdate(PermissionRequiredMixin, UpdateView):
     model = Author
     fields = '__all__' # Не рекомендуется (потенциальная проблема безопасности, если добавляются новые поля)
     permission_required = 'catalog.can_mark_returned'
+    template_name = 'catalog/author_edit.html'
+    success_url = reverse_lazy('authors')  # URL для перенаправления после успешного редактирования автора
 
+    def get_initial(self):
+      # Заполните начальные данные формы данными об авторе
+      initial = super(AuthorUpdate, self).get_initial()
+      author = self.get_object()
+      initial['first_name'] = author.first_name
+      initial['last_name'] = author.last_name
+      initial['date_of_birth'] = author.date_of_birth
+      initial['date_of_death'] = author.date_of_death
+      return initial
 
 class AuthorDelete(PermissionRequiredMixin, DeleteView):
     model = Author
     success_url = reverse_lazy('authors')
     permission_required = 'catalog.can_mark_returned'
-
+    template_name = 'catalog/author_confirm_delete.html'  # Создайте шаблон подтверждения удаления автора
 
 # Классы, созданные для задания с формами
 class BookCreate(PermissionRequiredMixin, CreateView):
@@ -293,3 +303,30 @@ def add_author(request):
         form = AuthorForm()
 
     return render(request, 'catalog/add_authors.html', {'form': form})
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import BookInstance
+
+def return_book(request, book_instance_id):
+    book_instance = get_object_or_404(BookInstance, id=book_instance_id)
+
+    # Устанавливаем статус книги как доступную
+    book_instance.status = 'д'
+    book_instance.borrower = None
+    book_instance.due_back = None
+
+    # Получаем соответствующую книгу
+    book = book_instance.book
+
+    # Увеличиваем количество доступных экземпляров на 1, но не больше, чем общее количество экземпляров
+    if book.instances is not None:
+      book.instances += 1
+      # if book.instances > book.total_instances:
+      #   book.instances = book.total_instances
+      book.save()
+
+    # Сохраняем изменения
+    book_instance.save()
+    return redirect('all-borrowed')
+    # return ()  # Перенаправление на страницу после возврата книги
+    # return redirect('your-return-success-url')
