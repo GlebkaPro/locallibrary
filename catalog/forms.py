@@ -35,12 +35,7 @@ class UserRegistrationForm(UserCreationForm):
         model = User
         fields = ('username', 'email', 'password1', 'password2')
 
-from django import forms
 from .models import BookInstance, Genre, Language, Author
-from django.core.exceptions import ValidationError
-
-from django import forms
-from .models import BookInstance
 
 from django import forms
 from django.core.exceptions import ValidationError
@@ -73,15 +68,16 @@ class AddBookForm(forms.ModelForm):
         model = Book
         fields = ['title', 'author', 'summary', 'isbn', 'genre', 'language', 'image', 'instances']
 
-
 from django import forms
 from .models import Book
 
+class EditBookForm(forms.ModelForm):
+    class Meta:
+        model = Book
+        fields = ['title', 'author', 'summary', 'isbn', 'genre', 'language', 'image', 'instances']
 
-class BookForm(forms.ModelForm):
-  class Meta:
-    model = Book
-    fields = ['title', 'author', 'summary', 'isbn', 'genre', 'language', 'image', 'instances']
+
+from django import forms
 
 class AuthorForm(forms.ModelForm):
   class Meta:

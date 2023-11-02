@@ -77,10 +77,14 @@ class LoanedBooksAllListView(PermissionRequiredMixin, generic.ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        return BookInstance.objects.filter(status__exact='р').order_by('due_back') # Книги на руках (статус = 'р')
+      status = self.request.GET.get('status', None)
+
+      if status is None:
+        status = ['р', 'з'] # Установите стандартное значение, например, 'р'
+
+      return BookInstance.objects.filter(status__in=status).order_by('due_back')
 
 from django.contrib.auth.decorators import login_required, permission_required
-
 from catalog.forms import RenewBookForm
 from django.utils import timezone
 
@@ -225,9 +229,25 @@ def add_bookinstance(request):
   return render(request, 'catalog/add_bookinstance.html', {'form': form})
 
 
-from .forms import AddBookForm
-from .models import Book, BookInstance
+from .forms import BookInstanceForm  # Подключите форму редактирования BookInstance
 
+def edit_bookinstance(request, bookinstance_id):
+    book_instance = get_object_or_404(BookInstance, id=bookinstance_id)
+
+    if request.method == 'POST':
+        form = BookInstanceForm(request.POST, instance=book_instance)  # Передайте экземпляр BookInstance в форму
+
+        if form.is_valid():
+            form.save()  # Сохраните изменения в экземпляре BookInstance
+            return redirect('all-borrowed')  # Перенаправление на список арендованных книг
+
+    else:
+        form = BookInstanceForm(instance=book_instance)  # Загрузите данные существующего экземпляра в форму
+
+    return render(request, 'catalog/edit_bookinstance.html', {'form': form, 'book_instance': book_instance})
+
+
+from .forms import AddBookForm
 
 def add_book(request):
   if request.method == 'POST':
@@ -257,31 +277,27 @@ def add_book(request):
 
   return render(request, 'catalog/add_book.html', {'form': form})
 
-from .forms import BookForm
 
+from .forms import EditBookForm
 
 def edit_book(request, book_id):
-  book = get_object_or_404(Book, pk=book_id)
+    book = get_object_or_404(Book, pk=book_id)
 
-  if request.method == "POST":
-    form = BookForm(request.POST, instance=book)
-    if form.is_valid():
-      form.save()
+    if request.method == "POST":
+        form = EditBookForm(request.POST, request.FILES, instance=book)  # Включите request.FILES
+        if form.is_valid():
+            form.save()
+            return redirect('book-detail', book_id)
+    else:
+        initial_data = {
+            'instances': book.instances,
+            'author': book.author,
+            'genre': book.genre.all(),
+        }
+        form = EditBookForm(instance=book, initial=initial_data)
 
+    return render(request, 'catalog/edit-book.html', {'book': book, 'form': form})
 
-      return redirect('book-detail', book_id)
-  else:
-    initial_data = {
-      'instances': book.instances,
-      'author': book.author,  # Подставляем автора из модели
-      'genre': book.genre.all(),  # Подставляем жанры из модели
-    }
-    form = BookForm(instance=book, initial=initial_data)
-
-  return render(request, 'catalog/edit-book.html', {'book': book, 'form': form})
-
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Book
 
 def delete_book(request, book_id):
     book = get_object_or_404(Book, pk=book_id)
@@ -349,7 +365,7 @@ def reserve_book(request, book_id):
 
     if available_copy:
         # Создание нового экземпляра для резервации
-        new_copy = BookInstance(book=book, borrower=user)
+        new_copy = BookInstance(book=book, borrower=user, status='з')
         new_copy.save()
         return redirect('book-detail', pk=book_id)
     else:

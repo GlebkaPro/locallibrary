@@ -1,6 +1,7 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
+  <div class="container">
     <h1>Возобновить: {{book_instance.book.title}}</h1>
     <p>Заёмщик: {{book_instance.borrower}}</p>
     <p{% if book_instance.is_overdue %} class="text-danger"{% endif %}>Первоначальная дата возврата: {{book_instance.due_back}}</p>
@@ -13,3 +14,4 @@
         <input type="submit" value="Принять">
     </form>
 {% endblock %}
+</div>

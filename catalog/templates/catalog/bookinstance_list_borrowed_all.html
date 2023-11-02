@@ -4,6 +4,16 @@
     <div class="container">
         <h1>Все абонирования библиотеки</h1>
         <a class="btn btn-primary" href="{% url 'add-bookinstance' %}">Добавить</a>
+      <form method="GET" action="{% url 'all-borrowed' %}">
+    <label for="status">Выберите статус:</label>
+    <select name="status" id="status">
+{#        <option value="">Все статусы</option>#}
+        <option value="р" {% if request.GET.status == 'р' %}selected{% endif %}>Выдано</option>
+{#        <option value="д" {% if request.GET.status == 'д' %}selected{% endif %}>Доступно</option>#}
+        <option value="з" {% if request.GET.status == 'з' %}selected{% endif %}>Зарезервировано</option>
+    </select>
+    <button type="submit">Применить фильтр</button>
+      </form>
         {% if bookinstance_list %}
         <table class="table">
             <thead>
@@ -15,6 +25,7 @@
                     <th>Дата начала</th>
                     <th>Дата окончания</th>
                     <th>Дата продления</th>
+                    <th>Статус</th>
 
                 </tr>
             </thead>
@@ -30,13 +41,16 @@
                     <td>{{ bookinst.current_date }}</td>
                     <td>{{ bookinst.due_back }}</td>
                     <td>{{ bookinst.renewal_date }}</td>
+                    <td>{{ bookinst.get_status_display }}</td>
                         <td>
                             <a href="{% url 'renew-book-librarian' bookinst.id %}">Продлить</a>
                         </td>
                         <td>
                             <a href="{% url 'return-book' bookinst.id %}">Возврат</a>
                         </td>
-
+                        <td>
+                            <a href="{% url 'edit-bookinstance' bookinst.id %}">Редактировать</a>
+                        </td>
                 </tr>
                 {% endfor %}
             </tbody>

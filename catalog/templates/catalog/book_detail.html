@@ -2,36 +2,90 @@
 
 {% block content %}
 <div class="container">
-
-<h1>Название: {{ book.title }}</h1>
-<form method="get" action="{% url 'edit-book' book_id=book.id %}">
-    <button type="submit" class="btn btn-primary">Редактировать книгу</button>
-</form>
-<form method="get" action="{% url 'delete-book' book_id=book.id %}">
-    <button type="submit" class="btn btn-danger">Удалить книгу</button>
-</form>
-<p><strong>Автор:</strong> <a href="{{ book.author.get_absolute_url }}">{{ book.author }}</a></p>
-<p><strong>Описание:</strong> {{ book.summary }}</p>
-<p><strong>ISBN:</strong> {{ book.isbn }}</p>
-<p><strong>Язык:</strong> {{ book.language }}</p>
-<p><strong>Жанр:</strong> {{ book.genre.all|join:", " }}</p>
-<form method="get" action="{% url 'reserve-book' book_id=book.id %}">
-    <button type="submit" class="btn btn-primary">Зарезервировать книгу</button>
-</form>
-<div style="margin-left:20px;margin-top:20px">
-<h4>Копии</h4>
-
-{% for copy in book.bookinstance_set.all %}
-<hr>
-<p class="{% if copy.status == 'a' %}text-success{% elif copy.status == 'd' %}text-danger{% else %}text-warning{% endif %}">{{ copy.get_status_display }}</p>
-{% if copy.status != 'a' %}<p><strong>Подлежит возврату:</strong> {{copy.due_back}}</p>{% endif %}
-{#<p class="text-muted"><strong>Id:</strong> {{copy.id}}</p>#}
+    <h1 class="card-title">Название: {{ book.title }}</h1>
+    <p><strong>Автор:</strong> <a href="{{ book.author.get_absolute_url }}">{{ book.author }}</a></p>
+      <form method="get" action="{% url 'edit-book' book_id=book.id %}">
+        <button type="submit" class="btn btn-primary">Редактировать книгу</button>
+      </form>
+      <form method="get" action="{% url 'delete-book' book_id=book.id %}">
+        <button type="submit" class="btn btn-danger">Удалить книгу</button>
+      </form>
+    <div class="book-info card">
+        <div class="d-flex flex-row">
+            <div class="image-container order-first">
+                {% if book.image %}
+                    <img src="{{ book.image.url }}" class="card-img-top img-fluid" alt="Book Image" style="width: 300px; height: auto;">
+                {% endif %}
+            </div>
+            <div class="text-container card-body order-last">
+                <p class="card-text">Описание: {{ book.summary }}</p>
+                <p class="card-text">ISBN: {{ book.isbn }}</p>
+                <p class="card-text">Язык: {{ book.language }}</p>
+                <p class="card-text">Жанр: {{ book.genre.all|join:", " }}</p>
+                <form method="get" action="{% url 'reserve-book' book_id=book.id %}">
+                    <button type="submit" class="btn btn-primary">Зарезервировать книгу</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
-{% endfor %}
 
-{% if user.is_authenticated %}
 
-{% endif %}
+<style>
+    .book-info {
+        display: flex;
+    }
 
+    .image-container {
+        margin-right: 10px;
+    }
+
+    .text-container {
+        flex: 1;
+        align-items: flex-start;
+    }
+
+    .card {
+        border-radius: 10px;
+        background-color: #f5f5f5;
+        padding: 10px;
+    }
+
+    .card-title {
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .card-subtitle {
+        font-size: 16px;
+    }
+
+    .card-text {
+        font-size: 14px;
+    }
+</style>
 {% endblock %}
-</div>
+
+
+
+
+
+
+{#          {% if user.is_authenticated %}#}
+{##}
+{#          {% endif %}#}
+
+
+
+{#<div style="margin-left:20px;margin-top:20px">#}
+{#<h4>Копии</h4>#}
+{##}
+{#{% for copy in book.bookinstance_set.all %}#}
+{#<hr>#}
+{#<p class="{% if copy.status == 'a' %}text-success{% elif copy.status == 'd' %}text-danger{% else %}text-warning{% endif %}">{{ copy.get_status_display }}</p>#}
+{#{% if copy.status != 'a' %}<p><strong>Подлежит возврату:</strong> {{copy.due_back}}</p>{% endif %}#}
+{#<p class="text-muted"><strong>Id:</strong> {{copy.id}}</p>#}
+{#</div>#}
+{#{% endfor %}#}
+
+
