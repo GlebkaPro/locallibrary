@@ -83,7 +83,7 @@ class BookInstance(models.Model):
     def is_overdue(self):
         """Определяет, просрочена ли книга на основе даты возврата и текущей даты."""
         return bool(self.due_back and date.today() > self.due_back)
-
+# 1
     LOAN_STATUS = (
       ('р', 'Выдано'),
       ('д', 'Доступно'),
