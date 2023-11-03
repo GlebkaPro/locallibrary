@@ -10,6 +10,9 @@
       <form method="get" action="{% url 'delete-book' book_id=book.id %}">
         <button type="submit" class="btn btn-danger">Удалить книгу</button>
       </form>
+<form method="get" action="{% url 'create-book-copy' book_id=book.id %}">
+    <button type="submit" class="btn btn-success">Создать экземпляр книги</button>
+</form>
     <div class="book-info card">
         <div class="d-flex flex-row">
             <div class="image-container order-first">
@@ -27,9 +30,14 @@
                 </form>
             </div>
         </div>
+    <h4>Копии</h4>
+      {% for copy in book.bookcopy_set.all %}
+        <hr><p class="{% if copy.status == 'a' %}text-success{% elif copy.status == 'd' %}text-danger{% else %}text-warning{% endif %}">{{ copy.get_status_display }}</p>
+          {% if copy.status != 'a' %}<p><strong>Подлежит возврату:</strong> {{copy.due_back}}</p>{% endif %}
+            <p class="text-muted"><strong>Id:</strong> {{copy.id}}</p>
+      {% endfor %}
     </div>
 </div>
-
 
 <style>
     .book-info {
@@ -77,15 +85,6 @@
 
 
 
-{#<div style="margin-left:20px;margin-top:20px">#}
-{#<h4>Копии</h4>#}
-{##}
-{#{% for copy in book.bookinstance_set.all %}#}
-{#<hr>#}
-{#<p class="{% if copy.status == 'a' %}text-success{% elif copy.status == 'd' %}text-danger{% else %}text-warning{% endif %}">{{ copy.get_status_display }}</p>#}
-{#{% if copy.status != 'a' %}<p><strong>Подлежит возврату:</strong> {{copy.due_back}}</p>{% endif %}#}
-{#<p class="text-muted"><strong>Id:</strong> {{copy.id}}</p>#}
-{#</div>#}
-{#{% endfor %}#}
+
 
 

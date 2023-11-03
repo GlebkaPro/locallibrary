@@ -85,7 +85,7 @@ class LoanedBooksAllListView(PermissionRequiredMixin, generic.ListView):
       return BookInstance.objects.filter(status__in=status).order_by('due_back')
 
 from django.contrib.auth.decorators import login_required, permission_required
-from catalog.forms import RenewBookForm
+from catalog.forms import RenewBookForm, BookInstanceEditForm
 from django.utils import timezone
 
 @login_required
@@ -108,6 +108,7 @@ def renew_book_librarian(request, pk):
                 proposed_renewal_date = form.cleaned_data['renewal_date']
                 book_instance.renewal_date = proposed_renewal_date  # Обновляем атрибут
                 book_instance.save()
+            return redirect('all-borrowed')
     # Если это GET (или любой другой метод), создаем форму по умолчанию
     else:
         proposed_renewal_date = book_instance.due_back + timezone.timedelta(weeks=1)
@@ -203,48 +204,60 @@ def user_list(request):
   else:
     return render(request, 'access_denied.html')
 
-from .forms import BookInstanceForm
-
 def add_bookinstance(request):
+  form = BookInstanceForm()
+
   if request.method == 'POST':
     form = BookInstanceForm(request.POST)
+
     if form.is_valid():
       book = form.cleaned_data['book']
-      due_back = form.cleaned_data['due_back']
+      form.save()
+      # Проверка доступности экземпляра по статусу 'з'
+      if BookInstance.objects.filter(book=book, status='з').exists():
+        raise Http404("Экземпляр с такой книгой уже находится в статусе 'з'")
 
-      # Проверьте, сколько экземпляров книги еще доступны
-      if book.instances > 0:
-        # Создайте новый экземпляр
-        book_instance = form.save()
-
-        # Уменьшите количество доступных экземпляров в модели Book
-        book.instances -= 1
-        book.save()
-
-        return redirect('all-borrowed')  # Перенаправление на список арендованных книг
-
-  else:
-    form = BookInstanceForm()
+      # Другие действия, связанные с сохранением экземпляра книги
 
   return render(request, 'catalog/add_bookinstance.html', {'form': form})
 
 
-from .forms import BookInstanceForm  # Подключите форму редактирования BookInstance
+from .forms import BookInstanceForm  # Импортируйте вашу форму
+from django.contrib.auth.decorators import login_required
 
+
+from .models import BookCopy
+
+@login_required
 def edit_bookinstance(request, bookinstance_id):
     book_instance = get_object_or_404(BookInstance, id=bookinstance_id)
 
-    if request.method == 'POST':
-        form = BookInstanceForm(request.POST, instance=book_instance)  # Передайте экземпляр BookInstance в форму
+    if book_instance.status == 'з':  # Проверьте статус экземпляра
+        if request.method == 'POST':
+            form = BookInstanceEditForm(request.POST, instance=book_instance)
 
-        if form.is_valid():
-            form.save()  # Сохраните изменения в экземпляре BookInstance
-            return redirect('all-borrowed')  # Перенаправление на список арендованных книг
+            if form.is_valid():
+                # Если статус был изменен, разрешите сохранение
+                if form.cleaned_data['status'] != 'з':
+                    form.save()
+                # Получите соответствующий экземпляр в BookCopy
+                book_copy = BookCopy.objects.filter(book=book_instance.book, status='з').first()
 
+                # Установите статус book_copy как в book_instance
+                if book_copy:
+                    book_copy.status = book_instance.status
+                    book_copy.save()
+                form.save()
+                return redirect('all-borrowed')
+
+        else:
+            form = BookInstanceEditForm(instance=book_instance)
+
+        return render(request, 'catalog/edit_bookinstance.html', {'form': form, 'book_instance': book_instance})
     else:
-        form = BookInstanceForm(instance=book_instance)  # Загрузите данные существующего экземпляра в форму
-
-    return render(request, 'catalog/edit_bookinstance.html', {'form': form, 'book_instance': book_instance})
+        # Обработка случая, когда экземпляр не имеет статус 'з'
+        # Можете добавить соответствующее сообщение об ошибке или перенаправление
+        return redirect('all-borrowed')  # Пример: вернуться на страницу с информацией о книге
 
 
 from .forms import AddBookForm
@@ -298,17 +311,16 @@ def edit_book(request, book_id):
 
     return render(request, 'catalog/edit-book.html', {'book': book, 'form': form})
 
-
 def delete_book(request, book_id):
     book = get_object_or_404(Book, pk=book_id)
 
     if request.method == 'POST':
         # Удаляем книгу
-        book.is_deleted = True
-        book.save()
+        book.delete()
         return redirect('books')  # Перенаправление на список книг или другую страницу
 
     return render(request, 'catalog/delete_book_confirm.html', {'book': book})
+
 
 from django.shortcuts import render, redirect
 from .models import Author
@@ -325,35 +337,42 @@ def add_author(request):
 
     return render(request, 'catalog/add_authors.html', {'form': form})
 
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import BookInstance
 
 def return_book(request, book_instance_id):
-    book_instance = get_object_or_404(BookInstance, id=book_instance_id)
+  book_instance = get_object_or_404(BookInstance, id=book_instance_id)
 
-    # Устанавливаем статус книги как доступную
-    book_instance.status = 'д'
-    book_instance.borrower = None
-    book_instance.due_back = None
-
-    # Получаем соответствующую книгу
-    book = book_instance.book
-
-    # Увеличиваем количество доступных экземпляров на 1, но не больше, чем общее количество экземпляров
-    if book.instances is not None:
-      book.instances += 1
-      # if book.instances > book.total_instances:
-      #   book.instances = book.total_instances
-      book.save()
-
-    # Сохраняем изменения
+  if book_instance.status == 'р':
+    # Если статус аренды равен 'р', устанавливаем его в 'п'
+    book_instance.status = 'п'
     book_instance.save()
-    return redirect('all-borrowed')
-    # return ()  # Перенаправление на страницу после возврата книги
-    # return redirect('your-return-success-url')
+
+    # Находим соответствующий экземпляр в BookCopy и устанавливаем его статус как 'д'
+    book_copy = BookCopy.objects.filter(book=book_instance.book, status='р').first()
+    if book_copy:
+      book_copy.status = 'д'
+      book_copy.save()
+
+  elif book_instance.status == 'з':
+    # Если статус аренды равен 'з', устанавливаем его в 'д'
+    book_instance.status = 'д'
+    book_instance.save()
+
+    # Находим соответствующий экземпляр в BookCopy и устанавливаем его статус также как 'д'
+    book_copy = BookCopy.objects.filter(book=book_instance.book, status='з').first()
+    if book_copy:
+      book_copy.status = 'д'
+      book_copy.save()
+  else:
+    # Обработка случая, когда статус не равен 'р' или 'з'
+    raise Http404("Статус экземпляра не позволяет его вернуть")
+
+  return redirect('all-borrowed')
+
+
+from django.shortcuts import get_object_or_404, redirect
+from .models import Book, BookCopy, BookInstance
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Book, BookInstance
+from django.http import Http404
 
 @login_required
 def reserve_book(request, book_id):
@@ -361,18 +380,45 @@ def reserve_book(request, book_id):
     user = request.user
 
     # Проверка наличия доступных экземпляров для резервации
-    available_copy = book.bookinstance_set.filter(status='d').first()
+    available_copy = book.bookcopy_set.filter(status='д').first()
 
     if available_copy:
-        # Создание нового экземпляра для резервации
+        # Создайте аренду экземпляра
         new_copy = BookInstance(book=book, borrower=user, status='з')
         new_copy.save()
+
+        # Измените статус экземпляра на 'з'
+        available_copy.status = 'з'
+        available_copy.borrower = user
+        available_copy.save()
+
         return redirect('book-detail', pk=book_id)
     else:
-        # Обработка случая, когда нет доступных экземпляров
-        # Вы можете добавить соответствующее сообщение об ошибке
-        return redirect('book-detail', pk=book_id)
+        # Если нет доступных экземпляров, возбудите исключение Http404
+        raise Http404("Нет доступных экземпляров для резервации")
 
+
+
+from django.shortcuts import render, redirect
+from .models import Book, BookCopy
+
+from .forms import BookCopyForm
+
+def create_book_copy(request, book_id):
+    book = Book.objects.get(id=book_id)
+
+    if request.method == 'POST':
+        form = BookCopyForm(request.POST)
+        if form.is_valid():
+            book_copy = form.save(commit=False)
+            book_copy.book = book
+            book_copy.status = 'д'  # Установите статус, например, 'д' для доступности
+            book_copy.save()
+            return redirect('book-detail', pk=book.id)
+    else:
+        form = BookCopyForm()
+
+    return render(request, 'catalog/create_book_copy.html', {'book': book, 'form': form})
 
 
 

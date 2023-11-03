@@ -70,6 +70,28 @@ class Book(models.Model):
         return self.title
 
 from django.utils import timezone
+
+class BookCopy(models.Model):
+    """Модель, представляющая конкретную копию книги (т. е. которую можно взять в библиотеке)."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4,
+                          help_text="Уникальный идентификатор для этой конкретной книги во всей библиотеке")
+    book = models.ForeignKey('Book', on_delete=models.RESTRICT, null=True, verbose_name='Книга')
+    loan = models.ForeignKey('BookInstance', on_delete=models.SET_NULL, null=True, blank=True)
+    imprint = models.CharField(max_length=200, null=True, verbose_name='Штамп')
+    LOAN_STATUS = (
+      ('р', 'Выдано'),
+      ('д', 'Доступно'),
+      ('з', 'Зарезервировано'),
+    )
+
+    status = models.CharField(
+        max_length=1, choices=LOAN_STATUS, blank=True, default='д', help_text='Доступность книги', verbose_name='Статус')
+
+    def __str__(self):
+        """Строка для представления объекта модели."""
+        return '{0} ({1})'.format(self.id, self.book.title)
+
+
 class BookInstance(models.Model):
     """Модель, представляющая конкретную копию книги (т. е. которую можно взять в библиотеке)."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4,
@@ -88,10 +110,11 @@ class BookInstance(models.Model):
       ('р', 'Выдано'),
       ('д', 'Доступно'),
       ('з', 'Зарезервировано'),
+      ('п', 'Погашено'),
     )
 
     status = models.CharField(
-        max_length=1, choices=LOAN_STATUS, blank=True, default='d', help_text='Доступность книги', verbose_name='Статус')
+        max_length=1, choices=LOAN_STATUS, blank=True, default='д', help_text='Доступность книги', verbose_name='Статус')
 
     class Meta:
         ordering = ['due_back']
@@ -100,7 +123,6 @@ class BookInstance(models.Model):
     def __str__(self):
         """Строка для представления объекта модели."""
         return '{0} ({1})'.format(self.id, self.book.title)
-
 
 class Author(models.Model):
     """Модель, представляющая автора."""
