@@ -90,6 +90,7 @@ class BookInstance(models.Model):
     borrower = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Заёмщик')
     renewal_date = models.DateField(null=True, blank=True, verbose_name='Дата возврата')
     current_date = models.DateField(default=timezone.now, verbose_name='Текущая дата')
+    loan = models.ForeignKey('BookCopy', on_delete=models.SET_NULL, null=True, blank=True)
 
     @property
     def is_overdue(self):

@@ -84,4 +84,4 @@ class AuthorForm(forms.ModelForm):
 class BookCopyForm(forms.ModelForm):
   class Meta:
     model = BookCopy
-    fields = ['imprint', 'loan']
+    fields = ['imprint']
