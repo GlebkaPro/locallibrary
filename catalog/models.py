@@ -66,7 +66,6 @@ class BookCopy(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4,
                           help_text="Уникальный идентификатор для этой конкретной книги во всей библиотеке")
     book = models.ForeignKey('Book', on_delete=models.RESTRICT, null=True, verbose_name='Книга')
-    loan = models.ForeignKey('BookInstance', on_delete=models.SET_NULL, null=True, blank=True)
     imprint = models.CharField(max_length=200, null=True, verbose_name='Штамп')
     LOAN_STATUS = (
       ('р', 'Выдано'),

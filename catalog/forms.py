@@ -33,7 +33,18 @@ class UserRegistrationForm(UserCreationForm):
 class BookInstanceForm(forms.ModelForm):
     class Meta:
         model = BookInstance
-        fields = ['book', 'due_back', 'borrower', 'status']
+        fields = ['book', 'due_back', 'borrower', 'status', 'loan']
+
+    def __init__(self, *args, **kwargs):
+      super(BookInstanceForm, self).__init__(*args, **kwargs)
+
+      # Ограничьте queryset для поля 'loan' на те копии, которые принадлежат выбранной книге.
+      if 'book' in self.data:
+        book_id = self.data.get('book')
+        if book_id:
+          self.fields['loan'].queryset = BookInstance.objects.filter(book=book_id)
+      elif self.instance.pk and self.instance.book:
+        self.fields['loan'].queryset = self.instance.book.bookcopy_set.filter(status='д')
 
     def clean(self):
         cleaned_data = super().clean()
