@@ -22,7 +22,7 @@
     <nav class="nav nav-underline justify-content-between">
 {#      <a class="nav-item nav-link link-body-emphasis active" href="#">World</a>#}
       <a class="nav-item nav-link link-body-emphasis" href="{% url 'index' %}">Библиотека</a>
-      <a class="nav-item nav-link link-body-emphasis" href="{% url 'books' %}">Все книги</a>
+        <a class="nav-item nav-link link-body-emphasis" href="{% url 'books' %}">Все книги</a>
       <a class="nav-item nav-link link-body-emphasis" href="{% url 'authors' %}">Все авторы</a>
       {% if user.is_staff and perms.catalog.can_mark_returned %}
       <a class="nav-item nav-link link-body-emphasis" href="{% url 'all-borrowed' %}">Все абонирования</a>
@@ -35,8 +35,8 @@
         <a class="btn btn-sm btn-outline-secondary" href="{% url 'logout' %}?next={{ request.path }}">Выход</a>
       {% else %}
         <a class="btn btn-sm btn-outline-secondary" href="{% url 'login' %}?next={{ request.path }}">Вход</a>
+        <a class="btn btn-sm btn-outline-secondary" href="{% url 'create_user' %}?next={{ request.path }}">Регистрация</a>
       {% endif %}
-
     </nav>
   </div>
 </div>

@@ -3,7 +3,9 @@
 {% block content %}
   <div class="container">
     <h1>Все книги</h1>
-    <a href="{% url 'add-book' %}" class="btn btn-primary">Добавить книгу</a>
+                    {% if user.is_authenticated %}
+                          <a href="{% url 'add-book' %}" class="btn btn-primary">Добавить книгу</a>
+      {% endif %}
     {% if book_list %}
       <div class="row">
         {% for book in book_list %}

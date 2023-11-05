@@ -2,8 +2,9 @@
 
 {% block content %}
     <div class="container">
+          {% if user.is_authenticated %}
+      {% endif %}
         <h1>Добавление новой книги</h1>
-
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="form-group">
@@ -38,7 +39,9 @@
                 <label for="{{ form.instances.id_for_label }}">Количество экземпляров</label>
                 {{ form.instances }}
             </div>
-            <button type="submit" class="btn btn-primary">Добавить книгу</button>
+                    {% if user.is_authenticated %}
+                      <button type="submit" class="btn btn-primary">Добавить книгу</button>
+      {% endif %}
         </form>
     </div>
 {% endblock %}

@@ -4,15 +4,18 @@
 <div class="container">
     <h1 class="card-title">Название: {{ book.title }}</h1>
     <p><strong>Автор:</strong> <a href="{{ book.author.get_absolute_url }}">{{ book.author }}</a></p>
-      <form method="get" action="{% url 'edit-book' book_id=book.id %}">
+
+{% if user.is_authenticated %}
+     <form method="get" action="{% url 'edit-book' book_id=book.id %}">
         <button type="submit" class="btn btn-primary">Редактировать книгу</button>
-      </form>
+     </form>
       <form method="get" action="{% url 'delete-book' book_id=book.id %}">
         <button type="submit" class="btn btn-danger">Удалить книгу</button>
       </form>
-<form method="get" action="{% url 'create-book-copy' book_id=book.id %}">
-    <button type="submit" class="btn btn-success">Создать экземпляр книги</button>
-</form>
+      <form method="get" action="{% url 'create-book-copy' book_id=book.id %}">
+        <button type="submit" class="btn btn-success">Создать экземпляр книги</button>
+      </form>
+{% endif %}
     <div class="book-info card">
         <div class="d-flex flex-row">
             <div class="image-container order-first">
@@ -26,19 +29,24 @@
                 <p class="card-text">Язык: {{ book.language }}</p>
                 <p class="card-text">Жанр: {{ book.genre.all|join:", " }}</p>
                 <form method="get" action="{% url 'reserve-book' book_id=book.id %}">
+                  {% if user.is_authenticated %}
                     <button type="submit" class="btn btn-primary">Зарезервировать книгу</button>
+                  {% endif %}
                 </form>
             </div>
         </div>
     <h4>Копии</h4>
       {% for copy in book.bookcopy_set.all %}
-        <hr><p class="{% if copy.status == 'a' %}text-success{% elif copy.status == 'd' %}text-danger{% else %}text-warning{% endif %}">{{ copy.get_status_display }}</p>
-          {% if copy.status != 'a' %}<p><strong>Подлежит возврату:</strong> {{copy.due_back}}</p>{% endif %}
+        <hr><p class="{% if copy.status == 'д' %}text-success{% elif copy.status == 'р' %}text-danger{% else %}text-warning{% endif %}">{{ copy.get_status_display }}</p>
+{#              {% if copy.status != 'д' %}#}
+{#        {% if copy.loan %}#}
+{#            <p><strong>Подлежит возврату:</strong> {{ copy.loan.due_back }}</p>#}
+{#        {% endif %}#}
+{#    {% endif %}#}
             <p class="text-muted"><strong>Id:</strong> {{copy.id}}</p>
       {% endfor %}
     </div>
 </div>
-
 
 <style>
     .book-info {

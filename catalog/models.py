@@ -1,16 +1,10 @@
-from django.db import models
-import uuid  # Необходимо для уникальных экземпляров книг
+import uuid
 from datetime import date
 from django.db import models
 from django.contrib.auth.models import User
-
-from django.contrib.auth.models import User  # Необходимо для назначения пользователя в качестве заемщика
-
-
-# Создайте здесь свои модели.
-
-from django.urls import reverse  # Для создания URL-адресов путем обращения к обратным шаблонам URL
-
+from django.utils import timezone
+from django.contrib.auth.models import User
+from django.urls import reverse
 
 class Genre(models.Model):
     """Модель, представляющая жанр книги (например, научная фантастика, научно-популярная литература)."""
@@ -23,7 +17,6 @@ class Genre(models.Model):
         """Строка для представления объекта модели (в административном сайте и т. д.)"""
         return self.name
 
-
 class Language(models.Model):
     """Модель, представляющая язык (например, английский, французский, японский и т. д.)"""
     name = models.CharField(max_length=200,
@@ -32,7 +25,6 @@ class Language(models.Model):
     def __str__(self):
         """Строка для представления объекта модели (в административном сайте и т. д.)"""
         return self.name
-
 
 class Book(models.Model):
     """Модель, представляющая книгу (но не конкретную копию книги)."""
@@ -69,8 +61,6 @@ class Book(models.Model):
         """Строка для представления объекта модели."""
         return self.title
 
-from django.utils import timezone
-
 class BookCopy(models.Model):
     """Модель, представляющая конкретную копию книги (т. е. которую можно взять в библиотеке)."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4,
@@ -91,7 +81,6 @@ class BookCopy(models.Model):
         """Строка для представления объекта модели."""
         return '{0} ({1})'.format(self.id, self.book.title)
 
-
 class BookInstance(models.Model):
     """Модель, представляющая конкретную копию книги (т. е. которую можно взять в библиотеке)."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4,
@@ -101,11 +90,11 @@ class BookInstance(models.Model):
     borrower = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Заёмщик')
     renewal_date = models.DateField(null=True, blank=True, verbose_name='Дата возврата')
     current_date = models.DateField(default=timezone.now, verbose_name='Текущая дата')
+
     @property
     def is_overdue(self):
         """Определяет, просрочена ли книга на основе даты возврата и текущей даты."""
         return bool(self.due_back and date.today() > self.due_back)
-# 1
     LOAN_STATUS = (
       ('р', 'Выдано'),
       ('д', 'Доступно'),

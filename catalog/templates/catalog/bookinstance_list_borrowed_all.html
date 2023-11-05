@@ -7,7 +7,7 @@
       <form method="GET" action="{% url 'all-borrowed' %}">
     <label for="status">Выберите статус:</label>
     <select name="status" id="status">
-{#        <option value="">Все статусы</option>#}
+        <option value="">Все статусы</option>
         <option value="р" {% if request.GET.status == 'р' %}selected{% endif %}>Выдано</option>
 {#        <option value="д" {% if request.GET.status == 'д' %}selected{% endif %}>Доступно</option>#}
         <option value="з" {% if request.GET.status == 'з' %}selected{% endif %}>Зарезервировано</option>
