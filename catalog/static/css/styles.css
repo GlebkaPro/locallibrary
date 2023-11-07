@@ -13,3 +13,18 @@
     margin-top: 10px;
 }
 
+body{
+  background: #A9D9D0;
+}
+.base-container{
+  background: #D3D9BF;
+  padding: 8px 20px 20px;
+  min-height: 100vh;
+}
+.link-color{
+  color: #027373;
+}
+.button-color{
+  background: #027373;
+}
+
