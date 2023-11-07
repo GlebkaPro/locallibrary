@@ -17,6 +17,28 @@
 {#<body class="dark-theme">#}
 <body>
 <div class="container">
+    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+      <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+        <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+        <span class="fs-4">Главная</span>
+      </a>
+
+      <ul class="nav nav-pills">
+      <li class="nav-item"><a href="{% url 'books' %}" class="nav-link">Книги</a></li>
+        <li class="nav-item"><a href="{% url 'authors' %}" class="nav-link">Авторы</a></li>
+        <li class="nav-item"><a href="{% url 'my-borrowed' %}" class="nav-link">Мои книги</a></li>
+        <li class="nav-item"><a href="#" class="nav-link">FAQs</a></li>
+        <li class="nav-item"><a href="#" class="nav-link">About</a></li>
+        {% if user.is_authenticated %}
+          <li class="nav-item"><a href="{% url 'logout' %}" class="nav-link active" aria-current="page">Выход</a></li>
+        {% else %}
+          <li class="nav-item"><a href="{% url 'login' %}" class="nav-link active" aria-current="page">Вход</a></li>
+          <li class="nav-item"><a href="{% url 'create_user' %}" class="nav-link active" aria-current="page">Регистрация</a></li>
+      {% endif %}
+      </ul>
+    </header>
+  </div>
+<div class="container">
 
   <div class="nav-scroller py-1 mb-3 border-bottom">
     <nav class="nav nav-underline justify-content-between">
