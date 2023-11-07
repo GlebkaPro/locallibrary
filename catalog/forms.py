@@ -1,3 +1,5 @@
+from django.core.validators import RegexValidator
+from django.forms import DateInput
 from django.utils.translation import gettext_lazy as _
 import datetime  # для проверки диапазона дат продления.
 from .models import Book, Author, BookCopy, BookInstance
@@ -8,9 +10,8 @@ from django.contrib.auth.models import User
 
 class RenewBookForm(forms.Form):
   """Форма для библиотекаря для обновления книг."""
-  renewal_date = forms.DateField(
-    help_text="Введите дату продления(максимум на 1 неделю).")
-
+  renewal_date = forms.DateField(help_text="Введите дату продления(максимум на 1 неделю).")
+  # fields = ['renewal_date']
   def clean_renewal_date(self):
     data = self.cleaned_data['renewal_date']
     # Дата проверки еще не прошла.
@@ -33,7 +34,7 @@ class UserRegistrationForm(UserCreationForm):
 class BookInstanceForm(forms.ModelForm):
     class Meta:
         model = BookInstance
-        fields = ['book', 'due_back', 'borrower', 'status', 'loan']
+        fields = ['book', 'due_back', 'borrower', 'status']
 
     def __init__(self, *args, **kwargs):
       super(BookInstanceForm, self).__init__(*args, **kwargs)
@@ -56,8 +57,11 @@ class BookInstanceForm(forms.ModelForm):
             available_copies = book.bookcopy_set.filter(status='д')
             if not available_copies.exists() and status != 'з':
                 raise forms.ValidationError('Нет доступных экземпляров книги для аренды.')
-        return cleaned_data
 
+    # Добавьте виджет DateInput к полю 'due_back'
+    widgets = {
+        'due_back': DateInput(attrs={'type': 'date'}),
+    }
 class BookInstanceEditForm(forms.ModelForm):
   class Meta:
     model = BookInstance
@@ -75,7 +79,9 @@ class BookInstanceEditForm(forms.ModelForm):
       if not available_copies.exists() and status != 'з':
         raise forms.ValidationError('Нет доступных экземпляров книги для аренды (редактирование).')
 
-    return cleaned_data
+  widgets = {
+      'due_back': DateInput(attrs={'type': 'date'}),
+  }
 
 class AddBookForm(forms.ModelForm):
   class Meta:
@@ -87,10 +93,25 @@ class EditBookForm(forms.ModelForm):
     model = Book
     fields = ['title', 'author', 'summary', 'isbn', 'genre', 'language', 'image']
 
+
 class AuthorForm(forms.ModelForm):
   class Meta:
     model = Author
-    fields = ['first_name', 'last_name', 'date_of_birth', 'date_of_death']
+    fields = ['first_name', 'last_name', 'middle_name', 'date_of_birth', 'date_of_death']
+
+  # # Поле ISBN с валидатором
+  # isbn_validator = RegexValidator(
+  #   regex=r'^\d{3}-\d-\d{4}-\d{4}-\d$',
+  #   message='Введите ISBN в формате "978-5-9614-2009-0".',
+  #   code='invalid_isbn'
+  # )
+  #
+  # isbn = forms.CharField(
+  #   label='ISBN',
+  #   validators=[isbn_validator],
+  #   widget=forms.TextInput(attrs={'pattern': r'^\d{3}-\d-\d{4}-\d{4}-\d$'})
+  # )
+
 
 class BookCopyForm(forms.ModelForm):
   class Meta:

@@ -33,7 +33,7 @@ class Book(models.Model):
     # Внешний ключ используется, потому что книга может иметь только одного автора, но авторы могут иметь несколько книг
     # Автор как строка, а не объект, потому что он еще не был объявлен в файле.
     summary = models.TextField(max_length=1000, help_text="Введите краткое описание книги")
-    isbn = models.CharField('ISBN', max_length=13,
+    isbn = models.CharField('ISBN', max_length=18,
                             unique=True,
                             help_text='13-значный <a href="https://www.isbn-international.org/content/what-isbn'
                                       '">номер ISBN</a>')
@@ -42,8 +42,6 @@ class Book(models.Model):
     # Класс Genre уже был определен, поэтому мы можем указать объект выше.
     language = models.ForeignKey('Language', on_delete=models.SET_NULL, null=True)
     image = models.ImageField(upload_to='books/', blank=True, null=True)
-    instances = models.IntegerField(null=True)
-    is_deleted = models.BooleanField(default=False)
     class Meta:
         ordering = ['title', 'author']
 
@@ -103,7 +101,7 @@ class BookInstance(models.Model):
     )
 
     status = models.CharField(
-        max_length=1, choices=LOAN_STATUS, blank=True, default='д', help_text='Доступность книги', verbose_name='Статус')
+        max_length=1, choices=LOAN_STATUS, blank=True, default='р', help_text='Доступность книги', verbose_name='Статус')
 
     class Meta:
         ordering = ['due_back']
@@ -116,7 +114,8 @@ class BookInstance(models.Model):
 class Author(models.Model):
     """Модель, представляющая автора."""
     first_name = models.CharField(verbose_name='Имя', max_length=100)
-    last_name = models.CharField(verbose_name='Фамилия',max_length=100)
+    last_name = models.CharField(verbose_name='Фамилия', max_length=100)
+    middle_name = models.CharField(verbose_name='Отчество', null=True, max_length=100)
     date_of_birth = models.DateField('Дата рождения',null=True, blank=True)
     date_of_death = models.DateField('Дата смерти', null=True, blank=True)
 

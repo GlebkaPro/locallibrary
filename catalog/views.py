@@ -44,11 +44,25 @@ class BookDetailView(generic.DetailView):
     """Общий класс-представление для детальной информации о книге."""
     model = Book
 
+    # def book_detail(request, book_id):
+    #   book = Book.objects.get(pk=book_id)
+    #
+    #   # Получаем количество копий с статусом 'д' для данной книги
+    #   available_copies = BookCopy.objects.filter(book=book, status='д').count()
+    #
+    #   return render(request, 'catalog/book_detail.html', {'book': book, 'available_copies': available_copies})
+
+
 class AuthorListView(generic.ListView):
     """Общий класс-представление для списка авторов."""
     model = Author
     paginate_by = 10
+    def get_queryset(self):
+        return Author.objects.all()  # Получите всех авторов
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
 class AuthorDetailView(generic.DetailView):
     """Общий класс-представление для детальной информации об авторе."""
     model = Author
@@ -116,25 +130,28 @@ def renew_book_librarian(request, pk):
 
 class AuthorCreate(PermissionRequiredMixin, CreateView):
   model = Author
-  fields = ['first_name', 'last_name', 'date_of_birth', 'date_of_death']
+  fields = ['first_name', 'last_name', 'middle_name', 'date_of_birth', 'date_of_death']
   initial = {'date_of_death': '11/06/2020'}
   permission_required = 'catalog.can_mark_returned'
 
-class AuthorUpdate(PermissionRequiredMixin, UpdateView):
-    model = Author
-    fields = '__all__' # Не рекомендуется (потенциальная проблема безопасности, если добавляются новые поля)
-    permission_required = 'catalog.can_mark_returned'
-    template_name = 'catalog/author_edit.html'
-    success_url = reverse_lazy('authors')  # URL для перенаправления после успешного редактирования автора
 
-    def get_initial(self):
-      initial = super(AuthorUpdate, self).get_initial()
-      author = self.get_object()
-      initial['first_name'] = author.first_name
-      initial['last_name'] = author.last_name
-      initial['date_of_birth'] = author.date_of_birth
-      initial['date_of_death'] = author.date_of_death
-      return initial
+class AuthorUpdate(PermissionRequiredMixin, UpdateView):
+  model = Author
+  fields = '__all__'  # Не рекомендуется (потенциальная проблема безопасности, если добавляются новые поля)
+  permission_required = 'catalog.can_mark_returned'
+  template_name = 'catalog/author_edit.html'
+  success_url = reverse_lazy('authors')  # URL для перенаправления после успешного редактирования автора
+
+  def get_initial(self):
+    initial = super(AuthorUpdate, self).get_initial()
+    author = self.get_object()
+    initial['first_name'] = author.first_name
+    initial['last_name'] = author.last_name
+    initial['middle_name'] = author.middle_name  # Установите начальное значение для "Отчество"
+    initial['date_of_birth'] = author.date_of_birth
+    initial['date_of_death'] = author.date_of_death
+    return initial
+
 
 class AuthorDelete(PermissionRequiredMixin, DeleteView):
     model = Author
@@ -178,20 +195,30 @@ def user_list(request):
   else:
     return render(request, 'access_denied.html')
 
-def add_bookinstance(request):
-  form = BookInstanceForm()
 
+def add_bookinstance(request):
   if request.method == 'POST':
     form = BookInstanceForm(request.POST)
-
     if form.is_valid():
       book = form.cleaned_data['book']
-      form.save()
-      # Проверка доступности экземпляра по статусу 'з'
-      if BookInstance.objects.filter(book=book, status='з').exists():
-        raise Http404("Экземпляр с такой книгой уже находится в статусе 'з'")
+      # Проверьте наличие доступного экземпляра
+      available_copy = book.bookcopy_set.filter(status='д').first()
+      if available_copy:
+        form.instance.loan = available_copy
+        form.save()
+        # Измените статус экземпляра на 'з'
+        available_copy.status = 'з'
+        available_copy.borrower = form.cleaned_data['borrower']
+        available_copy.save()
+        return redirect('book-detail', pk=book.id)
+      else:
+        # Если нет доступных экземпляров, возбудите исключение Http404
+        raise Http404("Нет доступных экземпляров для аренды")
+  else:
+    form = BookInstanceForm()
 
   return render(request, 'catalog/add_bookinstance.html', {'form': form})
+
 
 @login_required
 def edit_bookinstance(request, bookinstance_id):
@@ -234,16 +261,14 @@ def add_book(request):
       genre = form.cleaned_data['genre']
       language = form.cleaned_data['language']
       image = form.cleaned_data['image']
-      instances = form.cleaned_data['instances']
 
       # Создайте новую книгу
-      book = Book(title=title, summary=summary, isbn=isbn, language=language, image=image, instances=instances)
+      book = Book(title=title, summary=summary, isbn=isbn, language=language, image=image)
       book.save()
 
       # Создайте экземпляры книги и установите статус "доступно" для каждого
-      for _ in range(instances):
-        book_instance = BookInstance(book=book)
-        book_instance.save()
+      book_instance = BookInstance(book=book)
+      book_instance.save()
 
       return redirect('books')  # Перенаправление на список книг или другую страницу
   else:
@@ -251,23 +276,27 @@ def add_book(request):
 
   return render(request, 'catalog/add_book.html', {'form': form})
 
+
 def edit_book(request, book_id):
-    book = get_object_or_404(Book, pk=book_id)
+  book = get_object_or_404(Book, pk=book_id)
 
-    if request.method == "POST":
-        form = EditBookForm(request.POST, request.FILES, instance=book)  # Включите request.FILES
-        if form.is_valid():
-            form.save()
-            return redirect('book-detail', book_id)
-    else:
-        initial_data = {
-            'instances': book.instances,
-            'author': book.author,
-            'genre': book.genre.all(),
-        }
-        form = EditBookForm(instance=book, initial=initial_data)
+  if request.method == "POST":
+    form = EditBookForm(request.POST, request.FILES, instance=book)
+    if form.is_valid():
+      form.save()
+      return redirect('book-detail', book_id)
+  else:
+    # Устанавливаем начальные значения для полей, включая ManyToMany поле genre
+    initial_data = {
+      'title': book.title,
+      'isbn': book.isbn,
+      'genre': book.genre.all(),
+      # Добавьте другие поля, если необходимо
+    }
+    form = EditBookForm(instance=book, initial=initial_data)
 
-    return render(request, 'catalog/edit-book.html', {'book': book, 'form': form})
+  return render(request, 'catalog/edit-book.html', {'book': book, 'form': form})
+
 
 def delete_book(request, book_id):
     book = get_object_or_404(Book, pk=book_id)
@@ -284,7 +313,7 @@ def add_author(request):
         form = AuthorForm(request.POST)
         if form.is_valid():
             author = form.save()
-            return redirect('author-detail', author_id=author.id)
+            return redirect('author-detail', pk=author.id)
     else:
         form = AuthorForm()
 
@@ -329,8 +358,8 @@ def reserve_book(request, book_id):
     available_copy = book.bookcopy_set.filter(status='д').first()
 
     if available_copy:
-        # Создайте аренду экземпляра
-        new_copy = BookInstance(book=book, borrower=user, status='з')
+        # Создайте аренду экземпляра и заполните поле 'loan' доступным экземпляром
+        new_copy = BookInstance(book=book, borrower=user, status='з', loan=available_copy)
         new_copy.save()
 
         # Измените статус экземпляра на 'з'
@@ -342,6 +371,7 @@ def reserve_book(request, book_id):
     else:
         # Если нет доступных экземпляров, возбудите исключение Http404
         raise Http404("Нет доступных экземпляров для резервации")
+
 
 def create_book_copy(request, book_id):
     book = Book.objects.get(id=book_id)

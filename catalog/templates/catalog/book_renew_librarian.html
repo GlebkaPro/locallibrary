@@ -8,10 +8,31 @@
 
     <form action="" method="post">
         {% csrf_token %}
-        <table>
-        {{ form.as_table }}
-        </table>
+{#        <table>#}
+{#        {{ form.as_table }}#}
+{#        </table>#}
+      <div class="mb-3">
+    <label for="{{ form.due_back.id_for_label }}" class="form-label">Дата продления</label>
+    <div class="input-group date">
+        <input type="date" class="form-control form-control-sm" id="{{ form.renewal_date.id_for_label }}" name="{{ form.renewal_date.name }}" value="{{ form.renewal_date.value }}" style="max-width: 200px;">
+        <span class="input-group-addon">
+            <i class="glyphicon glyphicon-calendar"></i>
+        </span>
+    </div>
+</div>
         <input type="submit" value="Принять">
     </form>
 {% endblock %}
 </div>
+
+<script>
+    $(document).ready(function() {
+        // Инициализация datepicker на поле с id "id_due_back" (замените на актуальный ID)
+        $('#id_due_back').datepicker({
+            format: 'yyyy-mm-dd',  // Формат даты (ваш формат)
+            todayBtn: "linked",
+            clearBtn: true,
+            autoclose: true
+        });
+    });
+</script>

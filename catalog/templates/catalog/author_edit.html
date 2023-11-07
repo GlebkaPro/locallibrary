@@ -3,11 +3,57 @@
 {% block content %}
 <div class="container">
     <h1>Редактирование автора</h1>
+
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        <div class="form-group">
+            <label for="{{ form.last_name.id_for_label }}">Фамилия</label>
+            <input type="text" class="form-control form-control-sm" id="{{ form.last_name.id_for_label }}" name="{{ form.last_name.name }}" style="max-width: 200px;" value="{{ form.last_name.value }}">
+        </div>
+        <div class="form-group">
+            <label for="{{ form.first_name.id_for_label }}">Имя</label>
+            <input type="text" class="form-control form-control-sm" id="{{ form.first_name.id_for_label }}" name="{{ form.first_name.name }}" style="max-width: 200px;" value="{{ form.first_name.value }}">
+        </div>
+                <div class="form-group">
+            <label for="{{ form.middle_name.id_for_label }}">Отчество</label>
+            <input type="text" class="form-control form-control-sm" id="{{ form.middle_name.id_for_label }}" name="{{ form.middle_name.name }}" style="max-width: 200px;" value="{{ form.first_name.value }}">
+        </div>
+<div class="mb-3">
+    <label for="{{ form.date_of_birth.id_for_label }}" class="form-label">Дата рождения</label>
+    <div class="input-group date">
+        <input type="date" class="form-control form-control-sm" id="{{ form.date_of_birth.id_for_label }}" name="{{ form.date_of_birth.name }}" value="{{ form.date_of_birth.value }}" style="max-width: 200px;">
+        <span class="input-group-addon">
+            <i class="glyphicon glyphicon-calendar"></i>
+        </span>
+    </div>
+</div>
 
-        <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+<div class="mb-3">
+    <label for="{{ form.date_of_death.id_for_label }}" class="form-label">Дата смерти</label>
+    <div class="input-group date">
+        <input type="date" class="form-control form-control-sm" id="{{ form.date_of_death.id_for_label }}" name="{{ form.date_of_death.name }}" value="{{ form.date_of_death.value }}" style="max-width: 200px;">
+        <span class="input-group-addon">
+            <i class="glyphicon glyphicon-calendar"></i>
+        </span>
+    </div>
+</div>
+
+
+        {% if user.is_authenticated %}
+            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+        {% endif %}
     </form>
 </div>
 {% endblock %}
+
+<script>
+    $(document).ready(function() {
+        // Инициализация datepicker на поле с id "id_due_back" (замените на актуальный ID)
+        $('#id_due_back').datepicker({
+            format: 'yyyy-mm-dd',  // Формат даты (ваш формат)
+            todayBtn: "linked",
+            clearBtn: true,
+            autoclose: true
+        });
+    });
+</script>

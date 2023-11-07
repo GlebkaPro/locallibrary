@@ -2,22 +2,24 @@
 
 {% block content %}
 <div class="container">
-<h1>Список авторов</h1>
-  {% if user.is_authenticated %}
-  <a href="{% url 'add-author' %}" class="btn btn-primary">Добавить автора</a>
-  {% endif %}
-{% if author_list %}
-  <ul>
-  {% for author in author_list %}
-    <li>
-      <a href="{{ author.get_absolute_url }}">
-      {{ author }} ({{author.date_of_birth}} - {% if author.date_of_death %}{{author.date_of_death}}{% endif %})
-      </a>
-    </li>
-  {% endfor %}
- </ul>
-{% else %}
-  <p>There are no authors available.</p>
-{% endif %}
-{% endblock %}
+    <h1 class="mb-4">Список авторов</h1>
+    {% if user.is_authenticated %}
+    <a href="{% url 'add-author' %}" class="btn btn-primary mb-3">Добавить автора</a>
+    {% endif %}
+    {% if author_list %}
+    <ul class="list-group">
+        {% for author in author_list %}
+        <li class="list-group-item">
+            <a href="{{ author.get_absolute_url }}" class="text-decoration-none">
+                {{ author.last_name }} {{ author.first_name }}
+                {% if author.middle_name %}{{ author.middle_name }}{% endif %}
+                ({{ author.date_of_birth }} - {% if author.date_of_death %}{{ author.date_of_death }}{% endif %})
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>Авторов нет</p>
+    {% endif %}
 </div>
+{% endblock %}

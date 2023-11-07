@@ -22,11 +22,11 @@
                     <th>Имя</th>
                     <th>Логин</th>
                     <th>Название книги</th>
+                    <th>Штамп</th>
                     <th>Дата начала</th>
                     <th>Дата окончания</th>
                     <th>Дата продления</th>
                     <th>Статус</th>
-
                 </tr>
             </thead>
             <tbody>
@@ -38,6 +38,7 @@
                     <td>
                         <a href="{% url 'book-detail' bookinst.book.pk %}">{{ bookinst.book.title }}</a>
                     </td>
+                    <td>{{ bookinst.loan.imprint }}</td>
                     <td>{{ bookinst.current_date }}</td>
                     <td>{{ bookinst.due_back }}</td>
                     <td>{{ bookinst.renewal_date }}</td>

@@ -28,6 +28,8 @@
                 <p class="card-text">ISBN: {{ book.isbn }}</p>
                 <p class="card-text">Язык: {{ book.language }}</p>
                 <p class="card-text">Жанр: {{ book.genre.all|join:", " }}</p>
+                <p class="card-text">Всего копий: {{ book.bookcopy_set.all.count }}</p>
+{#                <p class="card-text">Копий доступно: {{ available_copies }}</p>#}
                 <form method="get" action="{% url 'reserve-book' book_id=book.id %}">
                   {% if user.is_authenticated %}
                     <button type="submit" class="btn btn-primary">Зарезервировать книгу</button>
@@ -36,15 +38,15 @@
             </div>
         </div>
     <h4>Копии</h4>
-      {% for copy in book.bookcopy_set.all %}
-        <hr><p class="{% if copy.status == 'д' %}text-success{% elif copy.status == 'р' %}text-danger{% else %}text-warning{% endif %}">{{ copy.get_status_display }}</p>
-{#              {% if copy.status != 'д' %}#}
-{#        {% if copy.loan %}#}
+{% for copy in book.bookcopy_set.all %}
+    <hr>
+    <p class="{% if copy.status == 'д' %}text-success{% elif copy.status == 'р' %}text-danger{% else %}text-warning{% endif %}">{{ copy.get_status_display }}</p>
+{#    <p>Штамп:{{ copy.imprint }}</p>#}
+{#    {% if copy.status != 'д' %}#}
 {#            <p><strong>Подлежит возврату:</strong> {{ copy.loan.due_back }}</p>#}
-{#        {% endif %}#}
 {#    {% endif %}#}
-            <p class="text-muted"><strong>Id:</strong> {{copy.id}}</p>
-      {% endfor %}
+    <p class="text-muted"><strong>Id:</strong> {{ copy.id }}</p>
+{% endfor %}
     </div>
 </div>
 
