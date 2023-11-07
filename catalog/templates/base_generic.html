@@ -26,7 +26,13 @@
       <ul class="nav nav-pills">
       <li class="nav-item"><a href="{% url 'books' %}" class="nav-link">Книги</a></li>
         <li class="nav-item"><a href="{% url 'authors' %}" class="nav-link">Авторы</a></li>
+      {% if user.is_staff.false and perms.catalog.can_mark_returned %}
         <li class="nav-item"><a href="{% url 'my-borrowed' %}" class="nav-link">Мои книги</a></li>
+      {% endif %}
+      {% if user.is_staff and perms.catalog.can_mark_returned %}
+        <li class="nav-item"><a href="{% url 'all-borrowed' %}">Все абонирования</a></li>
+        <li class="nav-item"><a href="{% url 'user_list' %}">Все абонирования</a></li>
+      {% endif %}
         <li class="nav-item"><a href="#" class="nav-link">FAQs</a></li>
         <li class="nav-item"><a href="#" class="nav-link">About</a></li>
         {% if user.is_authenticated %}
@@ -38,7 +44,8 @@
       </ul>
     </header>
   </div>
-<div class="container">
+
+{% comment %}<div class="container">
 
   <div class="nav-scroller py-1 mb-3 border-bottom">
     <nav class="nav nav-underline justify-content-between">
@@ -61,7 +68,7 @@
       {% endif %}
     </nav>
   </div>
-</div>
+</div>{% endcomment %}
 
 <div class="container-fluid">
     <div class="row">
