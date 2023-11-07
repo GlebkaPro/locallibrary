@@ -14,17 +14,32 @@
 }
 
 body{
-  background: #A9D9D0;
+  background: #89ABD9;
 }
 .base-container{
-  background: #D3D9BF;
-  padding: 8px 20px 20px;
+  background: #F2F2F2;
   min-height: 100vh;
+  box-shadow: 2px 0px 25px black;
 }
 .link-color{
-  color: #027373;
+  color: #0460D9;
 }
-.button-color{
-  background: #027373;
+.link-color:hover{
+  color: #327AD9;
+}
+.nav-link.button-color{
+  color: #F2F2F2;
+  background: #0460D9;
 }
 
+*{
+  color: #0D0D0D;
+}
+.for-text{
+  background-color: transparent;
+  transition: background-color 0.3s ease-in-out;
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  padding: 20px;
+}

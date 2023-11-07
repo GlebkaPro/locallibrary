@@ -1,31 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-{% load static %}
-    {% block title %}
-        <title>Local Library</title>
-    {% endblock %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/dark_theme.css' %}">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% load static %}
+  {% block title %}
+    <title>Local Library</title>
+  {% endblock %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/dark_theme.css' %}">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 
 </head>
 {# тёмная тема ##}
 {#<body class="dark-theme">#}
 <body>
 <div class="container base-container">
-    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
-      <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none link-color">
-        <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
-        <span class="fs-4">Главная</span>
-      </a>
+  <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom" style="margin: auto; width: 100%">
+    <a href="/"
+       class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none link-color">
+      <svg class="bi me-2" width="40" height="32">
+        <use xlink:href="#bootstrap"></use>
+      </svg>
+      <span class="fs-4 link-color">Главная</span>
+    </a>
 
-      <ul class="nav nav-pills">
-      <li class="nav-item"><a href="{% url 'books' %}" class="nav-link color link-color">Книги</a></li>
-        <li class="nav-item"><a href="{% url 'authors' %}" class="nav-link link-color">Авторы</a></li>
+    <ul class="nav nav-pills">
+      <li class="nav-item"><a href="{% url 'books' %}" class="nav-link link-color">Книги</a></li>
+      <li class="nav-item"><a href="{% url 'authors' %}" class="nav-link link-color">Авторы</a></li>
       {% if user.is_staff.false and perms.catalog.can_mark_returned %}
         <li class="nav-item"><a href="{% url 'my-borrowed' %}" class="nav-link link-color">Мои книги</a></li>
       {% endif %}
@@ -33,41 +37,46 @@
         <li class="nav-item"><a href="{% url 'all-borrowed' %}" class="nav-link link-color">Все абонирования</a></li>
         <li class="nav-item"><a href="{% url 'user_list' %}" class="nav-link link-color">Все абонирования</a></li>
       {% endif %}
-        <li class="nav-item"><a href="#" class="nav-link link-color">FAQs</a></li>
-        <li class="nav-item"><a href="#" class="nav-link link-color">About</a></li>
-        {% if user.is_authenticated %}
-          <li class="nav-item" style="margin-right: 8px"><a href="{% url 'logout' %}" class="nav-link active" aria-current="page">Выход</a></li>
-        {% else %}
-          <li class="nav-item" style="margin-right: 8px"><a href="{% url 'login' %}" class="nav-link active" aria-current="page">Вход</a></li>
-          <li class="nav-item"><a href="{% url 'create_user' %}" class="nav-link active" aria-current="page">Регистрация</a></li>
+      <li class="nav-item"><a href="#" class="nav-link link-color">FAQs</a></li>
+      <li class="nav-item"><a href="#" class="nav-link link-color">About</a></li>
+      {% if user.is_authenticated %}
+        <li class="nav-item" style="margin-right: 8px"><a href="{% url 'logout' %}" class="nav-link button-color"
+                                                          aria-current="page">Выход</a></li>
+      {% else %}
+        <li class="nav-item" style="margin-right: 8px"><a href="{% url 'login' %}" class="nav-link button-color"
+                                                          aria-current="page">Вход</a></li>
+        <li class="nav-item" style="margin-right: 28px"><a href="{% url 'create_user' %}" class="nav-link button-color" aria-current="page">Регистрация</a>
+        </li>
       {% endif %}
-      </ul>
-    </header>
-    <div class="row">
-        <div class="col-sm-2">
-            {% block sidebar %}
-                <ul class="nav flex-column">
-                    <!-- Sidebar content -->
-                </ul>
-            {% endblock %}
-        </div>
-        <div class="col-sm-12">
-            {% block content %}
-                <!-- Main content -->
-            {% endblock %}
-
-            {% block pagination %}
-                {% if is_paginated %}
-                    <div class="pagination">
-                        <!-- Pagination links -->
-                    </div>
-                {% endif %}
-            {% endblock %}
-        </div>
+    </ul>
+  </header>
+  <div class="row">
+    <div class="col-sm-2">
+      {% block sidebar %}
+        <ul class="nav flex-column">
+          <!-- Sidebar content -->
+        </ul>
+      {% endblock %}
     </div>
+    <div class="col-sm-12">
+      {% block content %}
+        <!-- Main content -->
+      {% endblock %}
+
+      {% block pagination %}
+        {% if is_paginated %}
+          <div class="pagination">
+            <!-- Pagination links -->
+          </div>
+        {% endif %}
+      {% endblock %}
+    </div>
+  </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-4XnfpUr13QFDo0SIn3k5gEGGpMCVomYiwV0iS/WP3x0r4CqSG/ycm6V8FT4HDkRw" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-4XnfpUr13QFDo0SIn3k5gEGGpMCVomYiwV0iS/WP3x0r4CqSG/ycm6V8FT4HDkRw"
+        crossorigin="anonymous"></script>
 
 </body>
 </html>
