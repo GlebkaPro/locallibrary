@@ -32,7 +32,7 @@
 {#                <p class="card-text">Копий доступно: {{ available_copies }}</p>#}
                 <form method="get" action="{% url 'reserve-book' book_id=book.id %}">
                   {% if user.is_authenticated %}
-                    <button type="submit" class="btn btn-primary">Зарезервировать книгу</button>
+                    <button type="submit" class="btn btn-primary" style="margin: 8px">Зарезервировать книгу</button>
                   {% endif %}
                 </form>
             </div>
