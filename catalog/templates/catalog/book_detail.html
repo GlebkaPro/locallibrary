@@ -5,7 +5,7 @@
     <h1 class="card-title">Название: {{ book.title }}</h1>
     <p><strong>Автор:</strong> <a href="{{ book.author.get_absolute_url }}">{{ book.author }}</a></p>
 
-{% if user.is_authenticated %}
+{% if user.is_staff %}
      <form method="get" action="{% url 'edit-book' book_id=book.id %}">
         <button type="submit" class="btn btn-primary">Редактировать книгу</button>
      </form>

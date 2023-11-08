@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container">
     <h1 class="mb-4">Список авторов</h1>
-    {% if user.is_authenticated %}
+    {% if user.staff %}
     <a href="{% url 'add-author' %}" class="btn btn-primary mb-3">Добавить автора</a>
     {% endif %}
     {% if author_list %}

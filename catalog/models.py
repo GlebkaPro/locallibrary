@@ -37,7 +37,7 @@ class Book(models.Model):
                             unique=True,
                             help_text='13-значный <a href="https://www.isbn-international.org/content/what-isbn'
                                       '">номер ISBN</a>')
-    genre = models.ManyToManyField(Genre, help_text="Выберите жанр для этой книги")
+    genre = models.ManyToManyField(Genre, help_text="Выберите жанр")
     # ManyToManyField используется, потому что жанр может содержать много книг, а книга может охватывать много жанров.
     # Класс Genre уже был определен, поэтому мы можем указать объект выше.
     language = models.ForeignKey('Language', on_delete=models.SET_NULL, null=True)

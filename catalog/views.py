@@ -255,7 +255,7 @@ def add_book(request):
     form = AddBookForm(request.POST, request.FILES)
     if form.is_valid():
       title = form.cleaned_data['title']
-      author_name = form.cleaned_data['author']
+      author = form.cleaned_data['author']
       summary = form.cleaned_data['summary']
       isbn = form.cleaned_data['isbn']
       genre = form.cleaned_data['genre']
@@ -264,11 +264,11 @@ def add_book(request):
 
       # Создайте новую книгу
       book = Book(title=title, summary=summary, isbn=isbn, language=language, image=image)
+      if author:
+        book.author = author
+      if genre:
+        book.genre.set(genre)
       book.save()
-
-      # Создайте экземпляры книги и установите статус "доступно" для каждого
-      book_instance = BookInstance(book=book)
-      book_instance.save()
 
       return redirect('books')  # Перенаправление на список книг или другую страницу
   else:

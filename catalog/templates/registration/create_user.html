@@ -7,19 +7,19 @@
         {% csrf_token %}
         <div class="mb-3">
             <label for="id_username" class="form-label">Имя пользователя</label>
-            <input type="text" class="form-control form-control-sm" id="id_username"  name="username" style="max-width: 200px;">
+            <input type="text" class="form-control form-control-sm" id="id_username" name="username" style="max-width: 200px;" autocomplete="off">
         </div>
         <div class="mb-3">
             <label for="id_email" class="form-label">Email</label>
-            <input type="email" class="form-control form-control-sm" id="id_email" name="email" style="max-width: 200px;">
+            <input type="email" class="form-control form-control-sm" id="id_email" name="email" style="max-width: 200px;" autocomplete="off">
         </div>
         <div class="mb-3">
             <label for="id_password" class="form-label">Пароль</label>
-            <input type="password" class="form-control form-control-sm" id="id_password" name="password1" style="max-width: 200px;">
+            <input type="password" class="form-control form-control-sm" id="id_password" name="password1" style="max-width: 200px;" autocomplete="off">
         </div>
         <div class="mb-3">
             <label for="id_password2" class="form-label">Подтверждение пароля</label>
-            <input type="password" class="form-control form-control-sm" id="id_password2" name="password2" style="max-width: 200px;">
+            <input type="password" class="form-control form-control-sm" id="id_password2" name="password2" style="max-width: 200px;" autocomplete="off">
         </div>
         <button type="submit" class="btn btn-primary">Зарегистрировать</button>
     </form>
