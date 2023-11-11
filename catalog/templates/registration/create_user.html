@@ -6,6 +6,28 @@
     <form method="post" class="mt-4">
         {% csrf_token %}
         <div class="mb-3">
+            <label for="id_last_name" class="form-label">Ваша фамилия</label>
+            <input type="text" class="form-control form-control-sm" id="id_last_name" name="last_name" style="max-width: 200px;" autocomplete="off">
+        </div>
+        <div class="mb-3">
+            <label for="id_first_name" class="form-label">Ваше имя</label>
+            <input type="text" class="form-control form-control-sm" id="id_first_name" name="first_name" style="max-width: 200px;" autocomplete="off">
+        </div>
+        <div class="mb-3">
+            <label for="id_middle_name" class="form-label">Ваше отчество</label>
+            <input type="text" class="form-control form-control-sm" id="id_middle_name" name="middle_name" style="max-width: 200px;" autocomplete="off">
+        </div>
+        <div class="mb-3">
+            <label for="{{ form.date_birth.id_for_label }}" class="form-label">Дата рождения:</label>
+            <div class="input-group date">
+                {{ form.date_birth }}
+                <span class="input-group-addon">
+                    <i class="glyphicon glyphicon-calendar"></i>
+                </span>
+            </div>
+            <div class="form-error">{{ form.date_birth.errors }}</div>
+        </div>
+        <div class="mb-3">
             <label for="id_username" class="form-label">Имя пользователя</label>
             <input type="text" class="form-control form-control-sm" id="id_username" name="username" style="max-width: 200px;" autocomplete="off">
         </div>

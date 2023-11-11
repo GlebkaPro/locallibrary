@@ -1,13 +1,17 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-
-<form action="" method="post">
+  <form action="{% url 'add-genre' %}" method="post">
     {% csrf_token %}
-    <table>
     {{ form.as_table }}
-    </table>
-    <input type="submit" value="Submit">
-
-</form>
+            <div class="mb-3">
+          <button type="submit" class="btn btn-primary">Сохранить</button>
+        </div>
+  </form>
+  <h2>Список жанров</h2>
+  <ul>
+    {% for genre in genres %}
+      <li>{{ genre.name }}</li>
+    {% endfor %}
+  </ul>
 {% endblock %}

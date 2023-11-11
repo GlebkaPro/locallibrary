@@ -1,26 +1,34 @@
 import uuid
 from datetime import date
-from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 from django.utils import timezone
-from django.contrib.auth.models import User
 from django.urls import reverse
+from django.db import models
+from django.contrib.auth.models import PermissionsMixin
+from django.contrib.auth.base_user import AbstractBaseUser
+from locallibrary import settings
+
 
 class Genre(models.Model):
-    """Модель, представляющая жанр книги (например, научная фантастика, научно-популярная литература)."""
-    name = models.CharField(
-        max_length=200,
-        help_text="Введите жанр книги (например, научная фантастика, французская поэзия и т. д.)"
-        )
-
-    def __str__(self):
-        """Строка для представления объекта модели (в административном сайте и т. д.)"""
-        return self.name
+  name = models.CharField(verbose_name='Жанр',
+    max_length=200,
+    unique=True,
+    error_messages={
+      'unique': 'Жанр с таким именем уже существует.',
+    },
+    help_text="Введите жанр книги (например, научная фантастика, французская поэзия и т. д.)"
+  )
+  def __str__(self):
+    return self.name
 
 class Language(models.Model):
     """Модель, представляющая язык (например, английский, французский, японский и т. д.)"""
-    name = models.CharField(max_length=200,
-                            help_text="Введите естественный язык книги (например, английский, французский, японский и т. д.)")
+    name = models.CharField(verbose_name='Язык',
+      max_length=200,
+      unique=True,
+      error_messages={'unique': 'Такой язык уже существует.',
+      },
+      help_text="Введите естественный язык книги (например, английский, французский, японский и т. д.)")
 
     def __str__(self):
         """Строка для представления объекта модели (в административном сайте и т. д.)"""
@@ -37,7 +45,8 @@ class Book(models.Model):
                             unique=True,
                             help_text='13-значный <a href="https://www.isbn-international.org/content/what-isbn'
                                       '">номер ISBN</a>')
-    genre = models.ManyToManyField(Genre, help_text="Выберите жанр")
+    # genre = models.ManyToManyField(Genre, help_text="Выберите жанр")
+    genre = models.ManyToManyField(Genre, help_text="Выберите жанр", related_name="books")
     # ManyToManyField используется, потому что жанр может содержать много книг, а книга может охватывать много жанров.
     # Класс Genre уже был определен, поэтому мы можем указать объект выше.
     language = models.ForeignKey('Language', on_delete=models.SET_NULL, null=True)
@@ -84,7 +93,7 @@ class BookInstance(models.Model):
                           help_text="Уникальный идентификатор для этой конкретной книги во всей библиотеке")
     book = models.ForeignKey('Book', on_delete=models.RESTRICT, null=True, verbose_name='Книга')
     due_back = models.DateField(null=True, blank=True, verbose_name='Дата возврата')
-    borrower = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Заёмщик')
+    borrower = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Абонент')
     renewal_date = models.DateField(null=True, blank=True, verbose_name='Дата возврата')
     current_date = models.DateField(default=timezone.now, verbose_name='Текущая дата')
     loan = models.ForeignKey('BookCopy', on_delete=models.SET_NULL, null=True, blank=True)
@@ -116,7 +125,7 @@ class Author(models.Model):
     first_name = models.CharField(verbose_name='Имя', max_length=100)
     last_name = models.CharField(verbose_name='Фамилия', max_length=100)
     middle_name = models.CharField(verbose_name='Отчество', null=True, max_length=100)
-    date_of_birth = models.DateField('Дата рождения',null=True, blank=True)
+    date_of_birth = models.DateField('Дата рождения', null=True, blank=True)
     date_of_death = models.DateField('Дата смерти', null=True, blank=True)
 
     class Meta:
@@ -124,16 +133,10 @@ class Author(models.Model):
 
     def get_absolute_url(self):
         """Возвращает URL-адрес для доступа к конкретному экземпляру автора."""
-        return reverse('author-detail', args=[str(self.id)])
+        return reverse('author-detail', args=[int(self.id)])
 
     def __str__(self):
         """Строка для представления объекта модели."""
-        return '{0}, {1}'.format(self.last_name, self.first_name)
+        return '{0}, {1}'.format(self.last_name, self.first_name, self.middle_name)
 
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    middle_name = models.CharField(max_length=100)
-    registration_date = models.DateTimeField(auto_now_add=True)
 

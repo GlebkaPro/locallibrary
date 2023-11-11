@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Add our new application
     'catalog.apps.CatalogConfig',
+    "users.apps.UsersConfig",
 
 ]
 
@@ -154,3 +155,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'images')
 
 # URL-префикс для медиафайлов
 MEDIA_URL = '/images/'
+
+AUTH_USER_MODEL = 'users.User'

@@ -4,7 +4,7 @@
   <div class="container">
     <h1>Все книги</h1>
     {% if user.is_staff %}
-      <a href="{% url 'add-book' %}" class="btn btn-primary">Добавить книгу</a>
+      <a href="{% url 'add-book' %}" class="btn btn-primary mb-2">Добавить книгу</a>
       {% endif %}
     {% if book_list %}
       <div class="row">
@@ -15,7 +15,7 @@
                 {% if book.image %}
                   <img src="{{ book.image.url }}" class="bd-placeholder-img card-img-top" width="100%" height="225" alt="Book Image">
                 {% else %}
-                             <div class="placeholder-image"></div>
+                  <div class="placeholder-image"></div>
                 {% endif %}
                 <div class="card-body">
                   <h5 class="card-title"><a href="{{ book.get_absolute_url }}">{{ book.title }}</a></h5>

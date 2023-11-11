@@ -1,17 +1,20 @@
+from sqlite3 import IntegrityError
+
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from catalog.forms import RenewBookForm, BookInstanceEditForm
+from catalog.forms import RenewBookForm, BookInstanceEditForm, GenreForm, LanguageForm
 from django.utils import timezone
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from django.contrib.auth import login
-from .forms import UserRegistrationForm, BookCopyForm, BookInstanceForm, AddBookForm, EditBookForm, AuthorForm
+from django.contrib.auth import login, get_user_model
+from .forms import UserRegistrationForm, BookCopyForm, BookInstanceForm, AddBookForm, EditBookForm, AuthorForm, ProfileUserForm
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import Http404
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Book, BookCopy, BookInstance, Author
-from django.contrib.auth.models import User
+from .models import Book, BookCopy, BookInstance, Author, Genre, Language
+
+
 def index(request):
     """Функция представления для домашней страницы сайта."""
     # Генерация количества некоторых основных объектов
@@ -74,11 +77,12 @@ class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        return (
-            BookInstance.objects.filter(borrower=self.request.user)
-            .filter(status__exact='р') # Книги на руках (статус = 'р')
-            .order_by('due_back')
-        )
+      status = self.request.GET.get('status', None)
+
+      if status is None:
+        status = ['р', 'з'] # Установите стандартное значение 'р, з'
+
+      return BookInstance.objects.filter(borrower=self.request.user, status__in=status).order_by('due_back')
 
 class LoanedBooksAllListView(PermissionRequiredMixin, generic.ListView):
     """Общий класс-представление для списка всех книг, взятых на аренду. Доступно только пользователям с разрешением can_mark_returned."""
@@ -96,7 +100,7 @@ class LoanedBooksAllListView(PermissionRequiredMixin, generic.ListView):
       return BookInstance.objects.filter(status__in=status).order_by('due_back')
 
 @login_required
-@permission_required('catalog.can_mark_returned', raise_exception=True)
+# @permission_required('catalog.can_mark_returned', raise_exception=True)
 def renew_book_librarian(request, pk):
     """Функция представления для продления конкретного экземпляра книги библиотекарем."""
     book_instance = get_object_or_404(BookInstance, pk=pk)
@@ -105,7 +109,7 @@ def renew_book_librarian(request, pk):
     if request.method == 'POST':
 
         # Создаем экземпляр формы и заполняем его данными из запроса (привязка):
-        form = RenewBookForm(request.POST)
+        form = RenewBookForm(request.POST, instance=book_instance)
 
         if form.is_valid():
             if not book_instance.due_back:  # Проверка, была ли книга продлена ранее
@@ -190,7 +194,7 @@ def create_user(request):
 
 def user_list(request):
   if request.user.is_staff:
-    users = User.objects.all()
+    users = get_user_model().objects.all()
     return render(request, 'catalog/user_list.html', {'users': users})
   else:
     return render(request, 'access_denied.html')
@@ -207,10 +211,10 @@ def add_bookinstance(request):
         form.instance.loan = available_copy
         form.save()
         # Измените статус экземпляра на 'з'
-        available_copy.status = 'з'
+        available_copy.status = 'р'
         available_copy.borrower = form.cleaned_data['borrower']
         available_copy.save()
-        return redirect('book-detail', pk=book.id)
+        return redirect('all-borrowed')
       else:
         # Если нет доступных экземпляров, возбудите исключение Http404
         raise Http404("Нет доступных экземпляров для аренды")
@@ -266,9 +270,13 @@ def add_book(request):
       book = Book(title=title, summary=summary, isbn=isbn, language=language, image=image)
       if author:
         book.author = author
+
+      # Сначала сохраните книгу без связей с жанрами
+      book.save()
+
+      # Теперь добавьте связи с жанрами
       if genre:
         book.genre.set(genre)
-      book.save()
 
       return redirect('books')  # Перенаправление на список книг или другую страницу
   else:
@@ -312,6 +320,10 @@ def add_author(request):
     if request.method == 'POST':
         form = AuthorForm(request.POST)
         if form.is_valid():
+            date_of_death = form.cleaned_data['date_of_death']
+            if not date_of_death:
+                # Если дата смерти не введена, устанавливаем ее в None
+                form.cleaned_data['date_of_death'] = None
             author = form.save()
             return redirect('author-detail', pk=author.id)
     else:
@@ -388,6 +400,43 @@ def create_book_copy(request, book_id):
         form = BookCopyForm()
 
     return render(request, 'catalog/create_book_copy.html', {'book': book, 'form': form})
+class ProfileUser(LoginRequiredMixin, UpdateView):
+    model = get_user_model()
+    form_class = ProfileUserForm
+    template_name = 'catalog/profile.html'
+    extra_context = {'title': "Профиль пользователя"}
 
+    def get_success_url(self):
+        return reverse_lazy('profile')
+
+    def get_object(self, queryset=None):
+      return self.request.user
+
+
+def add_genre(request):
+  if request.method == 'POST':
+    form = GenreForm(request.POST)
+    if form.is_valid():
+      form.save()
+      return redirect('add-genre')
+  else:
+    form = GenreForm()
+
+  genres = Genre.objects.all()
+
+  return render(request, 'catalog/add_genre.html', {'form': form, 'genres': genres})
+
+def add_language(request):
+    if request.method == 'POST':
+        form = LanguageForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('add-language')
+    else:
+        form = LanguageForm()
+
+    languages = Language.objects.all()
+
+    return render(request, 'catalog/add_language.html', {'form': form, 'languages': languages})
 
 

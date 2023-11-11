@@ -1,13 +1,22 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
+  <div class="container mt-4">
+    <h1>Добавить язык</h1>
 
-<form action="" method="post">
-    {% csrf_token %}
-    <table>
-    {{ form.as_table }}
-    </table>
-    <input type="submit" value="Submit">
+    <form action="{% url 'add-language' %}" method="post" class="mb-4">
+      {% csrf_token %}
+      {{ form.as_table }}
+      <div class="mb-3">
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+      </div>
+    </form>
 
-</form>
+    <h2>Список языков</h2>
+    <ul class="list-group">
+      {% for language in languages %}
+        <li class="list-group-item">{{ language.name }}</li>
+      {% endfor %}
+    </ul>
+  </div>
 {% endblock %}

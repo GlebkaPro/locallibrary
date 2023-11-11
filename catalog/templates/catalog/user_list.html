@@ -11,6 +11,7 @@
                     <th>Дата регистрации</th>
                     <th>Фамилия</th>
                     <th>Имя</th>
+                    <th>Отчество</th>
                     <th>Почта</th>
                 </tr>
             </thead>
@@ -21,6 +22,7 @@
                         <td>{{ user.date_joined }}</td>
                         <td>{{ user.last_name }}</td>
                         <td>{{ user.first_name }}</td>
+                        <td>{{ user.middle_name }}</td>
                         <td>{{ user.email }}</td>
                     </tr>
                 {% endfor %}
