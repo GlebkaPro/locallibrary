@@ -1,0 +1,17 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <form action="{% url 'add-publisher' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_table }}
+            <div class="mb-3">
+          <button type="submit" class="btn btn-primary">Сохранить</button>
+        </div>
+  </form>
+  <h2>Список жанров</h2>
+  <ul>
+    {% for publisher in publishers %}
+      <li>{{ publisher.publisher }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
