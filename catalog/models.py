@@ -97,7 +97,7 @@ class BookInstance(models.Model):
     renewal_date = models.DateField(null=True, blank=True, verbose_name='Дата возврата')
     current_date = models.DateField(default=timezone.now, verbose_name='Текущая дата')
     loan = models.ForeignKey('BookCopy', on_delete=models.SET_NULL, null=True, blank=True)
-
+    worker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='worked_books', verbose_name='Сотрудник')
     @property
     def is_overdue(self):
         """Определяет, просрочена ли книга на основе даты возврата и текущей даты."""

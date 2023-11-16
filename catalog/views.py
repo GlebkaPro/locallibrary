@@ -206,9 +206,11 @@ def add_bookinstance(request):
     if form.is_valid():
       book = form.cleaned_data['book']
       # Проверьте наличие доступного экземпляра
+      worker = request.user
       available_copy = book.bookcopy_set.filter(status='д').first()
       if available_copy:
         form.instance.loan = available_copy
+        form.instance.worker = worker
         form.save()
         # Измените статус экземпляра на 'з'
         available_copy.status = 'р'
