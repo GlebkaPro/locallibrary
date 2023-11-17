@@ -2,33 +2,37 @@
 
 {% block content %}
 
-<div class="container">
-    {% if form.errors %}
-    <p class="text-danger">Ваше имя пользователя и пароль не найдены. Пожалуйста, попробуйте снова.</p>
-    {% endif %}
-    {% if next %}
-        {% if user.is_authenticated %}
-        <p class="text-danger">У вашей учетной записи нет доступа к этой странице. Чтобы продолжить, пожалуйста, войдите в систему с учетной записью, у которой есть доступ.</p>
-        {% else %}
-        <p class="text-danger">Пожалуйста, войдите в систему, чтобы увидеть эту страницу.</p>
-        {% endif %}
-    {% endif %}
-    <form method="post" action="{% url 'login' %}">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label for="id_username" class="form-label">Имя пользователя</label>
-            <input type="text" class="form-control form-control-sm" id="id_username"  name="username" style="max-width: 200px;">
-            <small class="form-text text-muted">Введите ваше имя пользователя</small>
+<div class="container d-flex justify-content-center align-items-center vh-50">
+    <div class="card" style="width: 300px;">
+        <div class="card-body">
+            <h1 class="mt-2">Вход</h1>
+            {% if form.errors %}
+            <p class="text-danger">Ваше имя пользователя и пароль не найдены. Пожалуйста, попробуйте снова.</p>
+            {% endif %}
+            {% if next %}
+                {% if user.is_authenticated %}
+                <p class="text-danger">У вашей учетной записи нет доступа к этой странице. Чтобы продолжить, пожалуйста, войдите в систему с учетной записью, у которой есть доступ.</p>
+                {% else %}
+                <p class="text-danger">Пожалуйста, войдите в систему, чтобы увидеть эту страницу.</p>
+                {% endif %}
+            {% endif %}
+            <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="id_username" class="form-label">Имя пользователя</label>
+                    <input type="text" class="form-control form-control-sm" id="id_username"  name="username" style="max-width: 300px;">
+                    <small class="form-text text-muted">Введите ваше имя пользователя</small>
+                </div>
+                <div class="mb-3">
+                    <label for="id_password" class="form-label">Пароль</label>
+                    <input type="password" class="form-control form-control-sm" id="id_password"  name="password" style="max-width: 300px;">
+                    <small class="form-text text-muted">Введите ваш пароль</small>
+                </div>
+                <input type="submit" class="btn btn-primary" value="Войти">
+                <input type="hidden" name="next" value="{{ next }}">
+            </form>
+            {#    <p><a href="{% url 'password_reset' %}" class="text-muted">Забыли пароль?</a></p>#}
         </div>
-        <div class="mb-3">
-            <label for="id_password" class="form-label">Пароль</label>
-            <input type="password" class="form-control form-control-sm" id="id_password"  name="password" style="max-width: 200px;">
-            <small class="form-text text-muted">Введите ваш пароль</small>
-        </div>
-        <input type="submit" class="btn btn-primary" value="Войти">
-        <input type="hidden" name="next" value="{{ next }}">
-    </form>
-{#    <p><a href="{% url 'password_reset' %}" class="text-muted">Забыли пароль?</a></p>#}
+    </div>
 </div>
 {% endblock %}
-

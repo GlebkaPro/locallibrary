@@ -1,15 +1,15 @@
-from sqlite3 import IntegrityError
-
+from django.db.models import Q
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib import messages
 from catalog.forms import RenewBookForm, BookInstanceEditForm, GenreForm, LanguageForm
 from django.utils import timezone
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth import login, get_user_model
 from .forms import UserRegistrationForm, BookCopyForm, BookInstanceForm, AddBookForm, EditBookForm, AuthorForm, ProfileUserForm
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Book, BookCopy, BookInstance, Author, Genre, Language
@@ -38,10 +38,21 @@ def index(request):
                  'num_visits': num_visits},
     )
 
+
 class BookListView(generic.ListView):
-    """Общий класс-представление для списка книг."""
-    model = Book
-    paginate_by = 10
+  """Общий класс-представление для списка книг."""
+  model = Book
+  paginate_by = 12
+  template_name = 'catalog/book_list.html'
+
+  def get_queryset(self):
+    query = self.request.GET.get('search', '')
+    return Book.objects.filter(title__icontains=query)
+
+  def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    context['search_query'] = self.request.GET.get('search', '')
+    return context
 
 class BookDetailView(generic.DetailView):
     """Общий класс-представление для детальной информации о книге."""
@@ -61,10 +72,14 @@ class AuthorListView(generic.ListView):
     model = Author
     paginate_by = 10
     def get_queryset(self):
-        return Author.objects.all()  # Получите всех авторов
+        query = self.request.GET.get('search', '')
+        return Author.objects.filter(
+            Q(first_name__icontains=query) | Q(last_name__icontains=query) | Q(middle_name__icontains=query)
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['search_query'] = self.request.GET.get('search', '')
         return context
 class AuthorDetailView(generic.DetailView):
     """Общий класс-представление для детальной информации об авторе."""
@@ -381,10 +396,12 @@ def reserve_book(request, book_id):
         available_copy.borrower = user
         available_copy.save()
 
-        return redirect('book-detail', pk=book_id)
+        messages.success(request, "Экземпляр успешно зарезервирован.")
     else:
-        # Если нет доступных экземпляров, возбудите исключение Http404
-        raise Http404("Нет доступных экземпляров для резервации")
+      # Если нет доступных экземпляров, установите сообщение об ошибке
+      messages.error(request, "Нет доступных экземпляров для резервации")
+
+    return redirect('book-detail', pk=book_id)
 
 
 def create_book_copy(request, book_id):

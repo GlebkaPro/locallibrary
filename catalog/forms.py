@@ -26,7 +26,7 @@ class RenewBookForm(forms.Form):
 class UserRegistrationForm(UserCreationForm):
   email = forms.EmailField(required=True, label='Email')
   this_year = datetime.date.today().year
-  date_birth = forms.DateField(widget=forms.SelectDateWidget(years=tuple(range(this_year - 50, this_year - 5))))
+  date_birth = forms.DateField(widget=forms.SelectDateWidget(years=tuple(range(this_year - 100, this_year - 5))))
   class Meta:
     model = get_user_model()
     fields = ('username', 'email', 'password1', 'password2', 'first_name', 'last_name', 'middle_name','date_birth')
@@ -141,7 +141,6 @@ class ProfileUserForm(forms.ModelForm):
       'last_name': forms.TextInput(attrs={'class': 'form-input'}),
       'middle_name': forms.TextInput(attrs={'class': 'form-input'}),
     }
-
 
 class GenreForm(forms.ModelForm):
   class Meta:

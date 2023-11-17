@@ -1,7 +1,5 @@
 from django.urls import path
-
 from . import views
-
 
 urlpatterns = [
   path('', views.index, name='index'),
@@ -28,11 +26,7 @@ urlpatterns += [
   path('create_user/', views.create_user, name='create_user'),  # Добавление пользователя
   path('user_list/', views.user_list, name='user_list'),  # список пользователей
 ]
-# urlpatterns += [
-#   path('author/add/', views.add_author, name='add-author'),
-#   path('author/<int:pk>/update/', views.AuthorUpdate.as_view(), name='author-update'),
-#   path('author/<int:pk>/delete/', views.AuthorDelete.as_view(), name='author-delete'),
-# ]
+
 urlpatterns += [
   path('bookinstance/add/', views.add_bookinstance, name='add-bookinstance'),
   path('return/<uuid:book_instance_id>/', views.return_book, name='return-book'),
@@ -42,29 +36,19 @@ urlpatterns += [
 
 urlpatterns += [
   path('mybooks/', views.LoanedBooksByUserListView.as_view(), name='my-borrowed'),
-  path(r'borrowed/', views.LoanedBooksAllListView.as_view(), name='all-borrowed'),  # Added for challenge
+  path(r'borrowed/', views.LoanedBooksAllListView.as_view(), name='all-borrowed'),
 ]
 
-# Add URLConf for librarian to renew a book.
 urlpatterns += [
   path('book/<uuid:pk>/renew/', views.renew_book_librarian, name='renew-book-librarian'),
-]
-
-# Add URLConf to create, update, and delete authors
-# urlpatterns += [
-#   path('author/create/', views.AuthorCreate.as_view(), name='author-create'),
-#   path('author/<int:pk>/update/', views.AuthorUpdate.as_view(), name='author-update'),
-#   path('author/<int:pk>/delete/', views.AuthorDelete.as_view(), name='author-delete'),
-# ]
-
-# Add URLConf to create, update, and delete books
-urlpatterns += [
-  path('book/create/', views.BookCreate.as_view(), name='book-create'),
-  path('book/<int:pk>/update/', views.BookUpdate.as_view(), name='book-update'),
-  path('book/<int:pk>/delete/', views.BookDelete.as_view(), name='book-delete'),
 ]
 
 urlpatterns += [
   path('profile/', views.ProfileUser.as_view(), name='profile'),
 ]
 
+urlpatterns += [
+  path('book/create/', views.BookCreate.as_view(), name='book-create'),
+  path('book/<int:pk>/update/', views.BookUpdate.as_view(), name='book-update'),
+  path('book/<int:pk>/delete/', views.BookDelete.as_view(), name='book-delete'),
+]

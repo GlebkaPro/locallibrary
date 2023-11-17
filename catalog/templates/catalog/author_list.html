@@ -3,6 +3,12 @@
 {% block content %}
 <div class="container">
     <h1 class="mb-4">Список авторов</h1>
+    <form method="get">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Поиск по авторам" name="search" value="{{ search_query }}">
+            <button class="btn btn-outline-secondary" type="submit">Искать</button>
+        </div>
+    </form>
     {% if user.is_staff %}
     <a href="{% url 'add-author' %}" class="btn btn-primary mb-3">Добавить автора</a>
     {% endif %}

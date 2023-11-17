@@ -6,10 +6,10 @@
 {% if author.middle_name %}{{ author.middle_name }}{% endif %} </h1>
 <p>{{author.date_of_birth}} - {% if author.date_of_death %}{{author.date_of_death}}{% endif %}</p>
       {% if user.is_staff and perms.catalog.can_mark_returned %}
-        <a class="btn btn-primary" href="{% url 'author-update' author.pk %}">Редактировать автора</a>
+        <a class="btn btn-primary" href="{% url 'author-update' author.pk %}">Редактировать</a>
         <form method="post" action="{% url 'author-delete' author.pk %}" style="display: inline;">
       {% csrf_token %}
-        <button type="submit" class="btn btn-danger">Удалить автора</button>
+        <button type="submit" class="btn btn-danger">Удалить</button>
       </form>
       {% endif %}
 <div style="margin-left:20px;margin-top:20px">

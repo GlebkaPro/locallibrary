@@ -3,8 +3,8 @@
 {% block content %}
     <div class="container">
         {% if user.is_authenticated %}
+        <h1>Добавление</h1>
         {% endif %}
-        <h1>Добавление новой книги</h1>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="form-group">
