@@ -71,7 +71,7 @@ class Book(models.Model):
 class BookCopy(models.Model):
     """Модель, представляющая конкретную копию книги (т. е. которую можно взять в библиотеке)."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4,
-                          help_text="Уникальный идентификатор для этой конкретной книги во всей библиотеке")
+                          help_text="Уникальный идентификатор")
     book = models.ForeignKey('Book', on_delete=models.RESTRICT, null=True, verbose_name='Книга')
     imprint = models.CharField(max_length=200, null=True, verbose_name='Штамп')
     LOAN_STATUS = (
@@ -90,7 +90,7 @@ class BookCopy(models.Model):
 class BookInstance(models.Model):
     """Модель, представляющая конкретную копию книги (т. е. которую можно взять в библиотеке)."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4,
-                          help_text="Уникальный идентификатор для этой конкретной книги во всей библиотеке")
+                          help_text="Уникальный идентификатор")
     book = models.ForeignKey('Book', on_delete=models.RESTRICT, null=True, verbose_name='Книга')
     due_back = models.DateField(null=True, blank=True, verbose_name='Дата возврата')
     borrower = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Абонент')
@@ -139,4 +139,38 @@ class Author(models.Model):
         """Строка для представления объекта модели."""
         return '{0}, {1}'.format(self.last_name, self.first_name, self.middle_name)
 
+class Source(models.Model):
+  name = models.CharField(verbose_name='наименование', max_length=100)
 
+class FizPersonSource(models.Model):
+  first_name = models.CharField(verbose_name='Имя', max_length=100)
+  last_name = models.CharField(verbose_name='Фамилия', max_length=100)
+  middle_name = models.CharField(verbose_name='Отчество', null=True, max_length=100)
+  source = models.ForeignKey('Source', on_delete=models.RESTRICT, null=True, verbose_name='Источник')
+
+class AcceptAct(models.Model):
+  current_date = models.DateField(default=timezone.now, verbose_name='Текущая дата')
+  summa = models.CharField(verbose_name='Сумма', max_length=100)
+  worker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+                               verbose_name='Сотрудник')
+  source = models.ForeignKey('FizPersonSource', on_delete=models.SET_NULL, null=True, blank=True,
+                               verbose_name='Источник')
+  ACCEPT_TIP = (
+    ('д', 'Дарение'),
+    ('ж', 'Пожертвование'),
+    ('п', 'Покупка'),
+    ('о', 'Обмен'),
+    ('н', 'Наследование'),
+    ('з', 'Заимствование'),
+  )
+
+  Tip = models.CharField(
+    max_length=1, choices=ACCEPT_TIP, blank=True, default='р', verbose_name='Тип поступления')
+
+class PositionAcceptAct(models.Model):
+  price = models.CharField(verbose_name='Цена', max_length=100)
+  size = models.CharField(verbose_name='Количество', max_length=100)
+  copy = models.ForeignKey('BookCopy', on_delete=models.SET_NULL, null=True, blank=True,
+                               verbose_name='Экземпляр"')
+  AcceptAct = models.ForeignKey('AcceptAct', on_delete=models.SET_NULL, null=True, blank=True,
+                               verbose_name='Акт о приёме')

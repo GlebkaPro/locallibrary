@@ -114,38 +114,41 @@ class LoanedBooksAllListView(PermissionRequiredMixin, generic.ListView):
 
       return BookInstance.objects.filter(status__in=status).order_by('due_back')
 
-@login_required
+# @login_required
 # @permission_required('catalog.can_mark_returned', raise_exception=True)
 def renew_book_librarian(request, pk):
-    """Функция представления для продления конкретного экземпляра книги библиотекарем."""
-    book_instance = get_object_or_404(BookInstance, pk=pk)
+  """Функция представления для продления конкретного экземпляра книги библиотекарем."""
+  book_instance = get_object_or_404(BookInstance, pk=pk)
 
-    # Если это POST-запрос, то обрабатываем данные формы
-    if request.method == 'POST':
+  # Если это POST-запрос, то обрабатываем данные формы
+  if request.method == 'POST':
 
-        # Создаем экземпляр формы и заполняем его данными из запроса (привязка):
-        form = RenewBookForm(request.POST, instance=book_instance)
+    # Создаем экземпляр формы и заполняем его данными из запроса (привязка):
+    form = RenewBookForm(request.POST, instance=book_instance)
 
-        if form.is_valid():
-            if not book_instance.due_back:  # Проверка, была ли книга продлена ранее
-                proposed_renewal_date = timezone.now() + timezone.timedelta(weeks=1)
-                book_instance.due_back = proposed_renewal_date
-            else:
-                proposed_renewal_date = form.cleaned_data['renewal_date']
-                book_instance.renewal_date = proposed_renewal_date  # Обновляем атрибут
-                book_instance.save()
-            return redirect('all-borrowed')
-    # Если это GET (или любой другой метод), создаем форму по умолчанию
+    if form.is_valid():
+      if not book_instance.due_back:  # Проверка, была ли книга продлена ранее
+        proposed_renewal_date = timezone.now() + timezone.timedelta(weeks=1)
+        book_instance.due_back = proposed_renewal_date
+      else:
+        proposed_renewal_date = form.cleaned_data['renewal_date']
+        book_instance.renewal_date = proposed_renewal_date  # Обновляем атрибут
+        book_instance.save()
+        messages.success(request, 'Выдача успешно продлена.')
+        return redirect('my-borrowed')
     else:
-        proposed_renewal_date = book_instance.due_back + timezone.timedelta(weeks=1)
-        form = RenewBookForm(initial={'renewal_date': proposed_renewal_date})
+      messages.error(request, 'Введённая дата не входит в рамки 1 недели.')
+  # Если это GET (или любой другой метод), создаем форму по умолчанию
+  else:
+    proposed_renewal_date = book_instance.due_back + timezone.timedelta(weeks=1)
+    form = RenewBookForm(initial={'renewal_date': proposed_renewal_date})
 
-    context = {
-        'form': form,
-        'book_instance': book_instance,
-    }
+  context = {
+    'form': form,
+    'book_instance': book_instance,
+  }
 
-    return render(request, 'catalog/book_renew_librarian.html', context)
+  return render(request, 'catalog/book_renew_librarian.html', context)
 
 class AuthorCreate(PermissionRequiredMixin, CreateView):
   model = Author
@@ -459,3 +462,5 @@ def add_language(request):
     return render(request, 'catalog/add_language.html', {'form': form, 'languages': languages})
 
 
+def privacy_policy(request):
+  return render(request,'catalog/privacy_policy.html')

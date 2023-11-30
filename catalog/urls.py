@@ -45,6 +45,7 @@ urlpatterns += [
 
 urlpatterns += [
   path('profile/', views.ProfileUser.as_view(), name='profile'),
+  path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
 ]
 
 urlpatterns += [

@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>Все абонирования библиотеки</h1>
+        <h1>Все выдачи</h1>
         <a class="btn btn-primary" href="{% url 'add-bookinstance' %}">Добавить</a>
       <form method="GET" action="{% url 'all-borrowed' %}">
     <label for="status">Выберите статус:</label>

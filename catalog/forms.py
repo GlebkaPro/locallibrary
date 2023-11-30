@@ -7,29 +7,40 @@ from django.core.exceptions import ValidationError
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
-class RenewBookForm(forms.Form):
-  """Форма для библиотекаря для продления абонимирования."""
-  renewal_date = forms.DateField(help_text="Введите дату продления(максимум на 1 неделю).")
-  # fields = ['renewal_date']
+
+class RenewBookForm(forms.ModelForm):
+  renewal_date = forms.DateField(help_text="Введите дату в диапазоне 1 недель (по умолчанию 1).")
+
+  class Meta:
+    model = BookInstance
+    fields = ['renewal_date']
+
   def clean_renewal_date(self):
     data = self.cleaned_data['renewal_date']
-    # Дата проверки еще не прошла.
+
+    # Проверка, что дата в будущем
     if data < datetime.date.today():
-      raise ValidationError(_('Недействительная дата - продление в прошедшую дату'))
-    # Дата проверки находится в диапазоне, который библиотекарь может изменить (+1 неделя)
+      raise ValidationError(_('Неверная дата - дата выбрана из прошлого'))
+
+    # Проверка, что дата не более чем на 4 недели вперед
     if data > datetime.date.today() + datetime.timedelta(weeks=1):
-      raise ValidationError(
-        _('Недействительная дата - возможно не более чем на 1 неделю вперед'))
-    # Возврат очищенных данных.
+      raise ValidationError(_('Неверная дата - дата должна быть не более чем на 4 недели вперед'))
+
+    # Помните всегда вернуть обработанные данные
     return data
 
 class UserRegistrationForm(UserCreationForm):
   email = forms.EmailField(required=True, label='Email')
   this_year = datetime.date.today().year
   date_birth = forms.DateField(widget=forms.SelectDateWidget(years=tuple(range(this_year - 100, this_year - 5))))
+  privacy_policy_agreement = forms.BooleanField(
+    required=True,
+    widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+    label='Согласен с обработкой персональных данных'
+  )
   class Meta:
     model = get_user_model()
-    fields = ('username', 'email', 'password1', 'password2', 'first_name', 'last_name', 'middle_name','date_birth')
+    fields = ('username', 'email', 'password1', 'password2', 'first_name', 'last_name', 'middle_name','date_birth', 'privacy_policy_agreement')
 
 class BookInstanceForm(forms.ModelForm):
     class Meta:
@@ -151,4 +162,5 @@ class LanguageForm(forms.ModelForm):
   class Meta:
     model = Language
     fields = ['name']
+
 
