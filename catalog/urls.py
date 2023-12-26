@@ -32,15 +32,12 @@ urlpatterns += [
   path('return/<uuid:book_instance_id>/', views.return_book, name='return-book'),
   path('book/<int:book_id>/reserve/', views.reserve_book, name='reserve-book'),
   path('edit-bookinstance/<uuid:bookinstance_id>/', views.edit_bookinstance, name='edit-bookinstance'),
+  path('book/<uuid:pk>/renew/', views.renew_book_librarian, name='renew-book-librarian'),
 ]
 
 urlpatterns += [
   path('mybooks/', views.LoanedBooksByUserListView.as_view(), name='my-borrowed'),
   path(r'borrowed/', views.LoanedBooksAllListView.as_view(), name='all-borrowed'),
-]
-
-urlpatterns += [
-  path('book/<uuid:pk>/renew/', views.renew_book_librarian, name='renew-book-librarian'),
 ]
 
 urlpatterns += [
