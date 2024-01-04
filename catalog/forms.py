@@ -192,10 +192,18 @@ class AcceptActForm(forms.ModelForm):
 PositionAcceptActFormSet = inlineformset_factory(AcceptAct, PositionAcceptAct, fields=('price', 'size', 'exemplar'))
 
 
+from django import forms
+
+
 class PositionAcceptActForm(forms.ModelForm):
   class Meta:
     model = PositionAcceptAct
-    fields = '__all__'
+    fields = ['price', 'size', 'exemplar']
+
+  def __init__(self, *args, **kwargs):
+    super(PositionAcceptActForm, self).__init__(*args, **kwargs)
+    self.fields['exemplar'].queryset = BookExemplar.objects.all()
+    self.fields['exemplar'].widget.attrs.update({'class': 'form-control'})
 
 
 class BookExemplarForm(forms.ModelForm):

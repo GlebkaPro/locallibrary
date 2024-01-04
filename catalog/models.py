@@ -223,7 +223,7 @@ class BookExemplar(models.Model):
     max_length=1, choices=ACCEPT_publication_type, blank=True, default='р', verbose_name='Тип издания')
 
   def __str__(self):
-    return f"{self.publisher} - {self.date_of_manufacture}"
+    return f"{self.publisher} - {self.book} - {self.date_of_manufacture} "
 
 
 class Publisher(models.Model):
