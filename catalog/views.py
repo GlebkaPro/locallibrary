@@ -21,6 +21,8 @@ from .forms import AcceptActForm
 from django.shortcuts import get_object_or_404
 from .forms import BookExemplarForm
 from .models import BookExemplar
+
+
 def index(request):
   """Функция представления для домашней страницы сайта."""
   # Генерация количества некоторых основных объектов
@@ -446,6 +448,7 @@ def create_book_copy(request, book_id):
 
   return render(request, 'catalog/create_book_copy.html', {'book': book, 'form': form})
 
+
 class ProfileUser(LoginRequiredMixin, UpdateView):
   model = get_user_model()
   form_class = ProfileUserForm
@@ -457,6 +460,7 @@ class ProfileUser(LoginRequiredMixin, UpdateView):
 
   def get_object(self, queryset=None):
     return self.request.user
+
 
 def add_genre(request):
   if request.method == 'POST':
@@ -471,6 +475,7 @@ def add_genre(request):
 
   return render(request, 'catalog/add_genre.html', {'form': form, 'genres': genres})
 
+
 def add_language(request):
   if request.method == 'POST':
     form = LanguageForm(request.POST)
@@ -484,15 +489,19 @@ def add_language(request):
 
   return render(request, 'catalog/add_language.html', {'form': form, 'languages': languages})
 
+
 def privacy_policy(request):
   return render(request, 'catalog/privacy_policy.html')
 
+
 from django.views import View
+
 
 class AcceptActListView(View):
   def get(self, request):
     accept_acts = AcceptAct.objects.all()
     return render(request, 'catalog/accept_act_list.html', {'accept_acts': accept_acts})
+
 
 class CreateAcceptActView(View):
   def get(self, request):
@@ -529,28 +538,31 @@ class AddPositionAcceptActView(View):
       return redirect('edit_accept_act', pk=pk)
     return render(request, 'catalog/add_position_accept_act.html', {'accept_act': accept_act, 'form': form})
 
+
 # views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import PositionAcceptAct
 from .forms import PositionAcceptActForm
 
-class EditPositionAcceptActView(View):
-    def get(self, request, pk):
-        position_accept_act = get_object_or_404(PositionAcceptAct, pk=pk)
-        form = PositionAcceptActForm(instance=position_accept_act)
-        return render(
-            request,
-            'catalog/edit_position_accept_act.html',
-            {'position_accept_act': position_accept_act, 'form': form}
-        )
 
-    def post(self, request, pk):
-        position_accept_act = get_object_or_404(PositionAcceptAct, pk=pk)
-        form = PositionAcceptActForm(request.POST, instance=position_accept_act)
-        if form.is_valid():
-            form.save()
-            return redirect('edit_accept_act', pk=position_accept_act.accept_act.pk)
-        return render(request, 'catalog/edit_position_accept_act.html', {'position_accept_act': position_accept_act, 'form': form})
+class EditPositionAcceptActView(View):
+  def get(self, request, pk):
+    position_accept_act = get_object_or_404(PositionAcceptAct, pk=pk)
+    form = PositionAcceptActForm(instance=position_accept_act)
+    return render(
+      request,
+      'catalog/edit_position_accept_act.html',
+      {'position_accept_act': position_accept_act, 'form': form}
+    )
+
+  def post(self, request, pk):
+    position_accept_act = get_object_or_404(PositionAcceptAct, pk=pk)
+    form = PositionAcceptActForm(request.POST, instance=position_accept_act)
+    if form.is_valid():
+      form.save()
+      return redirect('edit_accept_act', pk=position_accept_act.accept_act.pk)
+    return render(request, 'catalog/edit_position_accept_act.html',
+                  {'position_accept_act': position_accept_act, 'form': form})
 
 
 class EditAcceptActView(View):
@@ -576,44 +588,95 @@ class EditAcceptActView(View):
 
 
 def create_book_exemplar(request):
-    if request.method == 'POST':
-        form = BookExemplarForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('list_book_exemplar')
-    else:
-        form = BookExemplarForm()
+  if request.method == 'POST':
+    form = BookExemplarForm(request.POST)
+    if form.is_valid():
+      form.save()
+      return redirect('list_book_exemplar')
+  else:
+    form = BookExemplarForm()
 
-    return render(request, 'catalog/create_book_exemplar.html', {'form': form})
+  return render(request, 'catalog/create_book_exemplar.html', {'form': form})
+
 
 def list_book_exemplar(request):
-    book_exemplars = BookExemplar.objects.all()
-    return render(request, 'catalog/list_book_exemplar.html', {'book_exemplars': book_exemplars})
+  book_exemplars = BookExemplar.objects.all()
+  return render(request, 'catalog/list_book_exemplar.html', {'book_exemplars': book_exemplars})
+
 
 from django.shortcuts import render, redirect
 from .models import Publisher
 from .forms import PublisherForm
 
+
 def list_publishers(request):
-    publishers = Publisher.objects.all()
-    return render(request, 'catalog/list_publishers.html', {'publishers': publishers})
+  publishers = Publisher.objects.all()
+  return render(request, 'catalog/list_publishers.html', {'publishers': publishers})
+
 
 def create_publisher(request):
-    if request.method == 'POST':
-        form = PublisherForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('list_publishers')
-    else:
-        form = PublisherForm()
-    return render(request, 'catalog/create_publisher.html', {'form': form})
+  if request.method == 'POST':
+    form = PublisherForm(request.POST)
+    if form.is_valid():
+      form.save()
+      return redirect('list_publishers')
+  else:
+    form = PublisherForm()
+  return render(request, 'catalog/create_publisher.html', {'form': form})
+
 
 from django.views import View
 from django.shortcuts import redirect, get_object_or_404
 
+
 class DeletePositionAcceptActView(View):
-    def post(self, request, pk):
-        position_accept_act = get_object_or_404(PositionAcceptAct, pk=pk)
-        accept_act_pk = position_accept_act.accept_act.pk
-        position_accept_act.delete()
-        return redirect('edit_accept_act', pk=accept_act_pk)
+  def post(self, request, pk):
+    position_accept_act = get_object_or_404(PositionAcceptAct, pk=pk)
+    accept_act_pk = position_accept_act.accept_act.pk
+    position_accept_act.delete()
+    return redirect('edit_accept_act', pk=accept_act_pk)
+
+
+# Ваши импорты
+from django.shortcuts import render
+from django.views import View
+from .models import PositionAcceptAct, AccountingBookCopy, BookCopy
+
+from django.shortcuts import render, redirect
+from django.views import View
+from .models import AccountingBookCopy, BookCopy
+from .forms import AccountingBookCopyForm, BookCopyForm
+from django.urls import reverse
+
+
+class CreateAccountingView(View):
+  template_name = 'catalog/create_accounting.html'
+
+  def get(self, request, pk):
+    position_accept_act = get_object_or_404(PositionAcceptAct, pk=pk)
+    accounting_form = AccountingBookCopyForm()
+    book_copy_form = BookCopyForm(initial={
+      'book': position_accept_act.exemplar.book,
+      'positionAcceptAct': position_accept_act
+    })
+    context = {'position_accept_act': position_accept_act, 'accounting_form': accounting_form,
+               'book_copy_form': book_copy_form}
+    return render(request, self.template_name, context)
+
+  def post(self, request, pk):
+    position_accept_act = get_object_or_404(PositionAcceptAct, pk=pk)
+    accounting_form = AccountingBookCopyForm(request.POST)
+    book_copy_form = BookCopyForm(request.POST)
+    if accounting_form.is_valid() and book_copy_form.is_valid():
+      accounting_book_copy = accounting_form.save()
+      book_copy = book_copy_form.save(commit=False)
+      book_copy.accountingBookCopy = accounting_book_copy
+      book_copy.save()
+
+      # Получим параметр 'next' из запроса (если есть), если нет - перенаправим на редактирование акта
+      redirect_url = request.GET.get('next', reverse('edit_accept_act', kwargs={'pk': pk}))
+      return redirect(redirect_url)
+
+    return render(request, self.template_name,
+                  {'position_accept_act': position_accept_act, 'accounting_form': accounting_form,
+                   'book_copy_form': book_copy_form})

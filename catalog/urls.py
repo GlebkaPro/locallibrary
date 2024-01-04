@@ -64,5 +64,5 @@ urlpatterns += [
        name='edit_position_accept_act'),
   path('delete_position_accept_act/<int:pk>/', views.DeletePositionAcceptActView.as_view(),
        name='delete_position_accept_act'),
-
+  path('create_accounting/<int:pk>/', views.CreateAccountingView.as_view(), name='create_accounting'),
 ]

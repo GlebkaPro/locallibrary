@@ -76,6 +76,18 @@ class Book(models.Model):
     return self.title
 
 
+class AccountingBookCopy(models.Model):
+  """Модель, представляющая учтённую копию книги (т. е. которой проставлен штамм)."""
+  id = models.UUIDField(primary_key=True, default=uuid.uuid4,
+                        help_text="Уникальный идентификатор")
+  worker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+                             verbose_name='Сотрудник')
+  date_of_creation = models.DateField(default=timezone.now, verbose_name='Дата создания')
+
+  def __str__(self):
+    """Строка для представления объекта модели."""
+    return '{0} ({1})'.format(self.id, self.worker, self.date_of_creation)
+
 class BookCopy(models.Model):
   """Модель, представляющая учтённую копию книги (т. е. которой проставлен штамм)."""
   id = models.UUIDField(primary_key=True, default=uuid.uuid4,
@@ -84,6 +96,8 @@ class BookCopy(models.Model):
   imprint = models.CharField(max_length=200, null=True, verbose_name='Штамп')
   positionAcceptAct = models.ForeignKey('PositionAcceptAct', on_delete=models.RESTRICT, null=True,
                                         verbose_name='Позиция акта послупления')
+  accountingBookCopy = models.ForeignKey('AccountingBookCopy', on_delete=models.RESTRICT, null=True,
+                                        verbose_name='Позиция учёта экземпляра')
   LOAN_STATUS = (
     ('р', 'Выдано'),
     ('д', 'Доступно'),
