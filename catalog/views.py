@@ -446,7 +446,6 @@ def create_book_copy(request, book_id):
 
   return render(request, 'catalog/create_book_copy.html', {'book': book, 'form': form})
 
-
 class ProfileUser(LoginRequiredMixin, UpdateView):
   model = get_user_model()
   form_class = ProfileUserForm
@@ -458,7 +457,6 @@ class ProfileUser(LoginRequiredMixin, UpdateView):
 
   def get_object(self, queryset=None):
     return self.request.user
-
 
 def add_genre(request):
   if request.method == 'POST':
@@ -473,7 +471,6 @@ def add_genre(request):
 
   return render(request, 'catalog/add_genre.html', {'form': form, 'genres': genres})
 
-
 def add_language(request):
   if request.method == 'POST':
     form = LanguageForm(request.POST)
@@ -487,22 +484,15 @@ def add_language(request):
 
   return render(request, 'catalog/add_language.html', {'form': form, 'languages': languages})
 
-
 def privacy_policy(request):
   return render(request, 'catalog/privacy_policy.html')
 
-
-# views.py
 from django.views import View
-from .models import PositionAcceptAct
-from .forms import PositionAcceptActForm
-
 
 class AcceptActListView(View):
   def get(self, request):
     accept_acts = AcceptAct.objects.all()
     return render(request, 'catalog/accept_act_list.html', {'accept_acts': accept_acts})
-
 
 class CreateAcceptActView(View):
   def get(self, request):
@@ -536,39 +526,54 @@ class AddPositionAcceptActView(View):
       position_accept_act = form.save(commit=False)
       position_accept_act.accept_act = accept_act
       position_accept_act.save()
-      return redirect('add_position_accept_act', pk=pk)
+      return redirect('edit_accept_act', pk=pk)
     return render(request, 'catalog/add_position_accept_act.html', {'accept_act': accept_act, 'form': form})
 
-class EditAcceptActView(View):
+# views.py
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import PositionAcceptAct
+from .forms import PositionAcceptActForm
+
+class EditPositionAcceptActView(View):
     def get(self, request, pk):
-        accept_act = get_object_or_404(AcceptAct, pk=pk)
-        form = AcceptActForm(instance=accept_act)
-
-        # Retrieve only PositionAcceptAct instances related to the specific AcceptAct
-        position_accept_acts = PositionAcceptAct.objects.filter(accept_act=accept_act)
-
+        position_accept_act = get_object_or_404(PositionAcceptAct, pk=pk)
+        form = PositionAcceptActForm(instance=position_accept_act)
         return render(
             request,
-            'catalog/edit_accept_act.html',
-            {'accept_act': accept_act, 'position_accept_acts': position_accept_acts, 'form': form}
+            'catalog/edit_position_accept_act.html',
+            {'position_accept_act': position_accept_act, 'form': form}
         )
 
-def post(self, request, pk):
-  accept_act = AcceptAct.objects.get(pk=pk)
-  form = AcceptActForm(request.POST, instance=accept_act)
-  if form.is_valid():
-    form.save()
-    return redirect('accept_act_list')
-  return render(request, 'catalog/edit_accept_act.html', {'accept_act': accept_act, 'form': form})
+    def post(self, request, pk):
+        position_accept_act = get_object_or_404(PositionAcceptAct, pk=pk)
+        form = PositionAcceptActForm(request.POST, instance=position_accept_act)
+        if form.is_valid():
+            form.save()
+            return redirect('edit_accept_act', pk=position_accept_act.accept_act.pk)
+        return render(request, 'catalog/edit_position_accept_act.html', {'position_accept_act': position_accept_act, 'form': form})
 
 
-def edit_accept_act(request, pk):
-  accept_act = get_object_or_404(AcceptAct, pk=pk)
-  position_accept_acts = PositionAcceptAct.objects.filter(accept_act=accept_act)
-  form = AcceptActForm(instance=accept_act)
+class EditAcceptActView(View):
+  def get(self, request, pk):
+    accept_act = get_object_or_404(AcceptAct, pk=pk)
+    form = AcceptActForm(instance=accept_act)
+    position_accept_acts = PositionAcceptAct.objects.filter(accept_act=accept_act)
+    return render(
+      request,
+      'catalog/edit_accept_act.html',
+      {'accept_act': accept_act, 'position_accept_acts': position_accept_acts, 'form': form}
+    )
 
-  return render(request, 'catalog/edit_accept_act.html',
-                {'accept_act': accept_act, 'position_accept_acts': position_accept_acts, 'form': form})
+  def post(self, request, pk):
+    accept_act = AcceptAct.objects.get(pk=pk)
+    form = AcceptActForm(request.POST, instance=accept_act)
+    if form.is_valid():
+      form.save()
+      return redirect('accept_act_list')
+    position_accept_acts = PositionAcceptAct.objects.filter(accept_act=accept_act)
+    return render(request, 'catalog/edit_accept_act.html',
+                  {'accept_act': accept_act, 'position_accept_acts': position_accept_acts, 'form': form})
+
 
 def create_book_exemplar(request):
     if request.method == 'POST':
@@ -602,3 +607,13 @@ def create_publisher(request):
     else:
         form = PublisherForm()
     return render(request, 'catalog/create_publisher.html', {'form': form})
+
+from django.views import View
+from django.shortcuts import redirect, get_object_or_404
+
+class DeletePositionAcceptActView(View):
+    def post(self, request, pk):
+        position_accept_act = get_object_or_404(PositionAcceptAct, pk=pk)
+        accept_act_pk = position_accept_act.accept_act.pk
+        position_accept_act.delete()
+        return redirect('edit_accept_act', pk=accept_act_pk)

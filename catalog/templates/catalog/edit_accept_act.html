@@ -9,28 +9,37 @@
     <button type="submit">Сохранить изменения</button>
   </form>
 
-<h2>Позиции акта о приёме</h2>
-{% if position_accept_acts %}
-  <table class="table">
-    <thead>
+  <h2>Позиции акта о приёме</h2>
+  <a href="{% url 'add_position_accept_act' pk=accept_act.pk %}">Добавить позицию</a>
+  {% if position_accept_acts %}
+    <table class="table">
+      <thead>
       <tr>
         <th>Цена</th>
         <th>Количество</th>
         <th>Экземпляр</th>
+        <th>Действия</th>
       </tr>
-    </thead>
-    <tbody>
+      </thead>
+      <tbody>
       {% for position_accept_act in position_accept_acts %}
         <tr>
           <td>{{ position_accept_act.price }}</td>
           <td>{{ position_accept_act.size }}</td>
-          <td>{{ position_accept_act.copy }}</td>
+          <td>{{ position_accept_act.exemplar }}</td>
+          <td><a href="{% url 'edit_position_accept_act' pk=position_accept_act.pk %}">Изменить</a></td>
+          <td>
+            <form method="post" action="{% url 'delete_position_accept_act' pk=position_accept_act.pk %}">
+              {% csrf_token %}
+              <button type="submit">Удалить</button>
+            </form>
+          </td>
         </tr>
       {% endfor %}
-    </tbody>
-  </table>
-{% else %}
-  <p>Нет данных о позициях акта</p>
-{% endif %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>Нет данных о позициях акта</p>
+  {% endif %}
 
 {% endblock %}

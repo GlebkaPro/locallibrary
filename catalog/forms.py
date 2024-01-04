@@ -183,7 +183,6 @@ from .models import AcceptAct, PositionAcceptAct
 from django.forms import inlineformset_factory
 
 class AcceptActForm(forms.ModelForm):
-  # Ваши поля формы
 
   class Meta:
     model = AcceptAct

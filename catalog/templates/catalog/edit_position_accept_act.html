@@ -1,0 +1,11 @@
+<!-- edit_position_accept_act.html -->
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Изменить позицию акта о приёме</h1>
+  <form method="post" action="">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Сохранить изменения</button>
+  </form>
+{% endblock %}
