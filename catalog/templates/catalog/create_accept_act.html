@@ -6,6 +6,37 @@
   <form method="post" action="">
     {% csrf_token %}
     {{ form.as_p }}
+    <table id="positions_table">
+      <thead>
+        <tr>
+          <th>Цена</th>
+          <th>Количество</th>
+          <th>Экземпляр</th>
+          <th>Действия</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Здесь будут добавляться строки с позициями акта динамически -->
+      </tbody>
+    </table>
+    <button type="button" onclick="addPosition()">Добавить позицию</button>
     <button type="submit">Создать</button>
   </form>
+
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script>
+    function addPosition() {
+      var newRow = '<tr>' +
+        '<td><input type="text" name="price[]"></td>' +
+        '<td><input type="text" name="size[]"></td>' +
+        '<td><input type="text" name="exemplar[]"></td>' +
+        '<td><button type="button" onclick="removeRow(this)">Удалить</button></td>' +
+        '</tr>';
+      $('#positions_table tbody').append(newRow);
+    }
+
+    function removeRow(button) {
+      $(button).closest('tr').remove();
+    }
+  </script>
 {% endblock %}

@@ -180,11 +180,16 @@ class LanguageForm(forms.ModelForm):
 from django import forms
 from .models import AcceptAct, PositionAcceptAct
 
+from django.forms import inlineformset_factory
 
 class AcceptActForm(forms.ModelForm):
+  # Ваши поля формы
+
   class Meta:
     model = AcceptAct
     fields = '__all__'
+
+PositionAcceptActFormSet = inlineformset_factory(AcceptAct, PositionAcceptAct, fields=('price', 'size', 'exemplar'))
 
 
 class PositionAcceptActForm(forms.ModelForm):

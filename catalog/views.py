@@ -15,6 +15,7 @@ from .forms import UserRegistrationForm, BookCopyForm, BookInstanceForm, AddBook
   ProfileUserForm
 from .models import Book, BookCopy, BookInstance, Author, Genre, Language
 
+from .forms import PositionAcceptActFormSet
 from .models import AcceptAct
 from .forms import AcceptActForm
 from django.shortcuts import get_object_or_404
@@ -502,17 +503,25 @@ class AcceptActListView(View):
     accept_acts = AcceptAct.objects.all()
     return render(request, 'catalog/accept_act_list.html', {'accept_acts': accept_acts})
 
+
 class CreateAcceptActView(View):
   def get(self, request):
     form = AcceptActForm()
-    return render(request, 'catalog/create_accept_act.html', {'form': form})
+    position_formset = PositionAcceptActFormSet(queryset=PositionAcceptAct.objects.none())
+    return render(request, 'catalog/create_accept_act.html', {'form': form, 'position_formset': position_formset})
 
   def post(self, request):
     form = AcceptActForm(request.POST)
-    if form.is_valid():
+    position_formset = PositionAcceptActFormSet(request.POST)
+    if form.is_valid() and position_formset.is_valid():
       accept_act = form.save()
-      return redirect('add_position_accept_act', pk=accept_act.pk)
-    return render(request, 'catalog/create_accept_act.html', {'form': form})
+      for position_form in position_formset:
+        position = position_form.save(commit=False)
+        position.accept_act = accept_act
+        position.save()
+      return redirect('accept_act_list')
+    return render(request, 'catalog/create_accept_act.html', {'form': form, 'position_formset': position_formset})
+
 
 class AddPositionAcceptActView(View):
   def get(self, request, pk):
