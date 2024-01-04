@@ -50,3 +50,10 @@ urlpatterns += [
   path('book/<int:pk>/update/', views.BookUpdate.as_view(), name='book-update'),
   path('book/<int:pk>/delete/', views.BookDelete.as_view(), name='book-delete'),
 ]
+
+urlpatterns += [
+  path('accept_acts/', views.AcceptActListView.as_view(), name='accept_act_list'),
+  path('create_accept_act/', views.CreateAcceptActView.as_view(), name='create_accept_act'),
+  path('add_position_accept_act/<int:pk>/', views.AddPositionAcceptActView.as_view(), name='add_position_accept_act'),
+  path('edit-accept-act/<int:pk>/', views.EditAcceptActView.as_view(), name='edit_accept_act'),
+]

@@ -8,7 +8,8 @@ from django.utils import timezone
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth import login, get_user_model
-from .forms import UserRegistrationForm, BookCopyForm, BookInstanceForm, AddBookForm, EditBookForm, AuthorForm, ProfileUserForm
+from .forms import UserRegistrationForm, BookCopyForm, BookInstanceForm, AddBookForm, EditBookForm, AuthorForm, \
+  ProfileUserForm
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import render, redirect, get_object_or_404
@@ -16,27 +17,27 @@ from .models import Book, BookCopy, BookInstance, Author, Genre, Language
 
 
 def index(request):
-    """Функция представления для домашней страницы сайта."""
-    # Генерация количества некоторых основных объектов
-    # Запрос всех книг и подсчет их количества
-    num_books = Book.objects.all().count()
-    num_instances = BookInstance.objects.all().count()
-    # Доступные книги (статус = 'д')
-    num_instances_available = BookInstance.objects.filter(status__exact='д').count()
-    num_authors = Author.objects.count()  # 'all()'
+  """Функция представления для домашней страницы сайта."""
+  # Генерация количества некоторых основных объектов
+  # Запрос всех книг и подсчет их количества
+  num_books = Book.objects.all().count()
+  num_instances = BookInstance.objects.all().count()
+  # Доступные книги (статус = 'д')
+  num_instances_available = BookInstance.objects.filter(status__exact='д').count()
+  num_authors = Author.objects.count()  # 'all()'
 
-    # Количество посещений этого представления, как подсчитывается в переменной сессии.
-    num_visits = request.session.get('num_visits', 1)
-    request.session['num_visits'] = num_visits+1
+  # Количество посещений этого представления, как подсчитывается в переменной сессии.
+  num_visits = request.session.get('num_visits', 1)
+  request.session['num_visits'] = num_visits + 1
 
-    # Отображение HTML-шаблона index.html с данными в переменной контекста.
-    return render(
-        request,
-        'index.html',
-        context={'num_books': num_books, 'num_instances': num_instances,
-                 'num_instances_available': num_instances_available, 'num_authors': num_authors,
-                 'num_visits': num_visits},
-    )
+  # Отображение HTML-шаблона index.html с данными в переменной контекста.
+  return render(
+    request,
+    'index.html',
+    context={'num_books': num_books, 'num_instances': num_instances,
+             'num_instances_available': num_instances_available, 'num_authors': num_authors,
+             'num_visits': num_visits},
+  )
 
 
 class BookListView(generic.ListView):
@@ -54,65 +55,72 @@ class BookListView(generic.ListView):
     context['search_query'] = self.request.GET.get('search', '')
     return context
 
-class BookDetailView(generic.DetailView):
-    """Общий класс-представление для детальной информации о книге."""
-    model = Book
 
-    # def book_detail(request, book_id):
-    #   book = Book.objects.get(pk=book_id)
-    #
-    #   # Получаем количество копий с статусом 'д' для данной книги
-    #   available_copies = BookCopy.objects.filter(book=book, status='д').count()
-    #
-    #   return render(request, 'catalog/book_detail.html', {'book': book, 'available_copies': available_copies})
+class BookDetailView(generic.DetailView):
+  """Общий класс-представление для детальной информации о книге."""
+  model = Book
+
+  # def book_detail(request, book_id):
+  #   book = Book.objects.get(pk=book_id)
+  #
+  #   # Получаем количество копий с статусом 'д' для данной книги
+  #   available_copies = BookCopy.objects.filter(book=book, status='д').count()
+  #
+  #   return render(request, 'catalog/book_detail.html', {'book': book, 'available_copies': available_copies})
 
 
 class AuthorListView(generic.ListView):
-    """Общий класс-представление для списка авторов."""
-    model = Author
-    paginate_by = 10
-    def get_queryset(self):
-        query = self.request.GET.get('search', '')
-        return Author.objects.filter(
-            Q(first_name__icontains=query) | Q(last_name__icontains=query) | Q(middle_name__icontains=query)
-        )
+  """Общий класс-представление для списка авторов."""
+  model = Author
+  paginate_by = 10
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['search_query'] = self.request.GET.get('search', '')
-        return context
+  def get_queryset(self):
+    query = self.request.GET.get('search', '')
+    return Author.objects.filter(
+      Q(first_name__icontains=query) | Q(last_name__icontains=query) | Q(middle_name__icontains=query)
+    )
+
+  def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    context['search_query'] = self.request.GET.get('search', '')
+    return context
+
+
 class AuthorDetailView(generic.DetailView):
-    """Общий класс-представление для детальной информации об авторе."""
-    model = Author
+  """Общий класс-представление для детальной информации об авторе."""
+  model = Author
+
 
 class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
-    """Общий класс-представление для списка книг, взятых на аренду текущим пользователем."""
-    model = BookInstance
-    template_name = 'catalog/bookinstance_list_borrowed_user.html'
-    paginate_by = 10
+  """Общий класс-представление для списка книг, взятых на аренду текущим пользователем."""
+  model = BookInstance
+  template_name = 'catalog/bookinstance_list_borrowed_user.html'
+  paginate_by = 10
 
-    def get_queryset(self):
-      status = self.request.GET.get('status', None)
+  def get_queryset(self):
+    status = self.request.GET.get('status', None)
 
-      if status is None:
-        status = ['р', 'з'] # Установите стандартное значение 'р, з'
+    if status is None:
+      status = ['р', 'з']  # Установите стандартное значение 'р, з'
 
-      return BookInstance.objects.filter(borrower=self.request.user, status__in=status).order_by('due_back')
+    return BookInstance.objects.filter(borrower=self.request.user, status__in=status).order_by('due_back')
+
 
 class LoanedBooksAllListView(PermissionRequiredMixin, generic.ListView):
-    """Общий класс-представление для списка всех книг, взятых на аренду. Доступно только пользователям с разрешением can_mark_returned."""
-    model = BookInstance
-    permission_required = 'catalog.can_mark_returned'
-    template_name = 'catalog/bookinstance_list_borrowed_all.html'
-    paginate_by = 10
+  """Общий класс-представление для списка всех книг, взятых на аренду. Доступно только пользователям с разрешением can_mark_returned."""
+  model = BookInstance
+  permission_required = 'catalog.can_mark_returned'
+  template_name = 'catalog/bookinstance_list_borrowed_all.html'
+  paginate_by = 10
 
-    def get_queryset(self):
-      status = self.request.GET.get('status', None)
+  def get_queryset(self):
+    status = self.request.GET.get('status', None)
 
-      if status is None:
-        status = ['р', 'з'] # Установите стандартное значение, например, 'р'
+    if status is None:
+      status = ['р', 'з']  # Установите стандартное значение, например, 'р'
 
-      return BookInstance.objects.filter(status__in=status).order_by('due_back')
+    return BookInstance.objects.filter(status__in=status).order_by('due_back')
+
 
 # @login_required
 # @permission_required('catalog.can_mark_returned', raise_exception=True)
@@ -150,6 +158,7 @@ def renew_book_librarian(request, pk):
 
   return render(request, 'catalog/book_renew_librarian.html', context)
 
+
 class AuthorCreate(PermissionRequiredMixin, CreateView):
   model = Author
   fields = ['first_name', 'last_name', 'middle_name', 'date_of_birth', 'date_of_death']
@@ -176,39 +185,44 @@ class AuthorUpdate(PermissionRequiredMixin, UpdateView):
 
 
 class AuthorDelete(PermissionRequiredMixin, DeleteView):
-    model = Author
-    success_url = reverse_lazy('authors')
-    permission_required = 'catalog.can_mark_returned'
-    template_name = 'catalog/author_confirm_delete.html'  # Создайте шаблон подтверждения удаления автора
+  model = Author
+  success_url = reverse_lazy('authors')
+  permission_required = 'catalog.can_mark_returned'
+  template_name = 'catalog/author_confirm_delete.html'  # Создайте шаблон подтверждения удаления автора
+
 
 class BookCreate(PermissionRequiredMixin, CreateView):
-    model = Book
-    fields = ['title', 'author', 'summary', 'isbn', 'genre', 'language']
-    permission_required = 'catalog.can_mark_returned'
+  model = Book
+  fields = ['title', 'author', 'summary', 'isbn', 'genre', 'language']
+  permission_required = 'catalog.can_mark_returned'
+
 
 class BookUpdate(PermissionRequiredMixin, UpdateView):
-    model = Book
-    fields = ['title', 'author', 'summary', 'isbn', 'genre', 'language']
-    permission_required = 'catalog.can_mark_returned'
+  model = Book
+  fields = ['title', 'author', 'summary', 'isbn', 'genre', 'language']
+  permission_required = 'catalog.can_mark_returned'
+
 
 class BookDelete(PermissionRequiredMixin, DeleteView):
-    model = Book
-    success_url = reverse_lazy('books')
-    permission_required = 'catalog.can_mark_returned'
+  model = Book
+  success_url = reverse_lazy('books')
+  permission_required = 'catalog.can_mark_returned'
+
 
 # @login_required
 # @permission_required('auth.add_user', raise_exception=True)
 def create_user(request):
-    if request.method == 'POST':
-        form = UserRegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('index')
-    else:
-        form = UserRegistrationForm()
+  if request.method == 'POST':
+    form = UserRegistrationForm(request.POST)
+    if form.is_valid():
+      user = form.save()
+      login(request, user)
+      return redirect('index')
+  else:
+    form = UserRegistrationForm()
 
-    return render(request, 'registration/create_user.html', {'form': form})
+  return render(request, 'registration/create_user.html', {'form': form})
+
 
 def user_list(request):
   if request.user.is_staff:
@@ -246,33 +260,34 @@ def add_bookinstance(request):
 
 @login_required
 def edit_bookinstance(request, bookinstance_id):
-    book_instance = get_object_or_404(BookInstance, id=bookinstance_id)
+  book_instance = get_object_or_404(BookInstance, id=bookinstance_id)
 
-    if book_instance.status == 'з':  # Проверьте статус экземпляра
-        if request.method == 'POST':
-            form = BookInstanceEditForm(request.POST, instance=book_instance)
+  if book_instance.status == 'з':  # Проверьте статус экземпляра
+    if request.method == 'POST':
+      form = BookInstanceEditForm(request.POST, instance=book_instance)
 
-            if form.is_valid():
-                # Если статус был изменен, разрешите сохранение
-                if form.cleaned_data['status'] != 'з':
-                    form.save()
-                # Получите соответствующий экземпляр в BookCopy
-                book_copy = BookCopy.objects.filter(book=book_instance.book, status='з').first()
+      if form.is_valid():
+        # Если статус был изменен, разрешите сохранение
+        if form.cleaned_data['status'] != 'з':
+          form.save()
+        # Получите соответствующий экземпляр в BookCopy
+        book_copy = BookCopy.objects.filter(book=book_instance.book, status='з').first()
 
-                # Установите статус book_copy как в book_instance
-                if book_copy:
-                    book_copy.status = book_instance.status
-                    book_copy.save()
-                form.save()
-                return redirect('all-borrowed')
+        # Установите статус book_copy как в book_instance
+        if book_copy:
+          book_copy.status = book_instance.status
+          book_copy.save()
+        form.save()
+        return redirect('all-borrowed')
 
-        else:
-            form = BookInstanceEditForm(instance=book_instance)
-
-        return render(request, 'catalog/edit_bookinstance.html', {'form': form, 'book_instance': book_instance})
     else:
-        # Обработка случая, когда экземпляр не имеет статус 'з'
-        return redirect('all-borrowed')  # Пример: вернуться на страницу с информацией о книге
+      form = BookInstanceEditForm(instance=book_instance)
+
+    return render(request, 'catalog/edit_bookinstance.html', {'form': form, 'book_instance': book_instance})
+  else:
+    # Обработка случая, когда экземпляр не имеет статус 'з'
+    return redirect('all-borrowed')  # Пример: вернуться на страницу с информацией о книге
+
 
 def add_book(request):
   if request.method == 'POST':
@@ -327,29 +342,31 @@ def edit_book(request, book_id):
 
 
 def delete_book(request, book_id):
-    book = get_object_or_404(Book, pk=book_id)
+  book = get_object_or_404(Book, pk=book_id)
 
-    if request.method == 'POST':
-        # Удаляем книгу
-        book.delete()
-        return redirect('books')  # Перенаправление на список книг или другую страницу
+  if request.method == 'POST':
+    # Удаляем книгу
+    book.delete()
+    return redirect('books')  # Перенаправление на список книг или другую страницу
 
-    return render(request, 'catalog/delete_book_confirm.html', {'book': book})
+  return render(request, 'catalog/delete_book_confirm.html', {'book': book})
+
 
 def add_author(request):
-    if request.method == 'POST':
-        form = AuthorForm(request.POST)
-        if form.is_valid():
-            date_of_death = form.cleaned_data['date_of_death']
-            if not date_of_death:
-                # Если дата смерти не введена, устанавливаем ее в None
-                form.cleaned_data['date_of_death'] = None
-            author = form.save()
-            return redirect('author-detail', pk=author.id)
-    else:
-        form = AuthorForm()
+  if request.method == 'POST':
+    form = AuthorForm(request.POST)
+    if form.is_valid():
+      date_of_death = form.cleaned_data['date_of_death']
+      if not date_of_death:
+        # Если дата смерти не введена, устанавливаем ее в None
+        form.cleaned_data['date_of_death'] = None
+      author = form.save()
+      return redirect('author-detail', pk=author.id)
+  else:
+    form = AuthorForm()
 
-    return render(request, 'catalog/add_authors.html', {'form': form})
+  return render(request, 'catalog/add_authors.html', {'form': form})
+
 
 def return_book(request, book_instance_id):
   book_instance = get_object_or_404(BookInstance, id=book_instance_id)
@@ -381,58 +398,61 @@ def return_book(request, book_instance_id):
 
   return redirect('all-borrowed')
 
+
 @login_required
 def reserve_book(request, book_id):
-    book = get_object_or_404(Book, pk=book_id)
-    user = request.user
+  book = get_object_or_404(Book, pk=book_id)
+  user = request.user
 
-    # Проверка наличия доступных экземпляров для резервации
-    available_copy = book.bookcopy_set.filter(status='д').first()
+  # Проверка наличия доступных экземпляров для резервации
+  available_copy = book.bookcopy_set.filter(status='д').first()
 
-    if available_copy:
-        # Создайте аренду экземпляра и заполните поле 'loan' доступным экземпляром
-        new_copy = BookInstance(book=book, borrower=user, status='з', loan=available_copy)
-        new_copy.save()
+  if available_copy:
+    # Создайте аренду экземпляра и заполните поле 'loan' доступным экземпляром
+    new_copy = BookInstance(book=book, borrower=user, status='з', loan=available_copy)
+    new_copy.save()
 
-        # Измените статус экземпляра на 'з'
-        available_copy.status = 'з'
-        available_copy.borrower = user
-        available_copy.save()
+    # Измените статус экземпляра на 'з'
+    available_copy.status = 'з'
+    available_copy.borrower = user
+    available_copy.save()
 
-        messages.success(request, "Экземпляр успешно зарезервирован.")
-    else:
-      # Если нет доступных экземпляров, установите сообщение об ошибке
-      messages.error(request, "Нет доступных экземпляров для резервации")
+    messages.success(request, "Экземпляр успешно зарезервирован.")
+  else:
+    # Если нет доступных экземпляров, установите сообщение об ошибке
+    messages.error(request, "Нет доступных экземпляров для резервации")
 
-    return redirect('book-detail', pk=book_id)
+  return redirect('book-detail', pk=book_id)
 
 
 def create_book_copy(request, book_id):
-    book = Book.objects.get(id=book_id)
+  book = Book.objects.get(id=book_id)
 
-    if request.method == 'POST':
-        form = BookCopyForm(request.POST)
-        if form.is_valid():
-            book_copy = form.save(commit=False)
-            book_copy.book = book
-            book_copy.status = 'д'  # Установите статус, например, 'д' для доступности
-            book_copy.save()
-            return redirect('book-detail', pk=book.id)
-    else:
-        form = BookCopyForm()
+  if request.method == 'POST':
+    form = BookCopyForm(request.POST)
+    if form.is_valid():
+      book_copy = form.save(commit=False)
+      book_copy.book = book
+      book_copy.status = 'д'  # Установите статус, например, 'д' для доступности
+      book_copy.save()
+      return redirect('book-detail', pk=book.id)
+  else:
+    form = BookCopyForm()
 
-    return render(request, 'catalog/create_book_copy.html', {'book': book, 'form': form})
+  return render(request, 'catalog/create_book_copy.html', {'book': book, 'form': form})
+
+
 class ProfileUser(LoginRequiredMixin, UpdateView):
-    model = get_user_model()
-    form_class = ProfileUserForm
-    template_name = 'catalog/profile.html'
-    extra_context = {'title': "Профиль пользователя"}
+  model = get_user_model()
+  form_class = ProfileUserForm
+  template_name = 'catalog/profile.html'
+  extra_context = {'title': "Профиль пользователя"}
 
-    def get_success_url(self):
-        return reverse_lazy('profile')
+  def get_success_url(self):
+    return reverse_lazy('profile')
 
-    def get_object(self, queryset=None):
-      return self.request.user
+  def get_object(self, queryset=None):
+    return self.request.user
 
 
 def add_genre(request):
@@ -448,19 +468,112 @@ def add_genre(request):
 
   return render(request, 'catalog/add_genre.html', {'form': form, 'genres': genres})
 
+
 def add_language(request):
-    if request.method == 'POST':
-        form = LanguageForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('add-language')
-    else:
-        form = LanguageForm()
+  if request.method == 'POST':
+    form = LanguageForm(request.POST)
+    if form.is_valid():
+      form.save()
+      return redirect('add-language')
+  else:
+    form = LanguageForm()
 
-    languages = Language.objects.all()
+  languages = Language.objects.all()
 
-    return render(request, 'catalog/add_language.html', {'form': form, 'languages': languages})
+  return render(request, 'catalog/add_language.html', {'form': form, 'languages': languages})
 
 
 def privacy_policy(request):
-  return render(request,'catalog/privacy_policy.html')
+  return render(request, 'catalog/privacy_policy.html')
+
+
+# views.py
+from django.shortcuts import render, redirect
+from django.views import View
+from .models import AcceptAct, PositionAcceptAct
+from .forms import AcceptActForm, PositionAcceptActForm
+
+
+class AcceptActListView(View):
+  def get(self, request):
+    accept_acts = AcceptAct.objects.all()
+    return render(request, 'catalog/accept_act_list.html', {'accept_acts': accept_acts})
+
+
+class CreateAcceptActView(View):
+  def get(self, request):
+    form = AcceptActForm()
+    return render(request, 'catalog/create_accept_act.html', {'form': form})
+
+  def post(self, request):
+    form = AcceptActForm(request.POST)
+    if form.is_valid():
+      accept_act = form.save()
+      return redirect('add_position_accept_act', pk=accept_act.pk)
+    return render(request, 'catalog/create_accept_act.html', {'form': form})
+
+
+class AddPositionAcceptActView(View):
+  def get(self, request, pk):
+    accept_act = AcceptAct.objects.get(pk=pk)
+    form = PositionAcceptActForm()
+    return render(request, 'catalog/add_position_accept_act.html', {'accept_act': accept_act, 'form': form})
+
+  def post(self, request, pk):
+    accept_act = AcceptAct.objects.get(pk=pk)
+    form = PositionAcceptActForm(request.POST)
+    if form.is_valid():
+      position_accept_act = form.save(commit=False)
+      position_accept_act.accept_act = accept_act
+      position_accept_act.save()
+      return redirect('add_position_accept_act', pk=pk)
+    return render(request, 'catalog/add_position_accept_act.html', {'accept_act': accept_act, 'form': form})
+
+
+# views.py
+from django.shortcuts import render, redirect
+from django.views import View
+from .models import AcceptAct
+from .forms import AcceptActForm
+
+from django.shortcuts import get_object_or_404
+
+
+from django.shortcuts import get_object_or_404
+
+class EditAcceptActView(View):
+    def get(self, request, pk):
+        accept_act = get_object_or_404(AcceptAct, pk=pk)
+        form = AcceptActForm(instance=accept_act)
+
+        # Retrieve only PositionAcceptAct instances related to the specific AcceptAct
+        position_accept_acts = PositionAcceptAct.objects.filter(accept_act=accept_act)
+
+        return render(
+            request,
+            'catalog/edit_accept_act.html',
+            {'accept_act': accept_act, 'position_accept_acts': position_accept_acts, 'form': form}
+        )
+
+
+
+def post(self, request, pk):
+  accept_act = AcceptAct.objects.get(pk=pk)
+  form = AcceptActForm(request.POST, instance=accept_act)
+  if form.is_valid():
+    form.save()
+    return redirect('accept_act_list')
+  return render(request, 'catalog/edit_accept_act.html', {'accept_act': accept_act, 'form': form})
+
+  # Ваш метод представления
+
+
+def edit_accept_act(request, pk):
+  accept_act = get_object_or_404(AcceptAct, pk=pk)
+  position_accept_acts = PositionAcceptAct.objects.filter(accept_act=accept_act)
+  form = AcceptActForm(instance=accept_act)
+
+  print(position_accept_acts)  # Отладочный вывод
+
+  return render(request, 'catalog/edit_accept_act.html',
+                {'accept_act': accept_act, 'position_accept_acts': position_accept_acts, 'form': form})

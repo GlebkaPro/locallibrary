@@ -1,0 +1,12 @@
+<!-- add_position_accept_act.html -->
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Добавить PositionAcceptAct к AcceptAct ({{ accept_act.current_date }})</h1>
+  <form method="post" action="">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Добавить PositionAcceptAct</button>
+  </form>
+  
+{% endblock %}

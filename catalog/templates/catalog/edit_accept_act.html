@@ -1,0 +1,36 @@
+<!-- edit_accept_act.html -->
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Изменить AcceptAct</h1>
+  <form method="post" action="">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Сохранить изменения</button>
+  </form>
+
+<h2>Позиции акта о приёме</h2>
+{% if position_accept_acts %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Цена</th>
+        <th>Количество</th>
+        <th>Экземпляр</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for position_accept_act in position_accept_acts %}
+        <tr>
+          <td>{{ position_accept_act.price }}</td>
+          <td>{{ position_accept_act.size }}</td>
+          <td>{{ position_accept_act.copy }}</td> 
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>Нет данных о позициях акта</p>
+{% endif %}
+
+{% endblock %}

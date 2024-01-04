@@ -1,0 +1,34 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Список AcceptAct</h1>
+  <a href="{% url 'create_accept_act' %}">Создать AcceptAct</a>
+
+  {% if accept_acts %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Дата</th>
+          <!-- Добавьте другие заголовки столбцов по вашему усмотрению -->
+          <th>Действия</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for accept_act in accept_acts %}
+          <tr>
+            <td>{{ accept_act.current_date }}</td>
+            <!-- Добавьте другие ячейки данных по вашему усмотрению -->
+            <td>
+              <a href="{% url 'add_position_accept_act' pk=accept_act.pk %}">Добавить позицию</a>
+              <a href="{% url 'edit_accept_act' pk=accept_act.pk %}">Изменить</a>
+              <!-- Добавьте другие действия по вашему усмотрению -->
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>Нет данных о AcceptAct</p>
+  {% endif %}
+  
+{% endblock %}

@@ -164,3 +164,15 @@ class LanguageForm(forms.ModelForm):
     fields = ['name']
 
 
+# forms.py
+from django import forms
+from .models import AcceptAct, PositionAcceptAct
+
+class AcceptActForm(forms.ModelForm):
+    class Meta:
+        model = AcceptAct
+        fields = '__all__'
+class PositionAcceptActForm(forms.ModelForm):
+    class Meta:
+        model = PositionAcceptAct
+        fields = '__all__'

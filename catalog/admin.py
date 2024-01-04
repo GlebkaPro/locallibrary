@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 
-from .models import Author, Genre, Book, BookInstance, Language, BookCopy
+from .models import Author, Genre, Book, BookInstance, Language, BookCopy, AcceptAct, PositionAcceptAct, Source, FizPersonSource
 from users.models import User
 # Minimal registration of Models.
 admin.site.register(Book)
@@ -12,7 +12,10 @@ admin.site.register(Genre)
 admin.site.register(Language)
 admin.site.register(BookCopy)
 admin.site.register(User)
-
+admin.site.register(AcceptAct)
+admin.site.register(PositionAcceptAct)
+admin.site.register(Source)
+admin.site.register(FizPersonSource)
 # admin.site.register(AuthorAdmin)
 #
 # class BooksInline(admin.TabularInline):
