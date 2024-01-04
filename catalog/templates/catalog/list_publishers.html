@@ -1,0 +1,28 @@
+<!-- list_publishers.html -->
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Список изданий</h1>
+  <a href="{% url 'create_publisher' %}">Создать издание</a>
+
+  {% if publishers %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Наименование</th>
+          <!-- Добавьте другие заголовки столбцов по вашему усмотрению -->
+        </tr>
+      </thead>
+      <tbody>
+        {% for publisher in publishers %}
+          <tr>
+            <td>{{ publisher.name }}</td>
+            <!-- Добавьте другие ячейки данных по вашему усмотрению -->
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>Нет данных об изданиях</p>
+  {% endif %}
+{% endblock %}

@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.forms import DateInput
 from django.utils.translation import gettext_lazy as _
 import datetime
-from .models import Book, Author, BookCopy, BookInstance, Genre, Language
+from .models import Book, Author, BookCopy, BookInstance, Genre, Language, BookExemplar
 from django.core.exceptions import ValidationError
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
@@ -29,6 +29,7 @@ class RenewBookForm(forms.ModelForm):
     # Помните всегда вернуть обработанные данные
     return data
 
+
 class UserRegistrationForm(UserCreationForm):
   email = forms.EmailField(required=True, label='Email')
   this_year = datetime.date.today().year
@@ -38,41 +39,46 @@ class UserRegistrationForm(UserCreationForm):
     widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}),
     label='Согласен с обработкой персональных данных'
   )
+
   class Meta:
     model = get_user_model()
-    fields = ('username', 'email', 'password1', 'password2', 'first_name', 'last_name', 'middle_name','date_birth', 'privacy_policy_agreement')
+    fields = ('username', 'email', 'password1', 'password2', 'first_name', 'last_name', 'middle_name', 'date_birth',
+              'privacy_policy_agreement')
+
 
 class BookInstanceForm(forms.ModelForm):
-    class Meta:
-        model = BookInstance
-        fields = ['book', 'due_back', 'borrower', 'status', 'loan']
+  class Meta:
+    model = BookInstance
+    fields = ['book', 'due_back', 'borrower', 'status', 'loan']
 
-    def __init__(self, *args, **kwargs):
-      super(BookInstanceForm, self).__init__(*args, **kwargs)
+  def __init__(self, *args, **kwargs):
+    super(BookInstanceForm, self).__init__(*args, **kwargs)
 
-      # Ограничьте queryset для поля 'loan' на те копии, которые принадлежат выбранной книге.
-      if 'book' in self.data:
-        book_id = self.data.get('book')
-        if book_id:
-          self.fields['loan'].queryset = BookInstance.objects.filter(book=book_id)
-      elif self.instance.pk and self.instance.book:
-        self.fields['loan'].queryset = self.instance.book.bookcopy_set.filter(status='р')
+    # Ограничьте queryset для поля 'loan' на те копии, которые принадлежат выбранной книге.
+    if 'book' in self.data:
+      book_id = self.data.get('book')
+      if book_id:
+        self.fields['loan'].queryset = BookInstance.objects.filter(book=book_id)
+    elif self.instance.pk and self.instance.book:
+      self.fields['loan'].queryset = self.instance.book.bookcopy_set.filter(status='р')
 
-    def clean(self):
-        cleaned_data = super().clean()
-        book = cleaned_data.get('book')
-        status = cleaned_data.get('status')
+  def clean(self):
+    cleaned_data = super().clean()
+    book = cleaned_data.get('book')
+    status = cleaned_data.get('status')
 
-        if book:
-            # Проверьте, остались ли доступные экземпляры книги
-            available_copies = book.bookcopy_set.filter(status='д')
-            if not available_copies.exists() and status != 'з':
-                raise forms.ValidationError('Нет доступных экземпляров книги для аренды.')
+    if book:
+      # Проверьте, остались ли доступные экземпляры книги
+      available_copies = book.bookcopy_set.filter(status='д')
+      if not available_copies.exists() and status != 'з':
+        raise forms.ValidationError('Нет доступных экземпляров книги для аренды.')
 
-    # Добавьте виджет DateInput к полю 'due_back'
-    widgets = {
-        'due_back': DateInput(attrs={'type': 'date'}),
-    }
+  # Добавьте виджет DateInput к полю 'due_back'
+  widgets = {
+    'due_back': DateInput(attrs={'type': 'date'}),
+  }
+
+
 class BookInstanceEditForm(forms.ModelForm):
   class Meta:
     model = BookInstance
@@ -91,8 +97,9 @@ class BookInstanceEditForm(forms.ModelForm):
         raise forms.ValidationError('Нет доступных экземпляров книги для аренды (редактирование).')
 
   widgets = {
-      'due_back': DateInput(attrs={'type': 'date'}),
+    'due_back': DateInput(attrs={'type': 'date'}),
   }
+
 
 class AddBookForm(forms.ModelForm):
   genres = forms.MultipleChoiceField(
@@ -108,30 +115,33 @@ class AddBookForm(forms.ModelForm):
     if new_genre and Genre.objects.filter(name=new_genre).exists():
       raise forms.ValidationError("Такой жанр уже существует.")
     return new_genre
+
   class Meta:
     model = Book
     fields = ['title', 'author', 'summary', 'isbn', 'genre', 'language', 'image']
+
 
 class EditBookForm(forms.ModelForm):
   class Meta:
     model = Book
     fields = ['title', 'author', 'summary', 'isbn', 'genre', 'language', 'image']
 
-class AuthorForm(forms.ModelForm):
-    # this_year = datetime.date.today().year
-    # date_of_birth = forms.DateField(widget=forms.SelectDateWidget(years=tuple(range(this_year - 1000, this_year - 5))), required=False)
-    # date_of_death = forms.DateField(widget=forms.SelectDateWidget(years=tuple(range(this_year - 1000, this_year - 5))),
-    #                                 required=False)
-    class Meta:
-        model = Author
-        fields = ['first_name', 'last_name', 'middle_name', 'date_of_birth', 'date_of_death']
 
+class AuthorForm(forms.ModelForm):
+  # this_year = datetime.date.today().year
+  # date_of_birth = forms.DateField(widget=forms.SelectDateWidget(years=tuple(range(this_year - 1000, this_year - 5))), required=False)
+  # date_of_death = forms.DateField(widget=forms.SelectDateWidget(years=tuple(range(this_year - 1000, this_year - 5))),
+  #                                 required=False)
+  class Meta:
+    model = Author
+    fields = ['first_name', 'last_name', 'middle_name', 'date_of_birth', 'date_of_death']
 
 
 class BookCopyForm(forms.ModelForm):
   class Meta:
     model = BookCopy
     fields = ['imprint']
+
 
 class ProfileUserForm(forms.ModelForm):
   username = forms.CharField(disabled=True, label='Логин', widget=forms.TextInput(attrs={'class': 'form-input'}))
@@ -153,10 +163,12 @@ class ProfileUserForm(forms.ModelForm):
       'middle_name': forms.TextInput(attrs={'class': 'form-input'}),
     }
 
+
 class GenreForm(forms.ModelForm):
   class Meta:
     model = Genre
     fields = ['name']
+
 
 class LanguageForm(forms.ModelForm):
   class Meta:
@@ -168,11 +180,28 @@ class LanguageForm(forms.ModelForm):
 from django import forms
 from .models import AcceptAct, PositionAcceptAct
 
+
 class AcceptActForm(forms.ModelForm):
-    class Meta:
-        model = AcceptAct
-        fields = '__all__'
+  class Meta:
+    model = AcceptAct
+    fields = '__all__'
+
+
 class PositionAcceptActForm(forms.ModelForm):
+  class Meta:
+    model = PositionAcceptAct
+    fields = '__all__'
+
+
+class BookExemplarForm(forms.ModelForm):
+  class Meta:
+    model = BookExemplar
+    fields = '__all__'
+
+from django import forms
+from .models import Publisher
+
+class PublisherForm(forms.ModelForm):
     class Meta:
-        model = PositionAcceptAct
+        model = Publisher
         fields = '__all__'

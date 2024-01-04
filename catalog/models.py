@@ -77,12 +77,13 @@ class Book(models.Model):
 
 
 class BookCopy(models.Model):
-  """Модель, представляющая конкретную копию книги (т. е. которую можно взять в библиотеке)."""
+  """Модель, представляющая учтённую копию книги (т. е. которой проставлен штамм)."""
   id = models.UUIDField(primary_key=True, default=uuid.uuid4,
                         help_text="Уникальный идентификатор")
   book = models.ForeignKey('Book', on_delete=models.RESTRICT, null=True, verbose_name='Книга')
   imprint = models.CharField(max_length=200, null=True, verbose_name='Штамп')
-  positionAcceptAct = models.ForeignKey('PositionAcceptAct', on_delete=models.RESTRICT, null=True, verbose_name='Позиция акта послупления')
+  positionAcceptAct = models.ForeignKey('PositionAcceptAct', on_delete=models.RESTRICT, null=True,
+                                        verbose_name='Позиция акта послупления')
   LOAN_STATUS = (
     ('р', 'Выдано'),
     ('д', 'Доступно'),
@@ -192,18 +193,21 @@ class AcceptAct(models.Model):
 class PositionAcceptAct(models.Model):
   price = models.CharField(verbose_name='Цена', max_length=100)
   size = models.CharField(verbose_name='Количество', max_length=100)
-  exemplar = models.ForeignKey('BookExemplar', on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Экземпляр')
+  exemplar = models.ForeignKey('BookExemplar', on_delete=models.SET_NULL, null=True, blank=True,
+                               verbose_name='Экземпляр')
   accept_act = models.ForeignKey('AcceptAct', on_delete=models.CASCADE, related_name='position_accept_acts',
                                  verbose_name='Акт о приёме')
+
   def __str__(self):
     return f"{self.price} - {self.exemplar}"
+
 
 class BookExemplar(models.Model):
   date_of_manufacture = models.DateField('Дата изготовления', null=True, blank=True)
   city_of_publication = models.CharField(verbose_name='Город издания', max_length=100)
   book = models.ForeignKey('Book', on_delete=models.RESTRICT, null=True, verbose_name='Книга')
   publisher = models.ForeignKey('Publisher', on_delete=models.CASCADE, related_name='publisher',
-                                 verbose_name='Издательство')
+                                verbose_name='Издательство')
 
   ACCEPT_publication_type = (
     ('к', 'Книги'),
@@ -218,7 +222,12 @@ class BookExemplar(models.Model):
   publication_type = models.CharField(
     max_length=1, choices=ACCEPT_publication_type, blank=True, default='р', verbose_name='Тип издания')
 
+  def __str__(self):
+    return f"{self.publisher} - {self.date_of_manufacture}"
+
+
 class Publisher(models.Model):
   name = models.CharField(verbose_name='Наименование', max_length=100)
 
-
+  def __str__(self):
+    return f"{self.name}"

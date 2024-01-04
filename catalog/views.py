@@ -1,21 +1,25 @@
-from django.db.models import Q
-from django.views import generic
+from django.contrib import messages
+from django.contrib.auth import login, get_user_model
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.contrib import messages
-from catalog.forms import RenewBookForm, BookInstanceEditForm, GenreForm, LanguageForm
-from django.utils import timezone
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.db.models import Q
+from django.http import Http404
 from django.urls import reverse_lazy
-from django.contrib.auth import login, get_user_model
+from django.utils import timezone
+from django.views import generic
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+
+from catalog.forms import RenewBookForm, BookInstanceEditForm, GenreForm, LanguageForm
 from .forms import UserRegistrationForm, BookCopyForm, BookInstanceForm, AddBookForm, EditBookForm, AuthorForm, \
   ProfileUserForm
-from django.contrib.auth.decorators import login_required
-from django.http import Http404
-from django.shortcuts import render, redirect, get_object_or_404
 from .models import Book, BookCopy, BookInstance, Author, Genre, Language
 
-
+from .models import AcceptAct
+from .forms import AcceptActForm
+from django.shortcuts import get_object_or_404
+from .forms import BookExemplarForm
+from .models import BookExemplar
 def index(request):
   """Функция представления для домашней страницы сайта."""
   # Генерация количества некоторых основных объектов
@@ -488,17 +492,15 @@ def privacy_policy(request):
 
 
 # views.py
-from django.shortcuts import render, redirect
 from django.views import View
-from .models import AcceptAct, PositionAcceptAct
-from .forms import AcceptActForm, PositionAcceptActForm
+from .models import PositionAcceptAct
+from .forms import PositionAcceptActForm
 
 
 class AcceptActListView(View):
   def get(self, request):
     accept_acts = AcceptAct.objects.all()
     return render(request, 'catalog/accept_act_list.html', {'accept_acts': accept_acts})
-
 
 class CreateAcceptActView(View):
   def get(self, request):
@@ -511,7 +513,6 @@ class CreateAcceptActView(View):
       accept_act = form.save()
       return redirect('add_position_accept_act', pk=accept_act.pk)
     return render(request, 'catalog/create_accept_act.html', {'form': form})
-
 
 class AddPositionAcceptActView(View):
   def get(self, request, pk):
@@ -529,18 +530,6 @@ class AddPositionAcceptActView(View):
       return redirect('add_position_accept_act', pk=pk)
     return render(request, 'catalog/add_position_accept_act.html', {'accept_act': accept_act, 'form': form})
 
-
-# views.py
-from django.shortcuts import render, redirect
-from django.views import View
-from .models import AcceptAct
-from .forms import AcceptActForm
-
-from django.shortcuts import get_object_or_404
-
-
-from django.shortcuts import get_object_or_404
-
 class EditAcceptActView(View):
     def get(self, request, pk):
         accept_act = get_object_or_404(AcceptAct, pk=pk)
@@ -555,8 +544,6 @@ class EditAcceptActView(View):
             {'accept_act': accept_act, 'position_accept_acts': position_accept_acts, 'form': form}
         )
 
-
-
 def post(self, request, pk):
   accept_act = AcceptAct.objects.get(pk=pk)
   form = AcceptActForm(request.POST, instance=accept_act)
@@ -565,15 +552,44 @@ def post(self, request, pk):
     return redirect('accept_act_list')
   return render(request, 'catalog/edit_accept_act.html', {'accept_act': accept_act, 'form': form})
 
-  # Ваш метод представления
-
 
 def edit_accept_act(request, pk):
   accept_act = get_object_or_404(AcceptAct, pk=pk)
   position_accept_acts = PositionAcceptAct.objects.filter(accept_act=accept_act)
   form = AcceptActForm(instance=accept_act)
 
-  print(position_accept_acts)  # Отладочный вывод
-
   return render(request, 'catalog/edit_accept_act.html',
                 {'accept_act': accept_act, 'position_accept_acts': position_accept_acts, 'form': form})
+
+def create_book_exemplar(request):
+    if request.method == 'POST':
+        form = BookExemplarForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('list_book_exemplar')
+    else:
+        form = BookExemplarForm()
+
+    return render(request, 'catalog/create_book_exemplar.html', {'form': form})
+
+def list_book_exemplar(request):
+    book_exemplars = BookExemplar.objects.all()
+    return render(request, 'catalog/list_book_exemplar.html', {'book_exemplars': book_exemplars})
+
+from django.shortcuts import render, redirect
+from .models import Publisher
+from .forms import PublisherForm
+
+def list_publishers(request):
+    publishers = Publisher.objects.all()
+    return render(request, 'catalog/list_publishers.html', {'publishers': publishers})
+
+def create_publisher(request):
+    if request.method == 'POST':
+        form = PublisherForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('list_publishers')
+    else:
+        form = PublisherForm()
+    return render(request, 'catalog/create_publisher.html', {'form': form})

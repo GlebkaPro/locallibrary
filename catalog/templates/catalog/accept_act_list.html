@@ -9,7 +9,6 @@
       <thead>
         <tr>
           <th>Дата</th>
-          <!-- Добавьте другие заголовки столбцов по вашему усмотрению -->
           <th>Действия</th>
         </tr>
       </thead>
@@ -17,11 +16,9 @@
         {% for accept_act in accept_acts %}
           <tr>
             <td>{{ accept_act.current_date }}</td>
-            <!-- Добавьте другие ячейки данных по вашему усмотрению -->
             <td>
               <a href="{% url 'add_position_accept_act' pk=accept_act.pk %}">Добавить позицию</a>
               <a href="{% url 'edit_accept_act' pk=accept_act.pk %}">Изменить</a>
-              <!-- Добавьте другие действия по вашему усмотрению -->
             </td>
           </tr>
         {% endfor %}

@@ -11,6 +11,10 @@ urlpatterns = [
   path('book/<int:book_id>/delete/', views.delete_book, name='delete-book'),
   path('add/genre/', views.add_genre, name='add-genre'),
   path('add/language/', views.add_language, name='add-language'),
+  path('create_book_exemplar/', views.create_book_exemplar, name='create_book_exemplar'),
+  path('list_book_exemplar/', views.list_book_exemplar, name='list_book_exemplar'),
+  path('list_publishers/', views.list_publishers, name='list_publishers'),
+  path('create_publisher/', views.create_publisher, name='create_publisher'),
 ]
 
 urlpatterns += [
@@ -23,8 +27,8 @@ urlpatterns += [
 ]
 
 urlpatterns += [
-  path('create_user/', views.create_user, name='create_user'),  # Добавление пользователя
-  path('user_list/', views.user_list, name='user_list'),  # список пользователей
+  path('create_user/', views.create_user, name='create_user'),
+  path('user_list/', views.user_list, name='user_list'),
 ]
 
 urlpatterns += [
