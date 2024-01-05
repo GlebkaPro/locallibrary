@@ -9,21 +9,21 @@
     {{ accounting_form.as_p }}
     <table class="table">
       <thead>
-        <tr>
-          <th>Книга</th>
-          <th>Штамп</th>
-          <th>Позиция акта</th>
-        </tr>
+      <tr>
+        <th>Книга</th>
+        <th>Штамп</th>
+        <th>Позиция акта</th>
+      </tr>
       </thead>
       <tbody>
-        {% for form in extra_forms %}
-          {{ form.management_form }} {# Добавляем управляющую форму для правильной обработки форм в представлении #}
-          <tr>
-            <td>{{ form.book }}</td>
-            <td>{{ form.imprint }}</td>
-            <td>{{ form.positionAcceptAct }}</td>
-          </tr>
-        {% endfor %}
+      {{ book_copy_formset.management_form }}
+      {% for form in book_copy_formset %}
+        <tr>
+          <td>{{ form.book }}</td>
+          <td>{{ form.imprint }}</td>
+          <td>{{ form.positionAcceptAct }}</td>
+        </tr>
+      {% endfor %}
       </tbody>
     </table>
     <button type="submit">Провести учёт</button>

@@ -647,6 +647,7 @@ from django.views import View
 from .models import AccountingBookCopy, BookCopy
 from .forms import AccountingBookCopyForm, BookCopyForm
 from django.urls import reverse
+from django.forms import formset_factory
 
 from django.urls import reverse
 
@@ -656,39 +657,44 @@ class CreateAccountingView(View):
 
   def get(self, request, pk):
     position_accept_act = get_object_or_404(PositionAcceptAct, pk=pk)
-    size = request.GET.get('size', 0)  # Получаем значение параметра size из запроса
+    size = request.GET.get('size', 0)
     size = int(size) if size.isdigit() and int(size) > 0 else 0
 
     accounting_form = AccountingBookCopyForm()
-    book_copy_form = BookCopyForm(initial={
-      'book': position_accept_act.exemplar.book,
-      'positionAcceptAct': position_accept_act
-    })
 
-    # Создаем список форм, основываясь на значении параметра size
-    extra_forms = [BookCopyForm(initial={
-      'book': position_accept_act.exemplar.book,
-      'positionAcceptAct': position_accept_act
-    }) for _ in range(size)]
+    # Create a BookCopyForm formset based on the value of size
+    BookCopyFormSet = formset_factory(BookCopyForm, extra=size)
 
     context = {'position_accept_act': position_accept_act, 'accounting_form': accounting_form,
-               'book_copy_form': book_copy_form, 'extra_forms': extra_forms}
+               'book_copy_formset': BookCopyFormSet(prefix='book_copy_forms')}
     return render(request, self.template_name, context)
 
   def post(self, request, pk):
     position_accept_act = get_object_or_404(PositionAcceptAct, pk=pk)
     accounting_form = AccountingBookCopyForm(request.POST)
-    book_copy_form = BookCopyForm(request.POST)
-    if accounting_form.is_valid() and book_copy_form.is_valid():
+
+    # Check if the accounting form is valid
+    if accounting_form.is_valid():
+      # Save the accounting form
       accounting_book_copy = accounting_form.save()
-      book_copy = book_copy_form.save(commit=False)
-      book_copy.accountingBookCopy = accounting_book_copy
-      book_copy.save()
 
-      # Получим параметр 'next' из запроса (если есть), если нет - перенаправим на редактирование акта
-      redirect_url = request.GET.get('next', reverse('edit_accept_act', kwargs={'pk': pk}))
-      return redirect(redirect_url)
+      # Create a BookCopyForm formset
+      BookCopyFormSet = formset_factory(BookCopyForm, extra=0)
 
+      # Check if the formset is valid
+      formset = BookCopyFormSet(request.POST, prefix='book_copy_forms')
+      if formset.is_valid():
+        # Save data from each form in the formset
+        for form in formset:
+          book_copy = form.save(commit=False)
+          book_copy.accountingBookCopy = accounting_book_copy
+          book_copy.save()
+
+        # Your existing code for redirection
+        redirect_url = request.GET.get('next', reverse('edit_accept_act', kwargs={'pk': pk}))
+        return redirect(redirect_url)
+
+    # Handle form validation errors
     return render(request, self.template_name,
                   {'position_accept_act': position_accept_act, 'accounting_form': accounting_form,
-                   'book_copy_form': book_copy_form})
+                   'book_copy_formset': formset})
