@@ -717,3 +717,4 @@ class CreateAccountingView(View):
     return render(request, self.template_name,
                   {'position_accept_act': position_accept_act, 'accounting_form': accounting_form,
                    'book_copy_formset': formset})
+
