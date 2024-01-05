@@ -229,3 +229,4 @@ class BookCopyForm(forms.ModelForm):
   class Meta:
     model = BookCopy
     fields = ['book', 'imprint', 'positionAcceptAct']
+

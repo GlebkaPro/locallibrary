@@ -12,4 +12,26 @@
     
     <button type="submit">Провести учёт</button>
   </form>
+
+  <h2>Данные по учёту копии книги</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Сотрудник</th>
+        <th>Дата создания</th>
+        <th>Книга</th>
+        <th>Штамп</th>
+        <th>Позиция акта</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{ accounting_form.worker }}</td>
+        <td>{{ accounting_form.date_of_creation }}</td>
+        <td>{{ book_copy_form.book }}</td>
+        <td>{{ book_copy_form.imprint }}</td>
+        <td>{{ book_copy_form.positionAcceptAct }}</td>
+      </tr>
+    </tbody>
+  </table>
 {% endblock %}
