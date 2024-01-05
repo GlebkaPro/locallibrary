@@ -648,6 +648,8 @@ from .models import AccountingBookCopy, BookCopy
 from .forms import AccountingBookCopyForm, BookCopyForm
 from django.urls import reverse
 
+from django.urls import reverse
+
 
 class CreateAccountingView(View):
   template_name = 'catalog/create_accounting.html'
@@ -680,3 +682,4 @@ class CreateAccountingView(View):
     return render(request, self.template_name,
                   {'position_accept_act': position_accept_act, 'accounting_form': accounting_form,
                    'book_copy_form': book_copy_form})
+
