@@ -1,0 +1,15 @@
+<!-- create_accounting.html -->
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Провести учёт</h1>
+  
+  <form method="post" action="">
+    {% csrf_token %}
+    {{ accounting_form.as_p }}
+    
+    {{ book_copy_form.as_p }}
+    
+    <button type="submit">Провести учёт</button>
+  </form>
+{% endblock %}

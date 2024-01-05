@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.forms import DateInput
 from django.utils.translation import gettext_lazy as _
 import datetime
-from .models import Book, Author, BookCopy, BookInstance, Genre, Language, BookExemplar
+from .models import Book, Author, BookCopy, BookInstance, Genre, Language, BookExemplar, AccountingBookCopy
 from django.core.exceptions import ValidationError
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
@@ -217,3 +217,15 @@ class PublisherForm(forms.ModelForm):
     class Meta:
         model = Publisher
         fields = '__all__'
+
+
+class AccountingBookCopyForm(forms.ModelForm):
+  class Meta:
+    model = AccountingBookCopy
+    fields = ['worker', 'date_of_creation']
+
+
+class BookCopyForm(forms.ModelForm):
+  class Meta:
+    model = BookCopy
+    fields = ['book', 'imprint', 'positionAcceptAct']

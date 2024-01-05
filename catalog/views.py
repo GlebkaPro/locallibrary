@@ -683,3 +683,5 @@ class CreateAccountingView(View):
                   {'position_accept_act': position_accept_act, 'accounting_form': accounting_form,
                    'book_copy_form': book_copy_form})
 
+
+
