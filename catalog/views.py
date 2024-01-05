@@ -662,11 +662,30 @@ class CreateAccountingView(View):
 
     accounting_form = AccountingBookCopyForm()
 
-    # Create a BookCopyForm formset based on the value of size
-    BookCopyFormSet = formset_factory(BookCopyForm, extra=size)
+    # Create initial data for BookCopyForm
+    initial_data = {
+      'book': position_accept_act.exemplar.book,
+      'positionAcceptAct': position_accept_act
+    }
 
-    context = {'position_accept_act': position_accept_act, 'accounting_form': accounting_form,
-               'book_copy_formset': BookCopyFormSet(prefix='book_copy_forms')}
+    # Calculate max_num based on size
+    max_num = size if size > 0 else None
+
+    # Create a BookCopyForm formset with initial data and max_num
+    BookCopyFormSet = formset_factory(
+      BookCopyForm, extra=size, max_num=max_num, can_order=False
+    )
+    book_copy_formset = BookCopyFormSet(
+      initial=[initial_data for _ in range(size)],
+      prefix='book_copy_forms'
+    )
+
+    context = {
+      'position_accept_act': position_accept_act,
+      'accounting_form': accounting_form,
+      'book_copy_formset': book_copy_formset
+    }
+
     return render(request, self.template_name, context)
 
   def post(self, request, pk):
