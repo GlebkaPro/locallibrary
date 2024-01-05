@@ -109,7 +109,8 @@ class BookCopy(models.Model):
 
   def __str__(self):
     """Строка для представления объекта модели."""
-    return '{0} ({1})'.format(self.id, self.book.title)
+    title = self.book.title if self.book else 'Нет названия книги'
+    return '{0} ({1})'.format(self.id, title)
 
 
 class BookInstance(models.Model):
