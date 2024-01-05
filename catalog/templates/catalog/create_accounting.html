@@ -7,27 +7,25 @@
   <form method="post" action="">
     {% csrf_token %}
     {{ accounting_form.as_p }}
-  <h2>Данные по учёту копии книги</h2>
-  <table class="table">
-    <thead>
-    <tr>
-      <th>Сотрудник</th>
-      <th>Дата создания</th>
-      <th>Книга</th>
-      <th>Штамп</th>
-      <th>Позиция акта</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-      <td>{{ accounting_form.worker }}</td>
-      <td>{{ accounting_form.date_of_creation }}</td>
-      <td>{{ book_copy_form.book }}</td>
-      <td>{{ book_copy_form.imprint }}</td>
-      <td>{{ book_copy_form.positionAcceptAct }}</td>
-    </tr>
-    </tbody>
-  </table>
-  <button type="submit">Провести учёт</button>
-    </form>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Книга</th>
+          <th>Штамп</th>
+          <th>Позиция акта</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for form in extra_forms %}
+          {{ form.management_form }} {# Добавляем управляющую форму для правильной обработки форм в представлении #}
+          <tr>
+            <td>{{ form.book }}</td>
+            <td>{{ form.imprint }}</td>
+            <td>{{ form.positionAcceptAct }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <button type="submit">Провести учёт</button>
+  </form>
 {% endblock %}

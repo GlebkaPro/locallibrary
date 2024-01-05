@@ -24,20 +24,22 @@
       <tbody>
       {% for position_accept_act in position_accept_acts %}
         <tr>
-          <td>{{ position_accept_act.price }}</td>
-          <td>{{ position_accept_act.size }}</td>
-          <td>{{ position_accept_act.exemplar }}</td>
-          <td><a href="{% url 'edit_position_accept_act' pk=position_accept_act.pk %}">Изменить</a></td>
-          <td>
-            <form method="post" action="{% url 'delete_position_accept_act' pk=position_accept_act.pk %}">
-              {% csrf_token %}
-              <button type="submit">Удалить</button>
-            </form>
-          </td>
-          <td><a
-            href="{% url 'create_accounting' position_accept_act.pk %}?next={% url 'edit_accept_act' pk=accept_act.pk %}">Провести
-            учёт</a></td>
-        </tr>
+        <td>{{ position_accept_act.price }}</td>
+        <td>{{ position_accept_act.size }}</td>
+        <td>{{ position_accept_act.exemplar }}</td>
+        <td><a href="{% url 'edit_position_accept_act' pk=position_accept_act.pk %}">Изменить</a></td>
+        <td>
+          <form method="post" action="{% url 'delete_position_accept_act' pk=position_accept_act.pk %}">
+            {% csrf_token %}
+            <button type="submit">Удалить</button>
+          </form>
+        </td>
+        <td>
+          <a
+            href="{% url 'create_accounting' position_accept_act.pk %}?next={% url 'edit_accept_act' pk=accept_act.pk %}&size={{ position_accept_act.size }}">Провести
+            учёт</a>
+        </td>
+
       {% endfor %}
       </tbody>
     </table>
