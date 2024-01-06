@@ -6,30 +6,28 @@
   <form method="post" action="">
     {% csrf_token %}
     {{ form.as_p }}
-    
+
     {{ position_formset.management_form }}
-    
-    <table id="positions_table">
-      <thead>
-        <tr>
-          <th>Цена</th>
-          <th>Количество</th>
-          <th>Экземпляр</th>
-          <th>Действия</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for form in position_formset.forms %}
-          <tr class="formset_row">
-            <td>{{ form.price }}</td>
-            <td>{{ form.size }}</td>
-            <td>{{ form.exemplar }}</td>
-            <td><button type="button" onclick="removeRow(this)">Удалить</button></td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    
+
+<table id="positions_table">
+  <thead>
+    <tr>
+      <th>Цена</th>
+      <th>Количество</th>
+      <th>Экземпляр</th>
+      <th>Действия</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="formset_row">
+      <td><input type="text" name="{{ position_formset.prefix }}-0-price"></td>
+      <td><input type="text" name="{{ position_formset.prefix }}-0-size"></td>
+      <td><select name="{{ position_formset.prefix }}-0-exemplar">{% for exemplar in position_formset.empty_form.exemplar.field.queryset %}<option value="{{ exemplar.pk }}">{{ exemplar }}</option>{% endfor %}</select></td>
+      <td><button type="button" onclick="removeRow(this)">Удалить</button></td>
+    </tr>
+  </tbody>
+</table>
+
     <button type="button" onclick="addPosition()">Добавить позицию</button>
     <button type="submit">Создать</button>
   </form>

@@ -235,7 +235,7 @@ class BookExemplar(models.Model):
   )
 
   publication_type = models.CharField(
-    max_length=1, choices=ACCEPT_publication_type, blank=True, default='р', verbose_name='Тип издания')
+    max_length=1, choices=ACCEPT_publication_type, blank=True, default='к', verbose_name='Тип издания')
 
   def __str__(self):
     return f"{self.publisher} - {self.book} - {self.date_of_manufacture} "

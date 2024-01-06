@@ -512,13 +512,18 @@ class CreateAcceptActView(View):
   def post(self, request):
     form = AcceptActForm(request.POST)
     position_formset = PositionAcceptActFormSet(request.POST)
+
     if form.is_valid() and position_formset.is_valid():
       accept_act = form.save()
+
       for position_form in position_formset:
-        position = position_form.save(commit=False)
-        position.accept_act = accept_act
-        position.save()
+        if position_form.cleaned_data:  # Проверяем, есть ли данные в форме
+          position = position_form.save(commit=False)
+          position.accept_act = accept_act
+          position.save()
+
       return redirect('accept_act_list')
+
     return render(request, 'catalog/create_accept_act.html', {'form': form, 'position_formset': position_formset})
 
 
