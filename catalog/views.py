@@ -527,6 +527,7 @@ class CreateAcceptActView(View):
     return render(request, 'catalog/create_accept_act.html', {'form': form, 'position_formset': position_formset})
 
 
+
 class AddPositionAcceptActView(View):
   def get(self, request, pk):
     accept_act = AcceptAct.objects.get(pk=pk)
