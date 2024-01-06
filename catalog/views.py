@@ -4,22 +4,25 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import Q
+from django.forms import formset_factory
 from django.http import Http404
+from django.urls import reverse
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-
+from django.views import View
+from django.shortcuts import redirect, get_object_or_404
 from catalog.forms import RenewBookForm, BookInstanceEditForm, GenreForm, LanguageForm
-from .forms import UserRegistrationForm, BookCopyForm, BookInstanceForm, AddBookForm, EditBookForm, AuthorForm, \
-  ProfileUserForm
-from .models import Book, BookCopy, BookInstance, Author, Genre, Language
-
-from .forms import PositionAcceptActFormSet
-from .models import AcceptAct
 from .forms import AcceptActForm
-from django.shortcuts import get_object_or_404
+from .forms import AccountingBookCopyForm, BookCopyForm
 from .forms import BookExemplarForm
+from .forms import PositionAcceptActFormSet
+from .forms import UserRegistrationForm, BookInstanceForm, AddBookForm, EditBookForm, AuthorForm, \
+  ProfileUserForm
+from .models import AcceptAct
+from .models import Book, BookInstance, Author, Genre, Language
+from .models import BookCopy
 from .models import BookExemplar
 
 
@@ -545,7 +548,6 @@ class AddPositionAcceptActView(View):
 
 
 # views.py
-from django.shortcuts import render, redirect, get_object_or_404
 from .models import PositionAcceptAct
 from .forms import PositionAcceptActForm
 
@@ -609,7 +611,7 @@ def list_book_exemplar(request):
   return render(request, 'catalog/list_book_exemplar.html', {'book_exemplars': book_exemplars})
 
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from .models import Publisher
 from .forms import PublisherForm
 
@@ -630,10 +632,6 @@ def create_publisher(request):
   return render(request, 'catalog/create_publisher.html', {'form': form})
 
 
-from django.views import View
-from django.shortcuts import redirect, get_object_or_404
-
-
 class DeletePositionAcceptActView(View):
   def post(self, request, pk):
     position_accept_act = get_object_or_404(PositionAcceptAct, pk=pk)
@@ -641,24 +639,8 @@ class DeletePositionAcceptActView(View):
     position_accept_act.delete()
     return redirect('edit_accept_act', pk=accept_act_pk)
 
-
-# Ваши импорты
-from django.shortcuts import render
-from django.views import View
-from .models import PositionAcceptAct, AccountingBookCopy, BookCopy
-
-from django.shortcuts import render, redirect
-from django.views import View
-from .models import AccountingBookCopy, BookCopy
-from .forms import AccountingBookCopyForm, BookCopyForm
-from django.urls import reverse
-from django.forms import formset_factory
-
-from django.urls import reverse
-
-
 class CreateAccountingView(View):
-  template_name = 'catalog/create_accounting.html'
+  template_name = 'accouting/create_accounting.html'
 
   def get(self, request, pk):
     position_accept_act = get_object_or_404(PositionAcceptAct, pk=pk)

@@ -275,4 +275,4 @@ class PositionDebitingAct(models.Model):
                                    verbose_name='Акт о приёме')
 
   def __str__(self):
-    return f"{self.price} - {self.exemplar}"
+    return f"{self.price} - {self.debiting_exemplar}"
