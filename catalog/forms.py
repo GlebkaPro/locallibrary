@@ -102,19 +102,19 @@ class BookInstanceEditForm(forms.ModelForm):
 
 
 class AddBookForm(forms.ModelForm):
-  genres = forms.MultipleChoiceField(
-    required=False,
-    widget=forms.CheckboxSelectMultiple,
-    choices=Genre.objects.all().values_list('id', 'name'),
-  )
+  # genres = forms.MultipleChoiceField(
+  #   required=False,
+  #   widget=forms.CheckboxSelectMultiple,
+  #   choices=Genre.objects.all().values_list('id', 'name'),
+  # )
   new_genre = forms.CharField(max_length=200, required=False)
 
   # Валидация для нового жанра
-  def clean_new_genre(self):
-    new_genre = self.cleaned_data['new_genre']
-    if new_genre and Genre.objects.filter(name=new_genre).exists():
-      raise forms.ValidationError("Такой жанр уже существует.")
-    return new_genre
+  # def clean_new_genre(self):
+  #   new_genre = self.cleaned_data['new_genre']
+  #   if new_genre and Genre.objects.filter(name=new_genre).exists():
+  #     raise forms.ValidationError("Такой жанр уже существует.")
+  #   return new_genre
 
   class Meta:
     model = Book

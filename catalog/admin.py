@@ -2,8 +2,8 @@ from django.contrib import admin
 
 # Register your models here.
 
-from .models import Author, Genre, Book, BookInstance, Language, BookCopy, AcceptAct, PositionAcceptAct, Source, \
-  FizPersonSource, BookExemplar, Publisher
+from .models import Author, Book, BookInstance, Language, BookCopy, AcceptAct, PositionAcceptAct, Source, \
+  FizPersonSource, BookExemplar, Publisher, Genre
 from users.models import User
 # Minimal registration of Models.
 admin.site.register(Book)
