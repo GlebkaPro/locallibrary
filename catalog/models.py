@@ -88,6 +88,7 @@ class AccountingBookCopy(models.Model):
     """Строка для представления объекта модели."""
     return '{0} ({1})'.format(self.id, self.worker, self.date_of_creation)
 
+
 class BookCopy(models.Model):
   """Модель, представляющая учтённую копию книги (т. е. которой проставлен штамм)."""
   id = models.UUIDField(primary_key=True, default=uuid.uuid4,
@@ -97,7 +98,7 @@ class BookCopy(models.Model):
   positionAcceptAct = models.ForeignKey('PositionAcceptAct', on_delete=models.RESTRICT, null=True,
                                         verbose_name='Позиция акта послупления')
   accountingBookCopy = models.ForeignKey('AccountingBookCopy', on_delete=models.RESTRICT, null=True,
-                                        verbose_name='Позиция учёта экземпляра')
+                                         verbose_name='Позиция учёта экземпляра')
   LOAN_STATUS = (
     ('р', 'Выдано'),
     ('д', 'Доступно'),
@@ -246,3 +247,32 @@ class Publisher(models.Model):
 
   def __str__(self):
     return f"{self.name}"
+
+
+class DebitingAct(models.Model):
+  current_date = models.DateField(default=timezone.now, verbose_name='Текущая дата')
+  worker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+                             verbose_name='Сотрудник')
+  ACCEPT_TIP = (
+    ('а', 'Амортизация'),
+    ('у', 'Устаревание'),
+    ('п', 'Повреждение'),
+    ('у', 'Утрата'),
+  )
+
+  Tip = models.CharField(
+    max_length=1, choices=ACCEPT_TIP, blank=True, default='п', verbose_name='Тип списания')
+
+  def __str__(self):
+    return f"{self.current_date} - {self.worker}"
+
+
+class PositionDebitingAct(models.Model):
+  price = models.CharField(verbose_name='Цена', max_length=100)
+  debiting_exemplar = models.ForeignKey('BookCopy', on_delete=models.SET_NULL, null=True, blank=True,
+                                        verbose_name='Учтённый экземпляр')
+  debiting_act = models.ForeignKey('DebitingAct', on_delete=models.CASCADE, related_name='position_debiting_acts',
+                                   verbose_name='Акт о приёме')
+
+  def __str__(self):
+    return f"{self.price} - {self.exemplar}"
