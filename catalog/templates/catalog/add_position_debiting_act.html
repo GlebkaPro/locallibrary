@@ -1,0 +1,11 @@
+<!-- ваш_проект/templates/your_app/add_position_debiting_act.html -->
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Добавить позицию акта списания</h1>
+  <form method="post" action="">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Добавить</button>
+  </form>
+{% endblock %}

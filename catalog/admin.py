@@ -3,7 +3,7 @@ from django.contrib import admin
 # Register your models here.
 
 from .models import Author, Book, BookInstance, Language, BookCopy, AcceptAct, PositionAcceptAct, Source, \
-  FizPersonSource, BookExemplar, Publisher, Genre
+  FizPersonSource, BookExemplar, Publisher, Genre, DebitingAct, PositionDebitingAct
 from users.models import User
 # Minimal registration of Models.
 admin.site.register(Book)
@@ -19,6 +19,9 @@ admin.site.register(Source)
 admin.site.register(FizPersonSource)
 admin.site.register(Publisher)
 admin.site.register(BookExemplar)
+admin.site.register(DebitingAct)
+admin.site.register(PositionDebitingAct)
+
 
 # admin.site.register(AuthorAdmin)
 #

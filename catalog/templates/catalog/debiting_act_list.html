@@ -1,0 +1,32 @@
+<!-- ваш_проект/templates/your_app/debiting_act_list.html -->
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Список актов списания</h1>
+  <a href="{% url 'create_debiting_act' %}">Создать AcceptAct</a>
+
+  {% if debiting_acts %}
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Дата</th>
+        <th>Сотрудник</th>
+        <th>Действия</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for debiting_act in debiting_acts %}
+        <tr>
+          <td>{{ debiting_act.current_date }}</td>
+          <td>{{ debiting_act.worker }}</td>
+          <td>
+            <a href="{% url 'edit_debiting_act' pk=debiting_act.pk %}">Изменить</a>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>Нет доступных актов списания.</p>
+  {% endif %}
+{% endblock %}

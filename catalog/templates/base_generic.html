@@ -32,6 +32,7 @@
     </a>
     <ul class="nav nav-pills">
       <li class="nav-item" style="margin-right: 10px"><a href="{% url 'accept_act_list' %}" class="nav-link link-color border ">Акты приёма</a></li>
+      <li class="nav-item" style="margin-right: 10px"><a href="{% url 'debiting_act_list' %}" class="nav-link link-color border ">Акты списания</a></li>
       <li class="nav-item" style="margin-right: 10px"><a href="{% url 'books' %}" class="nav-link link-color border ">Каталог</a></li>
       <li class="nav-item" style="margin-right: 10px"><a href="{% url 'authors' %}" class="nav-link link-color border ">Авторы</a></li>
       {% if user.is_authenticated %}

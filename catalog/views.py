@@ -13,7 +13,7 @@ from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views import View
 from django.shortcuts import redirect, get_object_or_404
-from catalog.forms import RenewBookForm, BookInstanceEditForm, GenreForm, LanguageForm
+from catalog.forms import RenewBookForm, BookInstanceEditForm, GenreForm, LanguageForm, PositionDebitingActForm
 from .forms import AcceptActForm
 from .forms import AccountingBookCopyForm, BookCopyForm
 from .forms import BookExemplarForm
@@ -639,6 +639,7 @@ class DeletePositionAcceptActView(View):
     position_accept_act.delete()
     return redirect('edit_accept_act', pk=accept_act_pk)
 
+
 class CreateAccountingView(View):
   template_name = 'accouting/create_accounting.html'
 
@@ -705,3 +706,164 @@ class CreateAccountingView(View):
                   {'position_accept_act': position_accept_act, 'accounting_form': accounting_form,
                    'book_copy_formset': formset})
 
+
+from django.shortcuts import render, redirect
+from django.views import View
+from .models import DebitingAct, PositionDebitingAct
+from .forms import DebitingActForm, PositionDebitingActFormSet
+
+
+class CreateDebitingActView(View):
+  template_name = 'catalog/create_debiting_act.html'
+
+  def get(self, request):
+    debiting_form = DebitingActForm()
+    position_formset = PositionDebitingActFormSet(prefix='position_formset')
+
+    context = {
+      'debiting_form': debiting_form,
+      'position_formset': position_formset,
+    }
+
+    return render(request, self.template_name, context)
+
+  def post(self, request):
+    debiting_form = DebitingActForm(request.POST)
+    position_formset = PositionDebitingActFormSet(request.POST, prefix='position_formset')
+
+    if debiting_form.is_valid() and position_formset.is_valid():
+      debiting_act = debiting_form.save()
+
+      for form in position_formset:
+        position = form.save(commit=False)
+        position.debiting_act = debiting_act
+        position.save()
+
+      return redirect('debiting_act_list')  # Change 'your_success_url' to your actual success URL
+
+    context = {
+      'debiting_form': debiting_form,
+      'position_formset': position_formset,
+    }
+
+    return render(request, self.template_name, context)
+
+
+# ваш_проект/views.py
+from django.shortcuts import render
+from django.views import View
+from .models import DebitingAct
+
+
+class DebitingActListView(View):
+  template_name = 'catalog/debiting_act_list.html'
+
+  def get(self, request):
+    debiting_acts = DebitingAct.objects.all()
+
+    context = {
+      'debiting_acts': debiting_acts,
+    }
+
+    return render(request, self.template_name, context)
+
+
+# ваш_проект/views.py
+from django.shortcuts import render, get_object_or_404, redirect
+from django.views import View
+from .models import DebitingAct, PositionDebitingAct
+from .forms import DebitingActForm, PositionDebitingActFormSet
+
+
+class EditDebitingActView(View):
+  template_name = 'catalog/edit_debiting_act.html'
+
+  def get(self, request, pk):
+    debiting_act = get_object_or_404(DebitingAct, pk=pk)
+    position_debiting_acts = PositionDebitingAct.objects.filter(debiting_act=debiting_act)
+    debiting_form = DebitingActForm(instance=debiting_act)
+
+    context = {
+      'debiting_act': debiting_act,
+      'debiting_form': debiting_form,
+      'position_debiting_acts': position_debiting_acts,
+    }
+
+    return render(request, self.template_name, context)
+
+  def post(self, request, pk):
+    debiting_act = get_object_or_404(DebitingAct, pk=pk)
+    debiting_form = DebitingActForm(request.POST, instance=debiting_act)
+
+    if debiting_form.is_valid():
+      debiting_form.save()
+      return redirect('edit_debiting_act', pk=pk)
+
+    # Если форма не валидна, вернуть ее с ошибками
+    position_debiting_acts = PositionDebitingAct.objects.filter(debiting_act=debiting_act)
+    context = {
+      'debiting_act': debiting_act,
+      'debiting_form': debiting_form,
+      'position_debiting_acts': position_debiting_acts,
+    }
+    return render(request, self.template_name, context)
+
+
+class EditPositionDebitingActView(View):
+  template_name = 'catalog/edit_position_debiting_act.html'
+
+  def get(self, request, pk):
+    position_debiting_act = get_object_or_404(PositionDebitingAct, pk=pk)
+    form = PositionDebitingActForm(instance=position_debiting_act)
+
+    context = {
+      'position_debiting_act': position_debiting_act,
+      'form': form,
+    }
+
+    return render(request, self.template_name, context)
+
+  def post(self, request, pk):
+    position_debiting_act = get_object_or_404(PositionDebitingAct, pk=pk)
+    form = PositionDebitingActForm(request.POST, instance=position_debiting_act)
+
+    if form.is_valid():
+      form.save()
+      return redirect('edit_debiting_act', pk=position_debiting_act.debiting_act.pk)
+
+    # Если форма не валидна, вернуть ее с ошибками
+    context = {
+      'position_debiting_act': position_debiting_act,
+      'form': form,
+    }
+    return render(request, self.template_name, context)
+
+
+class AddPositionDebitingActView(View):
+  template_name = 'catalog/add_position_debiting_act.html'
+
+  def get(self, request, pk):
+    form = PositionDebitingActForm()
+    context = {'form': form}
+    return render(request, self.template_name, context)
+
+  def post(self, request, pk):
+    form = PositionDebitingActForm(request.POST)
+
+    if form.is_valid():
+      position_debiting_act = form.save(commit=False)
+      position_debiting_act.debiting_act_id = pk
+      position_debiting_act.save()
+      return redirect('edit_debiting_act', pk=pk)
+
+    # Если форма не валидна, вернуть ее с ошибками
+    context = {'form': form}
+    return render(request, self.template_name, context)
+
+
+class DeletePositionDebitingActView(View):
+  def post(self, request, pk):
+    position_debiting_act = get_object_or_404(PositionDebitingAct, pk=pk)
+    debiting_act_pk = position_debiting_act.debiting_act.pk
+    position_debiting_act.delete()
+    return redirect('edit_debiting_act', pk=debiting_act_pk)

@@ -65,4 +65,13 @@ urlpatterns += [
   path('delete_position_accept_act/<int:pk>/', views.DeletePositionAcceptActView.as_view(),
        name='delete_position_accept_act'),
   path('create_accounting/<int:pk>/', views.CreateAccountingView.as_view(), name='create_accounting'),
+  path('create_debiting_act/', views.CreateDebitingActView.as_view(), name='create_debiting_act'),
+  path('debiting_act_list/', views.DebitingActListView.as_view(), name='debiting_act_list'),
+  path('edit_debiting_act/<int:pk>/', views.EditDebitingActView.as_view(), name='edit_debiting_act'),
+  path('add_position_debiting_act/<int:pk>/', views.AddPositionDebitingActView.as_view(),
+       name='add_position_debiting_act'),
+  path('edit_position_debiting_act/<int:pk>/', views.EditPositionDebitingActView.as_view(),
+       name='edit_position_debiting_act'),
+  path('delete_position_debiting_act/<int:pk>/', views.DeletePositionDebitingActView.as_view(),
+       name='delete_position_debiting_act'),
 ]

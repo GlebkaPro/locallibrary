@@ -1,0 +1,70 @@
+<!-- create_debiting_act.html -->
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Создать DebitingAct</h1>
+  <form method="post" action="">
+    {% csrf_token %}
+    {{ debiting_form.as_p }}
+
+    {{ position_formset.management_form }}
+
+    <table id="positions_table">
+      <thead>
+      <tr>
+        <th>Цена</th>
+        <th>Экземпляр</th>
+        <th>Действия</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr class="formset_row">
+        <td><input type="text" name="{{ position_formset.prefix }}-0-price"></td>
+        <td><select name="{{ position_formset.prefix }}">
+          {% for exemplar in position_formset.empty_form.debiting_exemplar.field.queryset %}
+            <option value="{{ exemplar.pk }}">{{ exemplar }}</option>{% endfor %}</select></td>
+        <td>
+          <button type="button" onclick="removeRow(this)">Удалить</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <button type="button" onclick="addPosition()">Добавить позицию</button>
+    <button type="submit">Создать</button>
+  </form>
+
+<!-- create_debiting_act.html (шаблон №1) -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script>
+    function addPosition() {
+      var formsetPrefix = '{{ position_formset.prefix }}';
+      var totalForms = $('#id_' + formsetPrefix + '-TOTAL_FORMS');
+      var newFormIndex = parseInt(totalForms.val());
+
+      // Создаем новую строку с правильными индексами
+      var newRow = $('<tr class="formset_row">' +
+                    '<td><input type="text" name="' + formsetPrefix + '-' + newFormIndex + '-price"></td>' +
+                    '<td><select name="' + formsetPrefix + '-' + newFormIndex + '-exemplar">{% for debiting_exemplar in position_formset.empty_form.debiting_exemplar.field.queryset %}<option value="{{ debiting_exemplar.pk }}">{{ debiting_exemplar }}</option>{% endfor %}</select></td>' +
+                    '<td><button type="button" onclick="removeRow(this)">Удалить</button></td>' +
+                    '</tr>');
+
+      // Обновляем индексы и атрибуты для новой строки
+      newRow.find('input, select, textarea').each(function() {
+        var nameAttr = $(this).attr('name');
+        $(this).attr('name', nameAttr.replace('-' + (newFormIndex - 1) + '-', '-' + newFormIndex + '-'));
+      });
+
+      // Вставляем новую строку в конец таблицы
+      $('#positions_table tbody').append(newRow);
+
+      // Обновляем общее количество форм в формсете
+      totalForms.val(newFormIndex + 1);
+    }
+
+    function removeRow(button) {
+      $(button).closest('tr').remove();
+    }
+  </script>
+
+{% endblock %}
