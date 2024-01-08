@@ -83,6 +83,7 @@ class AuthorListView(generic.ListView):
   """Общий класс-представление для списка авторов."""
   model = Author
   paginate_by = 10
+  template_name = 'authors/author_list.html'
 
   def get_queryset(self):
     query = self.request.GET.get('search', '')
@@ -99,7 +100,7 @@ class AuthorListView(generic.ListView):
 class AuthorDetailView(generic.DetailView):
   """Общий класс-представление для детальной информации об авторе."""
   model = Author
-
+  template_name = 'authors/author_detail.html'
 
 class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
   """Общий класс-представление для списка книг, взятых на аренду текущим пользователем."""
@@ -180,7 +181,7 @@ class AuthorUpdate(PermissionRequiredMixin, UpdateView):
   model = Author
   fields = '__all__'  # Не рекомендуется (потенциальная проблема безопасности, если добавляются новые поля)
   permission_required = 'catalog.can_mark_returned'
-  template_name = 'catalog/author_edit.html'
+  template_name = 'authors/author_edit.html'
   success_url = reverse_lazy('authors')  # URL для перенаправления после успешного редактирования автора
 
   def get_initial(self):
@@ -198,7 +199,7 @@ class AuthorDelete(PermissionRequiredMixin, DeleteView):
   model = Author
   success_url = reverse_lazy('authors')
   permission_required = 'catalog.can_mark_returned'
-  template_name = 'catalog/author_confirm_delete.html'  # Создайте шаблон подтверждения удаления автора
+  template_name = 'authors/author_confirm_delete.html'  # Создайте шаблон подтверждения удаления автора
 
 
 class BookCreate(PermissionRequiredMixin, CreateView):
