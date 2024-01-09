@@ -868,3 +868,18 @@ class DeletePositionDebitingActView(View):
     debiting_act_pk = position_debiting_act.debiting_act.pk
     position_debiting_act.delete()
     return redirect('edit_debiting_act', pk=debiting_act_pk)
+
+# ваш_проект/views.py
+from django.views.generic import ListView
+from .models import BookInstance
+
+class UserLoansListView(ListView):
+    model = BookInstance
+    # template_name = 'catalog/user_loans_list.html'
+    template_name = 'catalog/bookinstance_list_borrowed_all.html'
+
+    paginate_by = 10
+
+    def get_queryset(self):
+        user_id = self.kwargs['pk']
+        return BookInstance.objects.filter(borrower__id=user_id, status__in=['р', 'з']).order_by('due_back')

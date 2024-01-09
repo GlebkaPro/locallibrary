@@ -103,6 +103,7 @@ class BookCopy(models.Model):
     ('р', 'Выдано'),
     ('д', 'Доступно'),
     ('з', 'Зарезервировано'),
+    ('с', 'Списано'),
   )
 
   status = models.CharField(
