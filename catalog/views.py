@@ -740,6 +740,10 @@ class CreateDebitingActView(View):
         position.debiting_act = debiting_act
         position.save()
 
+        if position.debiting_exemplar:
+          position.debiting_exemplar.status = 'с'  # 'с' означает "Списано"
+          position.debiting_exemplar.save()
+
       return redirect('debiting_act_list')  # Change 'your_success_url' to your actual success URL
 
     context = {
