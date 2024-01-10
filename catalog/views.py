@@ -849,7 +849,11 @@ class AddPositionDebitingActView(View):
 
   def get(self, request, pk):
     form = PositionDebitingActForm()
-    context = {'form': form}
+    tip_choices = PositionDebitingAct.ACCEPT_TIP  # Получите значения выбора из модели
+    context = {
+      'form': form,
+      'tip_choices': tip_choices,  # Передайте значения выбора в контекст
+    }
     return render(request, self.template_name, context)
 
   def post(self, request, pk):

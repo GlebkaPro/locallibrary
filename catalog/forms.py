@@ -136,13 +136,6 @@ class AuthorForm(forms.ModelForm):
     model = Author
     fields = ['first_name', 'last_name', 'middle_name', 'date_of_birth', 'date_of_death']
 
-
-class BookCopyForm(forms.ModelForm):
-  class Meta:
-    model = BookCopy
-    fields = ['imprint']
-
-
 class ProfileUserForm(forms.ModelForm):
   username = forms.CharField(disabled=True, label='Логин', widget=forms.TextInput(attrs={'class': 'form-input'}))
   email = forms.CharField(disabled=True, label='E-mail', widget=forms.TextInput(attrs={'class': 'form-input'}))
@@ -237,12 +230,12 @@ from .models import DebitingAct, PositionDebitingAct
 class DebitingActForm(forms.ModelForm):
     class Meta:
         model = DebitingAct
-        fields = ['current_date', 'worker']
+        fields = ['number', 'current_date', 'worker']
 
 class PositionDebitingActForm(forms.ModelForm):
     class Meta:
         model = PositionDebitingAct
-        fields = ['price', 'debiting_exemplar']
+        fields = ['price', 'debiting_exemplar', 'Tip']
 
 PositionDebitingActFormSet = inlineformset_factory(
     DebitingAct, PositionDebitingAct,
