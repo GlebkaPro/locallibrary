@@ -237,7 +237,7 @@ from .models import DebitingAct, PositionDebitingAct
 class DebitingActForm(forms.ModelForm):
     class Meta:
         model = DebitingAct
-        fields = ['current_date', 'worker', 'Tip']
+        fields = ['current_date', 'worker']
 
 class PositionDebitingActForm(forms.ModelForm):
     class Meta:

@@ -185,6 +185,7 @@ class FizPersonSource(models.Model):
 
 
 class AcceptAct(models.Model):
+  number = models.CharField(verbose_name='Номер акта', max_length=100)
   current_date = models.DateField(default=timezone.now, verbose_name='Текущая дата')
   summa = models.CharField(verbose_name='Сумма', max_length=100)
   worker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
@@ -251,18 +252,10 @@ class Publisher(models.Model):
 
 
 class DebitingAct(models.Model):
+  number = models.CharField(verbose_name='Номер акта', max_length=100)
   current_date = models.DateField(default=timezone.now, verbose_name='Текущая дата')
   worker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
                              verbose_name='Сотрудник')
-  ACCEPT_TIP = (
-    ('а', 'Амортизация'),
-    ('с', 'Устаревание'),
-    ('п', 'Повреждение'),
-    ('у', 'Утрата'),
-  )
-
-  Tip = models.CharField(
-    max_length=1, choices=ACCEPT_TIP, blank=True, default='п', verbose_name='Тип списания')
 
   def __str__(self):
     return f"{self.current_date} - {self.worker}"
@@ -274,6 +267,14 @@ class PositionDebitingAct(models.Model):
                                         verbose_name='Учтённый экземпляр')
   debiting_act = models.ForeignKey('DebitingAct', on_delete=models.CASCADE, related_name='position_debiting_acts',
                                    verbose_name='Акт о приёме')
+  ACCEPT_TIP = (
+    ('а', 'Амортизация'),
+    ('с', 'Устаревание'),
+    ('п', 'Повреждение'),
+    ('у', 'Утрата'),
+  )
 
+  Tip = models.CharField(
+    max_length=1, choices=ACCEPT_TIP, blank=True, default='п', verbose_name='Тип списания')
   def __str__(self):
     return f"{self.price} - {self.debiting_exemplar}"
