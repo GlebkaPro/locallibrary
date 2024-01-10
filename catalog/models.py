@@ -175,7 +175,8 @@ class Author(models.Model):
 
 class Source(models.Model):
   name = models.CharField(verbose_name='наименование', max_length=100)
-
+  def __str__(self):
+    return f"{self.name}"
 
 class FizPersonSource(models.Model):
   first_name = models.CharField(verbose_name='Имя', max_length=100)

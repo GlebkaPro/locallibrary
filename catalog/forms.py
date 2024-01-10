@@ -179,7 +179,7 @@ class AcceptActForm(forms.ModelForm):
 
   class Meta:
     model = AcceptAct
-    fields = '__all__'
+    fields = ['number', 'summa', 'Tip', 'worker', 'source', 'current_date']
 
 PositionAcceptActFormSet = inlineformset_factory(AcceptAct, PositionAcceptAct, fields=('price', 'size', 'exemplar'))
 
@@ -192,10 +192,10 @@ class PositionAcceptActForm(forms.ModelForm):
     model = PositionAcceptAct
     fields = ['price', 'size', 'exemplar']
 
-  def __init__(self, *args, **kwargs):
-    super(PositionAcceptActForm, self).__init__(*args, **kwargs)
-    self.fields['exemplar'].queryset = BookExemplar.objects.all()
-    self.fields['exemplar'].widget.attrs.update({'class': 'form-control'})
+  # def __init__(self, *args, **kwargs):
+  #   super(PositionAcceptActForm, self).__init__(*args, **kwargs)
+  #   self.fields['exemplar'].queryset = BookExemplar.objects.all()
+  #   self.fields['exemplar'].widget.attrs.update({'class': 'form-control'})
 
 
 class BookExemplarForm(forms.ModelForm):

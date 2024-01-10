@@ -2,8 +2,8 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <h1>Список актов списания</h1>
-  <a href="{% url 'create_debiting_act' %}">Создать AcceptAct</a>
+  <h1>Список актов о списании</h1>
+  <a href="{% url 'create_debiting_act' %}">Создать акт о списании</a>
 
   {% if debiting_acts %}
     <table class="table">
