@@ -6,37 +6,42 @@
       {% csrf_token %}
       <input type="hidden" name="{{ debiting_form.worker.name }}" value="{{ request.user.pk }}">
       <input type="hidden" name="{{ debiting_form.current_date.name }}" value="{% now 'Y-m-d' %}">
-      
+
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h1>Редактировать акт о списании</h1>
         <div class="form-group d-flex align-items-center">
           <label for="{{ debiting_form.worker.id_for_label }}" class="mr-2">Сотрудник:</label>
           <p class="form-control-static mb-0">{{ request.user.username }}</p>
         </div>
-        <label for="{{ debiting_form.current_date.id_for_label }}" class="form-label ml-2">Дата: {{ debiting_form.current_date.value|date:'d.m.Y' }}</label>
-        <input type="hidden" name="{{ debiting_form.current_date.name }}" id="{{ debiting_form.current_date.id_for_label }}"
+        <label for="{{ debiting_form.current_date.id_for_label }}"
+               class="form-label ml-2">Дата: {{ debiting_form.current_date.value|date:'d.m.Y' }}</label>
+        <input type="hidden" name="{{ debiting_form.current_date.name }}"
+               id="{{ debiting_form.current_date.id_for_label }}"
                value="{% now 'Y-m-d' %}">
       </div>
 
       <div class="form-group">
         <label for="{{ debiting_form.number.id_for_label }}">Номер акта:</label>
         <input type="text" class="form-control {% if debiting_form.number.errors %}is-invalid{% endif %}"
-               id="{{ debiting_form.number.id_for_label }}" name="{{ debiting_form.number.name }}" style="max-width: 200px;">
+               id="{{ debiting_form.number.id_for_label }}" name="{{ debiting_form.number.name }}"
+               style="max-width: 200px;"
+               value="{{ debiting_form.number.value }}">
         {% if debiting_form.number.errors %}
           <span class="invalid-feedback">{{ debiting_form.number.errors }}</span>
         {% endif %}
       </div>
-    </form>
 
-    <div class="mt-4">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-      <h2>Позиции акта списания</h2>
-      <a href="{% url 'add_position_debiting_act' pk=debiting_act.pk %}" class="btn btn-success">Добавить позицию</a>
-      </div>
 
-      {% if position_debiting_acts %}
-        <table class="table mt-3">
-          <thead>
+      <div class="mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h2>Позиции акта:</h2>
+          <a href="{% url 'add_position_debiting_act' pk=debiting_act.pk %}" class="btn btn-success">Добавить
+            позицию</a>
+        </div>
+
+        {% if position_debiting_acts %}
+          <table class="table mt-3">
+            <thead>
             <tr>
               <th>Цена</th>
               <th>Экземпляр</th>
@@ -44,8 +49,8 @@
               <th>Действия</th>
               <th></th>
             </tr>
-          </thead>
-          <tbody>
+            </thead>
+            <tbody>
             {% for position_debiting_act in position_debiting_acts %}
               <tr>
                 <td>{{ position_debiting_act.price }}</td>
@@ -62,14 +67,15 @@
                 </td>
               </tr>
             {% endfor %}
-          </tbody>
-        </table>
-      <div class="d-flex justify-content-between align-items-center mb-3 mt-3">
-        <button type="submit" class="btn btn-success">Сохранить акт</button>
-      </div>
-      {% else %}
-        <p>Нет данных о позициях акта</p>
-      {% endif %}
-    </div>
+            </tbody>
+          </table>
+          <div class="d-flex justify-content-between align-items-center mb-3 mt-3">
+            <button type="submit" class="btn btn-success">Сохранить акт</button>
+          </div>
+          </form>
+        {% else %}
+          <p>Нет данных о позициях акта</p>
+        {% endif %}
+  </div>
   </div>
 {% endblock %}

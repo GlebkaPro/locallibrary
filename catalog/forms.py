@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.forms import DateInput
 from django.utils.translation import gettext_lazy as _
 import datetime
-from .models import Book, Author, BookCopy, BookInstance, Genre, Language, BookExemplar, AccountingBookCopy
+from .models import Book, Author, BookCopy, BookInstance, Genre, Language, BookExemplar, AccountingBookCopy, Source
 from django.core.exceptions import ValidationError
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
@@ -136,6 +136,7 @@ class AuthorForm(forms.ModelForm):
     model = Author
     fields = ['first_name', 'last_name', 'middle_name', 'date_of_birth', 'date_of_death']
 
+
 class ProfileUserForm(forms.ModelForm):
   username = forms.CharField(disabled=True, label='Логин', widget=forms.TextInput(attrs={'class': 'form-input'}))
   email = forms.CharField(disabled=True, label='E-mail', widget=forms.TextInput(attrs={'class': 'form-input'}))
@@ -175,14 +176,14 @@ from .models import AcceptAct, PositionAcceptAct
 
 from django.forms import inlineformset_factory
 
-class AcceptActForm(forms.ModelForm):
 
+class AcceptActForm(forms.ModelForm):
   class Meta:
     model = AcceptAct
     fields = ['number', 'summa', 'Tip', 'worker', 'source', 'current_date']
 
-PositionAcceptActFormSet = inlineformset_factory(AcceptAct, PositionAcceptAct, fields=('price', 'size', 'exemplar'))
 
+PositionAcceptActFormSet = inlineformset_factory(AcceptAct, PositionAcceptAct, fields=('price', 'size', 'exemplar'))
 
 from django import forms
 
@@ -203,13 +204,15 @@ class BookExemplarForm(forms.ModelForm):
     model = BookExemplar
     fields = '__all__'
 
+
 from django import forms
 from .models import Publisher
 
+
 class PublisherForm(forms.ModelForm):
-    class Meta:
-        model = Publisher
-        fields = '__all__'
+  class Meta:
+    model = Publisher
+    fields = '__all__'
 
 
 class AccountingBookCopyForm(forms.ModelForm):
@@ -223,21 +226,26 @@ class BookCopyForm(forms.ModelForm):
     model = BookCopy
     fields = ['book', 'imprint', 'positionAcceptAct']
 
+
 # ваш_проект/forms.py
 from django import forms
 from .models import DebitingAct, PositionDebitingAct
 
+
 class DebitingActForm(forms.ModelForm):
-    class Meta:
-        model = DebitingAct
-        fields = ['number', 'current_date', 'worker']
+  class Meta:
+    model = DebitingAct
+    fields = ['number', 'current_date', 'worker']
+
 
 class PositionDebitingActForm(forms.ModelForm):
-    class Meta:
-        model = PositionDebitingAct
-        fields = ['price', 'debiting_exemplar', 'Tip']
+  class Meta:
+    model = PositionDebitingAct
+    fields = ['price', 'debiting_exemplar', 'Tip']
+
 
 PositionDebitingActFormSet = inlineformset_factory(
-    DebitingAct, PositionDebitingAct,
-    form=PositionDebitingActForm, extra=1, can_delete=True
+  DebitingAct, PositionDebitingAct,
+  form=PositionDebitingActForm, extra=1, can_delete=True
 )
+

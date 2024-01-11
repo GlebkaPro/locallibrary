@@ -802,7 +802,7 @@ class EditDebitingActView(View):
 
     if debiting_form.is_valid():
       debiting_form.save()
-      return redirect('edit_debiting_act', pk=pk)
+      return redirect('debiting_act_list')
 
     # Если форма не валидна, вернуть ее с ошибками
     position_debiting_acts = PositionDebitingAct.objects.filter(debiting_act=debiting_act)

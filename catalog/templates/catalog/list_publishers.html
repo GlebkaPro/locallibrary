@@ -3,21 +3,19 @@
 
 {% block content %}
   <h1>Список изданий</h1>
-  <a href="{% url 'create_publisher' %}">Создать издание</a>
+      <a href="{% url 'create_publisher' %}" class="btn btn-primary">Создать издателя</a>
 
   {% if publishers %}
     <table class="table">
       <thead>
         <tr>
           <th>Наименование</th>
-          <!-- Добавьте другие заголовки столбцов по вашему усмотрению -->
         </tr>
       </thead>
       <tbody>
         {% for publisher in publishers %}
           <tr>
             <td>{{ publisher.name }}</td>
-            <!-- Добавьте другие ячейки данных по вашему усмотрению -->
           </tr>
         {% endfor %}
       </tbody>
