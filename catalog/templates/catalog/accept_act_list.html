@@ -8,6 +8,7 @@
     <table class="table">
       <thead>
       <tr>
+        <th>Номер</th>
         <th>Дата</th>
         <th>Сумма</th>
         <th>Сотрудник</th>
@@ -17,6 +18,7 @@
       <tbody>
       {% for accept_act in accept_acts %}
         <tr>
+          <td>{{ accept_act.number }}</td>
           <td>{{ accept_act.current_date }}</td>
           <td>{{ accept_act.summa }}</td>
           <td>{{ accept_act.worker }}</td>

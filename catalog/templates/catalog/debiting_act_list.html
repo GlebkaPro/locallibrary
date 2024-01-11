@@ -9,6 +9,7 @@
     <table class="table">
       <thead>
       <tr>
+        <th>№</th>
         <th>Дата</th>
         <th>Сотрудник</th>
         <th>Действия</th>
@@ -17,6 +18,7 @@
       <tbody>
       {% for debiting_act in debiting_acts %}
         <tr>
+          <td>{{ debiting_act.number }}</td>
           <td>{{ debiting_act.current_date }}</td>
           <td>{{ debiting_act.worker }}</td>
           <td>

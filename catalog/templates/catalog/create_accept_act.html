@@ -3,6 +3,7 @@
 {% block content %}
   <div class="container">
   <form method="post" action="">
+      {% csrf_token %}
     <input type="hidden" name="{{ form.worker.name }}" value="{{ request.user.pk }}">
     <input type="hidden" name="{{ form.current_date.name }}" value="{% now 'Y-m-d' %}">
 
@@ -18,7 +19,7 @@
       <input type="hidden" name="{{ form.current_date.name }}" id="{{ form.current_date.id_for_label }}"
              value="{% now 'Y-m-d' %}">
     </div>
-    {% csrf_token %}
+
     <div class="form-group">
       <label for="{{ form.number.id_for_label }}">Номер акта:</label>
       <input type="text" class="form-control {% if form.number.errors %}is-invalid{% endif %}"
