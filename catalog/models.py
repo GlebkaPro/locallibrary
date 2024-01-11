@@ -184,6 +184,9 @@ class FizPersonSource(models.Model):
   middle_name = models.CharField(verbose_name='Отчество', null=True, max_length=100)
   source = models.ForeignKey('Source', on_delete=models.RESTRICT, null=True, verbose_name='Источник')
 
+  def __str__(self):
+    return f"{self.last_name} - {self.source}"
+
 
 class AcceptAct(models.Model):
   number = models.CharField(verbose_name='Номер акта', max_length=100)
