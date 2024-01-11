@@ -249,3 +249,15 @@ PositionDebitingActFormSet = inlineformset_factory(
   form=PositionDebitingActForm, extra=1, can_delete=True
 )
 
+from django import forms
+from .models import Source, FizPersonSource
+
+class SourceForm(forms.ModelForm):
+    class Meta:
+        model = Source
+        fields = ['name']
+
+class FizPersonSourceForm(forms.ModelForm):
+    class Meta:
+        model = FizPersonSource
+        fields = ['first_name', 'last_name', 'middle_name', 'source']

@@ -75,4 +75,9 @@ urlpatterns += [
        name='edit_position_debiting_act'),
   path('delete_position_debiting_act/<int:pk>/', views.DeletePositionDebitingActView.as_view(),
        name='delete_position_debiting_act'),
+
+  path('create_source/', views.create_source, name='create_source'),
+  path('create_fiz_person_source/', views.create_fiz_person_source, name='create_fiz_person_source'),
+  path('source_list/', views.source_list, name='source_list'),
+  path('fiz_person_source_list/', views.fiz_person_source_list, name='fiz_person_source_list'),
 ]

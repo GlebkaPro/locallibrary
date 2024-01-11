@@ -1,0 +1,30 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <div class="container">
+    <h1>Физические лица</h1>
+    <a href="{% url 'create_fiz_person_source' %}" class="btn btn-primary">Создать физическое лицо</a>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>№</th>
+          <th>Фамилия</th>
+          <th>Имя</th>
+          <th>Отчество</th>
+          <th>Организация</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for fiz_person in fiz_persons %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ fiz_person.last_name }}</td>
+            <td>{{ fiz_person.first_name }}</td>
+            <td>{{ fiz_person.middle_name }}</td>
+            <td>{{ fiz_person.source }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

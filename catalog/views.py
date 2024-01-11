@@ -20,7 +20,7 @@ from .forms import BookExemplarForm
 from .forms import PositionAcceptActFormSet
 from .forms import UserRegistrationForm, BookInstanceForm, AddBookForm, EditBookForm, AuthorForm, \
   ProfileUserForm
-from .models import AcceptAct
+from .models import AcceptAct, FizPersonSource
 from .models import Book, BookInstance, Author, Genre, Language
 from .models import BookCopy
 from .models import BookExemplar
@@ -891,3 +891,50 @@ class UserLoansListView(ListView):
     def get_queryset(self):
         user_id = self.kwargs['pk']
         return BookInstance.objects.filter(borrower__id=user_id, status__in=['р', 'з']).order_by('due_back')
+
+
+from django.shortcuts import render, redirect
+from .forms import SourceForm, FizPersonSourceForm
+
+
+from django.shortcuts import render, redirect
+from .forms import SourceForm, FizPersonSourceForm
+
+def create_source(request):
+    if request.method == 'POST':
+        form = SourceForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('source_list')  # Замените 'success_page' на URL успешной страницы
+    else:
+        form = SourceForm()
+
+    return render(request, 'source/create_source.html', {'form': form})
+
+def create_fiz_person_source(request):
+    if request.method == 'POST':
+        form = FizPersonSourceForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('fiz_person_source_list')  # Замените 'success_page' на URL успешной страницы
+    else:
+        form = FizPersonSourceForm()
+
+    return render(request, 'source/create_fiz_person_source.html', {'form': form})
+
+
+from django.shortcuts import render
+from .models import Source
+
+def source_list(request):
+    organizations = Source.objects.all()
+    return render(request, 'source/source_list.html', {'organizations': organizations})
+
+
+from django.shortcuts import render
+from .models import FizPersonSource
+
+def fiz_person_source_list(request):
+    fiz_persons = FizPersonSource.objects.all()
+    return render(request, 'source/fiz_person_source_list.html', {'fiz_persons': fiz_persons})
+
