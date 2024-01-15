@@ -255,9 +255,9 @@ from .models import Source, FizPersonSource
 class SourceForm(forms.ModelForm):
     class Meta:
         model = Source
-        fields = ['name']
+        fields = ['name', 'address']
 
 class FizPersonSourceForm(forms.ModelForm):
     class Meta:
         model = FizPersonSource
-        fields = ['first_name', 'last_name', 'middle_name', 'source']
+        fields = ['first_name', 'last_name', 'middle_name', 'source', 'contact_information']

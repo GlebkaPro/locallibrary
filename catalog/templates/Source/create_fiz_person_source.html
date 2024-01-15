@@ -1,10 +1,66 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <h1>Создать физическое лицо</h1>
-  <form method="post" action="{% url 'create_fiz_person_source' %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Создать</button>
-  </form>
+  <div class="container">
+    <h1>Создать физическое лицо</h1>
+    <form method="post" action="{% url 'create_fiz_person_source' %}" class="needs-validation" novalidate>
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="{{ form.first_name.id_for_label }}">Имя:</label>
+        <input type="text" class="form-control {% if form.first_name.errors %}is-invalid{% endif %}"
+               id="{{ form.first_name.id_for_label }}" name="{{ form.first_name.name }}" style="max-width: 200px;"
+               required autocomplete="off">
+        {% if form.first_name.errors %}
+          <div class="invalid-feedback">{{ form.first_name.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.last_name.id_for_label }}">Фамилия:</label>
+        <input type="text" class="form-control {% if form.last_name.errors %}is-invalid{% endif %}"
+               id="{{ form.last_name.id_for_label }}" name="{{ form.last_name.name }}" style="max-width: 200px;"
+               required autocomplete="off">
+        {% if form.last_name.errors %}
+          <div class="invalid-feedback">{{ form.last_name.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.middle_name.id_for_label }}">Отчество:</label>
+        <input type="text" class="form-control {% if form.middle_name.errors %}is-invalid{% endif %}"
+               id="{{ form.middle_name.id_for_label }}" name="{{ form.middle_name.name }}" style="max-width: 200px;"
+               required autocomplete="off">
+        {% if form.middle_name.errors %}
+          <div class="invalid-feedback">{{ form.middle_name.errors }}</div>
+        {% endif %}
+      </div>
+      <div class="form-group">
+        <label for="{{ form.contact_information.id_for_label }}">Контактные данные:</label>
+        <input type="text" class="form-control {% if form.contact_information.errors %}is-invalid{% endif %}"
+               id="{{ form.contact_information.id_for_label }}" name="{{ form.contact_information.name }}"
+               style="max-width: 200px;"
+               required autocomplete="off">
+        {% if form.contact_information.errors %}
+          <div class="invalid-feedback">{{ form.contact_information.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.source.id_for_label }}">Источник:</label>
+        <select class="form-control {% if form.source.errors %}is-invalid{% endif %}"
+                id="{{ form.source.id_for_label }}" name="{{ form.source.name }}" style="max-width: 200px;" required>
+          <option value="" disabled selected>Выберите источник</option>
+          {% for source_choice in form.source.field.choices %}
+            <option value="{{ source_choice.0 }}">{{ source_choice.1 }}</option>
+          {% endfor %}
+        </select>
+        {% if form.source.errors %}
+          <div class="invalid-feedback">{{ form.source.errors }}</div>
+        {% endif %}
+      </div>
+      <div class="d-flex justify-content-between align-items-center mb-3 mt-3">
+        <button type="submit" class="btn btn-primary">Создать</button>
+      </div>
+    </form>
+  </div>
 {% endblock %}

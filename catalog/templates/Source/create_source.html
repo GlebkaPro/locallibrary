@@ -6,8 +6,27 @@
 
     <form method="post" action="{% url 'source_list' %}">
       {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit" class="btn btn-success">Сохранить</button>
+      <div class="form-group">
+        <label for="{{ form.name.id_for_label }}">Наименование:</label>
+        <input type="text" class="form-control {% if form.first_name.errors %}is-invalid{% endif %}"
+               id="{{ form.name.id_for_label }}" name="{{ form.name.name }}" style="max-width: 200px;"
+               required autocomplete="off">
+        {% if form.name.errors %}
+          <div class="invalid-feedback">{{ form.first_name.errors }}</div>
+        {% endif %}
+      </div>
+      <div class="form-group">
+        <label for="{{ form.address.id_for_label }}">Адрес:</label>
+        <input type="text" class="form-control {% if form.address.errors %}is-invalid{% endif %}"
+               id="{{ form.address.id_for_label }}" name="{{ form.address.name }}" style="max-width: 200px;"
+               required autocomplete="off">
+        {% if form.address.errors %}
+          <div class="invalid-feedback">{{ form.address.errors }}</div>
+        {% endif %}
+      </div>
+      <div class="d-flex justify-content-between align-items-center mb-3 mt-3">
+        <button type="submit" class="btn btn-success">Сохранить</button>
+      </div>
     </form>
   </div>
 {% endblock %}

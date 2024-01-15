@@ -45,20 +45,20 @@
       {% endif %}
     </div>
 
-    <div class="form-group" style="max-width: 200px;">
+    <div class="form-group">
       <label for="{{ form.source.id_for_label }}">Источник:</label>
-      <select class="form-control {% if form.source.errors %}is-invalid{% endif %}" id="{{ form.source.id_for_label }}"
-              name="{{ form.source.name }}">
-        <option value="" {% if not form.source.value %}selected{% endif %}>Выберите источник</option>
-        {% for value, label in form.source.field.choices %}
-          <option value="{{ value }}" {% if form.source.value == value %}selected{% endif %}>{{ label }}</option>
+      <select class="form-control {% if form.source.errors %}is-invalid{% endif %}"
+              id="{{ form.source.id_for_label }}" name="{{ form.source.name }}" style="max-width: 200px;" required>
+        <option value="" disabled selected>Выберите источник</option>
+        {% for source_choice in form.source.field.choices %}
+          <option value="{{ source_choice.0 }}">{{ source_choice.1 }}</option>
         {% endfor %}
       </select>
       {% if form.source.errors %}
-        <span class="invalid-feedback">{{ form.source.errors }}</span>
+        <div class="invalid-feedback">{{ form.source.errors }}</div>
       {% endif %}
     </div>
-  
+
     {{ position_formset.management_form }}
   <div class="d-flex justify-content-between align-items-center mb-3">
       <h2>Позиции акта:</h2>
@@ -108,7 +108,7 @@
 </div>
   </div>
   </form>
-  
+
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
   var rowNumber = 2;
@@ -150,7 +150,7 @@
     rowNumber--;
   }
 </script>
-  
+
   <script>
   function updateSum() {
     var sum = 0;
@@ -177,6 +177,6 @@
     addPosition();
   });
 </script>
-  
+
 {% endblock %}
 </div>

@@ -174,7 +174,8 @@ class Author(models.Model):
 
 
 class Source(models.Model):
-  name = models.CharField(verbose_name='наименование', max_length=100)
+  name = models.CharField(verbose_name='Наименование', max_length=100)
+  address = models.CharField(verbose_name='Адрес', max_length=100)
   def __str__(self):
     return f"{self.name}"
 
@@ -182,6 +183,7 @@ class FizPersonSource(models.Model):
   first_name = models.CharField(verbose_name='Имя', max_length=100)
   last_name = models.CharField(verbose_name='Фамилия', max_length=100)
   middle_name = models.CharField(verbose_name='Отчество', null=True, max_length=100)
+  contact_information = models.CharField(verbose_name='Контактные данные', null=True, max_length=100)
   source = models.ForeignKey('Source', on_delete=models.RESTRICT, null=True, verbose_name='Источник')
 
   def __str__(self):
