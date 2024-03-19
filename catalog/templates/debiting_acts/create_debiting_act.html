@@ -7,7 +7,7 @@
       {% csrf_token %}
       <input type="hidden" name="{{ debiting_form.worker.name }}" value="{{ request.user.pk }}">
       <input type="hidden" name="{{ debiting_form.current_date.name }}" value="{% now 'Y-m-d' %}">
-      
+
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h1>Создать акт о списании</h1>
         <div class="form-group d-flex align-items-center">
@@ -76,7 +76,7 @@
         <button type="submit" class="btn btn-success">Сохранить акт</button>
       </div>
     </form>
-  
+
 <!-- create_debiting_act.html (шаблон №1) -->
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
@@ -119,7 +119,6 @@ function addPosition() {
     rowNumber--;
   }
 </script>
-  
 
 {% endblock %}
 </div>

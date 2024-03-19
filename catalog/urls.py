@@ -80,4 +80,6 @@ urlpatterns += [
   path('create_fiz_person_source/', views.create_fiz_person_source, name='create_fiz_person_source'),
   path('source_list/', views.source_list, name='source_list'),
   path('fiz_person_source_list/', views.fiz_person_source_list, name='fiz_person_source_list'),
+  path('accept_act/<int:pk>/', views.AcceptActDetailView.as_view(), name='accept_act_detail'),
+  path('accept_act/<int:pk>/print/', views.PrintAcceptActView.as_view(), name='print_accept_act'),
 ]

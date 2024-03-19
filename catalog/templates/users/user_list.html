@@ -3,6 +3,12 @@
 {% block content %}
   <div class="container">
     <h1>Список пользователей</h1>
+    <form method="get">
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Введите фамилию пользователя" name="search" value="{{ search_query }}">
+        <button class="btn btn-outline-secondary" type="submit">Искать</button>
+      </div>
+    </form>
     <a href="{% url 'create_user' %}" class="btn btn-primary">Добавить пользователя</a>
     <table class="table table-striped">
       <thead>

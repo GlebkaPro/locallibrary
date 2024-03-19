@@ -30,14 +30,25 @@
       </svg>
       <span class="fs-4 link-color">Главная</span>
     </a>
+
     <ul class="nav nav-pills">
-      <li class="nav-item" style="margin-right: 10px"><a href="{% url 'accept_act_list' %}" class="nav-link link-color border ">Акты приёма</a></li>
-      <li class="nav-item" style="margin-right: 10px"><a href="{% url 'debiting_act_list' %}" class="nav-link link-color border ">Акты списания</a></li>
-      <li class="nav-item" style="margin-right: 10px"><a href="{% url 'books' %}" class="nav-link link-color border ">Каталог</a></li>
-      <li class="nav-item" style="margin-right: 10px"><a href="{% url 'authors' %}" class="nav-link link-color border ">Авторы</a></li>
-      {% if user.is_authenticated %}
-        <li class="nav-item" style="margin-right: 10px"><a href="{% url 'my-borrowed' %}" class="nav-link link-color border ">Мои книги</a></li>
-      {% endif %}
+            <div class="dropdown">
+          <button class="nav-link link-color border border-primary btn btn-secondary dropdown-toggle" style="margin-right: 10px" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Акты
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="{% url 'accept_act_list' %}">Акты приёма</a>
+            <a class="dropdown-item" href="{% url 'debiting_act_list' %}">Акты списания</a>
+          </div>
+        </div>
+
+{#      <li class="nav-item" style="margin-right: 10px"><a href="{% url 'accept_act_list' %}" class="nav-link link-color border ">Акты приёма</a></li>#}
+{#      <li class="nav-item" style="margin-right: 10px"><a href="{% url 'debiting_act_list' %}" class="nav-link link-color border ">Акты списания</a></li>#}
+{#      <li class="nav-item" style="margin-right: 10px"><a href="{% url 'books' %}" class="nav-link link-color border ">Каталог</a></li>#}
+{#      <li class="nav-item" style="margin-right: 10px"><a href="{% url 'authors' %}" class="nav-link link-color border ">Авторы</a></li>#}
+{#      {% if user.is_authenticated %}#}
+{#        <li class="nav-item" style="margin-right: 10px"><a href="{% url 'my-borrowed' %}" class="nav-link link-color border ">Мои книги</a></li>#}
+{#      {% endif %}#}
       {% if user.is_staff and perms.catalog.can_mark_returned %}
         <li class="nav-item" style="margin-right: 10px"><a href="{% url 'all-borrowed' %}" class="nav-link link-color border border-primary">Все выдачи</a></li>
 {#        <li class="nav-item" style="margin-right: 10px"><a href="{% url 'user_list' %}" class="nav-link link-color border border-primary">Все пользователи</a></li>#}

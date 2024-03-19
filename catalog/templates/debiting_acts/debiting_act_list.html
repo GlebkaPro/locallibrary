@@ -23,6 +23,7 @@
               <td>{{ debiting_act.worker }}</td>
               <td>
                 <a href="{% url 'edit_debiting_act' pk=debiting_act.pk %}" class="btn btn-warning">Изменить</a>
+                <a href="{% url 'print_accept_act' pk=debiting_act.pk %}" class="btn btn-secondary">Печать акта</a>
               </td>
             </tr>
           {% endfor %}

@@ -1,0 +1,121 @@
+<!-- edit_accept_act.html -->
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <div class="container">
+    <form method="post" action="">
+      {% csrf_token %}
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Изменить акт о приёме</h1>
+        <div class="form-group d-flex align-items-center">
+          <label for="{{ form.worker.id_for_label }}" class="mr-2">Сотрудник:</label>
+          <p class="form-control-static mb-0">{{ request.user.username }}</p>
+        </div>
+        <label for="{{ form.current_date.id_for_label }}" class="form-label ml-2">Дата создания акта: {{ form.current_date.value|date:'d.m.Y' }}</label>
+        <input type="hidden" name="{{ form.current_date.name }}" id="{{ form.current_date.id_for_label }}" value="{% now 'Y-m-d' %}">
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.number.id_for_label }}">Номер акта:</label>
+        <input type="text" class="form-control {% if form.number.errors %}is-invalid{% endif %}" id="{{ form.number.id_for_label }}" name="{{ form.number.name }}" style="max-width: 200px;" value="{{ form.number.value }}">
+        {% if form.number.errors %}
+          <span class="invalid-feedback">{{ form.number.errors }}</span>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.Tip.id_for_label }}">Тип поступления:</label>
+        <select class="form-control" id="{{ form.Tip.id_for_label }}" name="{{ form.Tip.name }}" style="max-width: 200px;">
+          {% for value, label in form.Tip.field.choices %}
+            <option value="{{ value }}" {% if form.Tip.value == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+        {% if form.Tip.errors %}
+          <span class="invalid-feedback">{{ form.Tip.errors }}</span>
+        {% endif %}
+      </div>
+
+      <div class="form-group" style="max-width: 200px;">
+        <label for="{{ form.source.id_for_label }}">Источник:</label>
+        <select class="form-control {% if form.source.errors %}is-invalid{% endif %}" id="{{ form.source.id_for_label }}" name="{{ form.source.name }}">
+          {% for value, label in form.source.field.choices %}
+            <option value="{{ value }}" {% if form.source.value == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+        {% if form.source.errors %}
+          <span class="invalid-feedback">{{ form.source.errors }}</span>
+        {% endif %}
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Позиции акта:</h2>
+        <a href="{% url 'add_position_accept_act' pk=accept_act.pk %}" class="btn btn-primary">Добавить позицию</a>
+      </div>
+
+      {% if position_accept_acts %}
+        <table class="table mt-3" id="positions_table">
+          <thead>
+            <tr>
+              <th>Экземпляр</th>
+              <th>Количество</th>
+              <th>Цена(руб.)</th>
+              <th>Действия</th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for position_accept_act in position_accept_acts %}
+              <tr>
+                <td>{{ position_accept_act.exemplar }}</td>
+                <td><input type="text" class="form-control position-size" name="size" value="{{ position_accept_act.size }}"></td>
+                <td><input type="text" class="form-control position-price" name="price" value="{{ position_accept_act.price }}"></td>
+                <td><a href="#" class="btn btn-warning btn-edit-position">Изменить</a></td>
+                <td>
+                  <form method="post" action="{% url 'delete_position_accept_act' pk=position_accept_act.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                  </form>
+                </td>
+                <td>
+                  <a href="{% url 'create_accounting' position_accept_act.pk %}?next={% url 'edit_accept_act' pk=accept_act.pk %}&size={{ position_accept_act.size }}" class="btn btn-info">Провести учёт</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="d-flex justify-content-between align-items-center mb-3 mt-3">
+          <button type="submit" class="btn btn-success">Сохранить изменения</button>
+          <div class="form-group">
+            <label for="total-sum">Сумма(руб.):</label>
+            <input type="text" class="form-control" id="total-sum" readonly value="{{ form.instance.calculate_total_sum }}">
+          </div>
+        </div>
+      {% else %}
+        <p>Нет данных о позициях акта</p>
+      {% endif %}
+    </form>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      updateTotalSum();
+
+      $('#positions_table').on('input', '.position-price, .position-size', function () {
+        updateTotalSum();
+      });
+
+      function updateTotalSum() {
+        var totalSum = 0;
+        $('.position-price').each(function () {
+          var price = parseFloat($(this).val()) || 0;
+          var size = parseFloat($(this).closest('tr').find('.position-size').val()) || 0;
+          totalSum += price * size;
+        });
+
+        $('#total-sum').val(totalSum.toFixed(2));
+      }
+    });
+  </script>
+{% endblock %}

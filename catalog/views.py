@@ -14,6 +14,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views import View
 from django.shortcuts import redirect, get_object_or_404
 from catalog.forms import RenewBookForm, BookInstanceEditForm, GenreForm, LanguageForm, PositionDebitingActForm
+from users.models import User
 from .forms import AcceptActForm
 from .forms import AccountingBookCopyForm, BookCopyForm
 from .forms import BookExemplarForm
@@ -54,7 +55,7 @@ class BookListView(generic.ListView):
   """Общий класс-представление для списка книг."""
   model = Book
   paginate_by = 12
-  template_name = 'catalog/book_list.html'
+  template_name = 'books/book_list.html'
 
   def get_queryset(self):
     query = self.request.GET.get('search', '')
@@ -76,7 +77,7 @@ class BookDetailView(generic.DetailView):
   #   # Получаем количество копий с статусом 'д' для данной книги
   #   available_copies = BookCopy.objects.filter(book=book, status='д').count()
   #
-  #   return render(request, 'catalog/book_detail.html', {'book': book, 'available_copies': available_copies})
+  #   return render(request, 'books/book_detail.html', {'book': book, 'available_copies': available_copies})
 
 
 class AuthorListView(generic.ListView):
@@ -105,30 +106,40 @@ class AuthorDetailView(generic.DetailView):
 class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
   """Общий класс-представление для списка книг, взятых на аренду текущим пользователем."""
   model = BookInstance
-  template_name = 'catalog/bookinstance_list_borrowed_user.html'
+  template_name = 'bookinstances/bookinstance_list_borrowed_user.html'
   paginate_by = 10
 
   def get_queryset(self):
-    status = self.request.GET.get('status', None)
+    query = self.request.GET.get('search', '')
+    return User.objects.filter(
+      Q(first_name__icontains=query) | Q(last_name__icontains=query) | Q(middle_name__icontains=query)
+    )
 
-    if status is None:
-      status = ['р', 'з']  # Установите стандартное значение 'р, з'
-
-    return BookInstance.objects.filter(borrower=self.request.user, status__in=status).order_by('due_back')
+  def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    context['search_query'] = self.request.GET.get('search', '')
+    return context
+  # def get_queryset(self):
+  #   status = self.request.GET.get('status', None)
+  #
+  #   if status is None:
+  #     status = ['р', 'з']  # Установите стандартное значение 'р, з'
+  #
+  #   return BookInstance.objects.filter(borrower=self.request.user, status__in=status).order_by('due_back')
 
 
 class LoanedBooksAllListView(PermissionRequiredMixin, generic.ListView):
   """Общий класс-представление для списка всех книг, взятых на аренду. Доступно только пользователям с разрешением can_mark_returned."""
   model = BookInstance
   permission_required = 'catalog.can_mark_returned'
-  template_name = 'catalog/bookinstance_list_borrowed_all.html'
+  template_name = 'bookinstances/bookinstance_list_borrowed_all.html'
   paginate_by = 10
 
   def get_queryset(self):
     status = self.request.GET.get('status', None)
 
     if status is None:
-      status = ['р', 'з']  # Установите стандартное значение, например, 'р'
+      status = ['р', 'з', 'п']
 
     return BookInstance.objects.filter(status__in=status).order_by('due_back')
 
@@ -167,7 +178,7 @@ def renew_book_librarian(request, pk):
     'book_instance': book_instance,
   }
 
-  return render(request, 'catalog/book_renew_librarian.html', context)
+  return render(request, 'bookinstances/book_renew_librarian.html', context)
 
 
 class AuthorCreate(PermissionRequiredMixin, CreateView):
@@ -238,7 +249,7 @@ def create_user(request):
 def user_list(request):
   if request.user.is_staff:
     users = get_user_model().objects.all()
-    return render(request, 'catalog/user_list.html', {'users': users})
+    return render(request, 'users/user_list.html', {'users': users})
   else:
     return render(request, 'access_denied.html')
 
@@ -266,7 +277,7 @@ def add_bookinstance(request):
   else:
     form = BookInstanceForm()
 
-  return render(request, 'catalog/add_bookinstance.html', {'form': form})
+  return render(request, 'bookinstances/add_bookinstance.html', {'form': form})
 
 
 @login_required
@@ -294,7 +305,7 @@ def edit_bookinstance(request, bookinstance_id):
     else:
       form = BookInstanceEditForm(instance=book_instance)
 
-    return render(request, 'catalog/edit_bookinstance.html', {'form': form, 'book_instance': book_instance})
+    return render(request, 'bookinstances/edit_bookinstance.html', {'form': form, 'book_instance': book_instance})
   else:
     # Обработка случая, когда экземпляр не имеет статус 'з'
     return redirect('all-borrowed')  # Пример: вернуться на страницу с информацией о книге
@@ -328,7 +339,7 @@ def add_book(request):
   else:
     form = AddBookForm()
 
-  return render(request, 'catalog/add_book.html', {'form': form})
+  return render(request, 'books/add_book.html', {'form': form})
 
 
 def edit_book(request, book_id):
@@ -349,7 +360,7 @@ def edit_book(request, book_id):
     }
     form = EditBookForm(instance=book, initial=initial_data)
 
-  return render(request, 'catalog/edit-book.html', {'book': book, 'form': form})
+  return render(request, 'books/edit-book.html', {'book': book, 'form': form})
 
 
 def delete_book(request, book_id):
@@ -360,7 +371,7 @@ def delete_book(request, book_id):
     book.delete()
     return redirect('books')  # Перенаправление на список книг или другую страницу
 
-  return render(request, 'catalog/delete_book_confirm.html', {'book': book})
+  return render(request, 'books/delete_book_confirm.html', {'book': book})
 
 
 def add_author(request):
@@ -376,7 +387,7 @@ def add_author(request):
   else:
     form = AuthorForm()
 
-  return render(request, 'catalog/add_authors.html', {'form': form})
+  return render(request, 'authors/add_authors.html', {'form': form})
 
 
 def return_book(request, book_instance_id):
@@ -450,17 +461,26 @@ def create_book_copy(request, book_id):
   else:
     form = BookCopyForm()
 
-  return render(request, 'catalog/create_book_copy.html', {'book': book, 'form': form})
+  return render(request, 'books/create_book_copy.html', {'book': book, 'form': form})
 
 
-class ProfileUser(LoginRequiredMixin, UpdateView):
+class ProfileUser(UpdateView):
   model = get_user_model()
   form_class = ProfileUserForm
-  template_name = 'catalog/profile.html'
+  template_name = 'users/profile.html'
   extra_context = {'title': "Профиль пользователя"}
 
   def get_success_url(self):
     return reverse_lazy('profile')
+
+  def form_valid(self, form):
+    # Сохраняем пользователя, включая аватар, если он был загружен
+    user = form.save(commit=False)
+    avatar = form.cleaned_data.get('avatar')
+    if avatar:
+      user.avatar = avatar
+    user.save()
+    return super().form_valid(form)
 
   def get_object(self, queryset=None):
     return self.request.user
@@ -504,14 +524,14 @@ from django.views import View
 class AcceptActListView(View):
   def get(self, request):
     accept_acts = AcceptAct.objects.all()
-    return render(request, 'catalog/accept_act_list.html', {'accept_acts': accept_acts})
+    return render(request, 'accept_acts/accept_act_list.html', {'accept_acts': accept_acts})
 
 
 class CreateAcceptActView(View):
   def get(self, request):
     form = AcceptActForm()
     position_formset = PositionAcceptActFormSet(queryset=PositionAcceptAct.objects.none())
-    return render(request, 'catalog/create_accept_act.html', {'form': form, 'position_formset': position_formset})
+    return render(request, 'accept_acts/create_accept_act.html', {'form': form, 'position_formset': position_formset})
 
   def post(self, request):
     form = AcceptActForm(request.POST)
@@ -528,14 +548,14 @@ class CreateAcceptActView(View):
 
       return redirect('accept_act_list')
 
-    return render(request, 'catalog/create_accept_act.html', {'form': form, 'position_formset': position_formset})
+    return render(request, 'accept_acts/create_accept_act.html', {'form': form, 'position_formset': position_formset})
 
 
 class AddPositionAcceptActView(View):
   def get(self, request, pk):
     accept_act = AcceptAct.objects.get(pk=pk)
     form = PositionAcceptActForm()
-    return render(request, 'catalog/add_position_accept_act.html', {'accept_act': accept_act, 'form': form})
+    return render(request, 'accept_acts/add_position_accept_act.html', {'accept_act': accept_act, 'form': form})
 
   def post(self, request, pk):
     accept_act = AcceptAct.objects.get(pk=pk)
@@ -545,7 +565,7 @@ class AddPositionAcceptActView(View):
       position_accept_act.accept_act = accept_act
       position_accept_act.save()
       return redirect('edit_accept_act', pk=pk)
-    return render(request, 'catalog/add_position_accept_act.html', {'accept_act': accept_act, 'form': form})
+    return render(request, 'accept_acts/add_position_accept_act.html', {'accept_act': accept_act, 'form': form})
 
 
 # views.py
@@ -559,7 +579,7 @@ class EditPositionAcceptActView(View):
     form = PositionAcceptActForm(instance=position_accept_act)
     return render(
       request,
-      'catalog/edit_position_accept_act.html',
+      'accept_acts/edit_position_accept_act.html',
       {'position_accept_act': position_accept_act, 'form': form}
     )
 
@@ -569,7 +589,7 @@ class EditPositionAcceptActView(View):
     if form.is_valid():
       form.save()
       return redirect('edit_accept_act', pk=position_accept_act.accept_act.pk)
-    return render(request, 'catalog/edit_position_accept_act.html',
+    return render(request, 'accept_acts/edit_position_accept_act.html',
                   {'position_accept_act': position_accept_act, 'form': form})
 
 
@@ -580,7 +600,7 @@ class EditAcceptActView(View):
     position_accept_acts = PositionAcceptAct.objects.filter(accept_act=accept_act)
     return render(
       request,
-      'catalog/edit_accept_act.html',
+      'accept_acts/edit_accept_act.html',
       {'accept_act': accept_act, 'position_accept_acts': position_accept_acts, 'form': form}
     )
 
@@ -591,7 +611,7 @@ class EditAcceptActView(View):
       form.save()
       return redirect('accept_act_list')
     position_accept_acts = PositionAcceptAct.objects.filter(accept_act=accept_act)
-    return render(request, 'catalog/edit_accept_act.html',
+    return render(request, 'accept_acts/edit_accept_act.html',
                   {'accept_act': accept_act, 'position_accept_acts': position_accept_acts, 'form': form})
 
 
@@ -604,12 +624,12 @@ def create_book_exemplar(request):
   else:
     form = BookExemplarForm()
 
-  return render(request, 'catalog/create_book_exemplar.html', {'form': form})
+  return render(request, 'books/create_book_exemplar.html', {'form': form})
 
 
 def list_book_exemplar(request):
   book_exemplars = BookExemplar.objects.all()
-  return render(request, 'catalog/list_book_exemplar.html', {'book_exemplars': book_exemplars})
+  return render(request, 'books/list_book_exemplar.html', {'book_exemplars': book_exemplars})
 
 
 from django.shortcuts import render
@@ -715,7 +735,7 @@ from .forms import DebitingActForm, PositionDebitingActFormSet
 
 
 class CreateDebitingActView(View):
-  template_name = 'catalog/create_debiting_act.html'
+  template_name = 'debiting_acts/create_debiting_act.html'
 
   def get(self, request):
     debiting_form = DebitingActForm()
@@ -761,7 +781,7 @@ from .models import DebitingAct
 
 
 class DebitingActListView(View):
-  template_name = 'catalog/debiting_act_list.html'
+  template_name = 'debiting_acts/debiting_act_list.html'
 
   def get(self, request):
     debiting_acts = DebitingAct.objects.all()
@@ -781,7 +801,7 @@ from .forms import DebitingActForm, PositionDebitingActFormSet
 
 
 class EditDebitingActView(View):
-  template_name = 'catalog/edit_debiting_act.html'
+  template_name = 'debiting_acts/edit_debiting_act.html'
 
   def get(self, request, pk):
     debiting_act = get_object_or_404(DebitingAct, pk=pk)
@@ -815,7 +835,7 @@ class EditDebitingActView(View):
 
 
 class EditPositionDebitingActView(View):
-  template_name = 'catalog/edit_position_debiting_act.html'
+  template_name = 'debiting_acts/edit_position_debiting_act.html'
 
   def get(self, request, pk):
     position_debiting_act = get_object_or_404(PositionDebitingAct, pk=pk)
@@ -845,7 +865,7 @@ class EditPositionDebitingActView(View):
 
 
 class AddPositionDebitingActView(View):
-  template_name = 'catalog/add_position_debiting_act.html'
+  template_name = 'debiting_acts/add_position_debiting_act.html'
 
   def get(self, request, pk):
     form = PositionDebitingActForm()
@@ -884,13 +904,13 @@ from .models import BookInstance
 class UserLoansListView(ListView):
     model = BookInstance
     # template_name = 'catalog/user_loans_list.html'
-    template_name = 'catalog/bookinstance_list_borrowed_all.html'
+    template_name = 'catalog/templates/bookinstances/bookinstance_list_borrowed_all.html'
 
     paginate_by = 10
 
     def get_queryset(self):
         user_id = self.kwargs['pk']
-        return BookInstance.objects.filter(borrower__id=user_id, status__in=['р', 'з']).order_by('due_back')
+        return BookInstance.objects.filter(borrower__id=user_id, status__in=['р', 'з', 'п']).order_by('due_back')
 
 
 from django.shortcuts import render, redirect
@@ -938,3 +958,65 @@ def fiz_person_source_list(request):
     fiz_persons = FizPersonSource.objects.all()
     return render(request, 'source/fiz_person_source_list.html', {'fiz_persons': fiz_persons})
 
+from django.shortcuts import render
+from django.views.generic import DetailView
+from django.http import HttpResponse
+from .models import AcceptAct
+from django.views.generic import DetailView
+from reportlab.pdfgen import canvas
+from .models import AcceptAct
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+
+# В начале файла views.py
+pdfmetrics.registerFont(TTFont('LiberationSans', 'catalog/static/fonts/LiberationSans-Regular.ttf'))
+
+
+class AcceptActDetailView(DetailView):
+    model = AcceptAct
+    template_name = 'accept_acts/accept_act_detail.html'
+
+class PrintAcceptActView(DetailView):
+    model = AcceptAct
+    template_name = 'print_accept_act.html'
+
+    def render_to_response(self, context, **response_kwargs):
+        # Создаем объект HttpResponse с типом содержимого PDF.
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'filename="accept_act.pdf"'
+
+        # Создаем объект PDF, связанный с объектом HttpResponse.
+        p = canvas.Canvas(response)
+
+        # Устанавливаем шрифт
+        p.setFont('LiberationSans', 12)
+
+        # Получаем данные акта из контекста.
+        accept_act = context['object']
+
+        # Добавляем данные акта в PDF.
+        p.drawString(100, 800, f"Акт о приёме №{accept_act.number}")
+        p.drawString(100, 780, f"Дата: {accept_act.current_date}")
+        p.drawString(100, 760, f"Сумма: {accept_act.summa}")
+        p.drawString(100, 740, f"Сотрудник: {accept_act.worker}")
+        p.drawString(100, 720, f"Источник: {accept_act.source}")
+        p.drawString(100, 700, f"Тип поступления: {accept_act.get_Tip_display()}")
+
+
+        # Добавляем заголовок для позиций.
+        p.drawString(100, 670, "Позиции в акте:")
+
+        # Получаем позиции акта и добавляем их в PDF.
+        positions = accept_act.position_accept_acts.all()
+        y_position = 650
+        for position in positions:
+            p.drawString(120, y_position, f"Цена: {position.price}")
+            p.drawString(120, y_position - 20, f"Количество: {position.size}")
+            p.drawString(120, y_position - 40, f"Экземпляр: {position.exemplar}")
+            y_position -= 60
+
+        # Завершаем создание PDF.
+        p.showPage()
+        p.save()
+
+        return response

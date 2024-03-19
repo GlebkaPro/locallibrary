@@ -1,0 +1,32 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <div class="container">
+    <h1>Акт о приёме №{{ accept_act.number }}</h1>
+    <p>Дата: {{ accept_act.current_date }}</p>
+    <p>Сумма: {{ accept_act.summa }}</p>
+    <p>Сотрудник: {{ accept_act.worker }}</p>
+    <p>Источник: {{ accept_act.source }}</p>
+    <p>Тип поступления: {{ accept_act.get_Tip_display }}</p>
+
+    <h2>Позиции в акте:</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Цена</th>
+          <th>Количество</th>
+          <th>Экземпляр</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for position in accept_act.position_accept_acts.all %}
+          <tr>
+            <td>{{ position.price }}</td>
+            <td>{{ position.size }}</td>
+            <td>{{ position.exemplar }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

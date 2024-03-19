@@ -12,9 +12,9 @@
       <form method="get" action="{% url 'delete-book' book_id=book.id %}">
         <button type="submit" class="btn btn-danger">Удалить</button>
       </form>
-      <form method="get" action="{% url 'create-book-copy' book_id=book.id %}">
-        <button type="submit" class="btn btn-success">Создать экземпляр</button>
-      </form>
+{#      <form method="get" action="{% url 'create-book-copy' book_id=book.id %}">#}
+{#        <button type="submit" class="btn btn-success">Создать экземпляр</button>#}
+{#      </form>#}
   </div>
 {% endif %}
     <div class="book-info card">

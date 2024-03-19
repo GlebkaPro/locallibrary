@@ -1,8 +1,5 @@
 import uuid
-from _ast import operator
 from datetime import date
-
-from django.contrib.auth import models
 from django.contrib.auth.models import User, AbstractUser
 from django.utils import timezone
 from django.urls import reverse
@@ -10,7 +7,6 @@ from django.db import models
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
 from locallibrary import settings
-
 
 class Genre(models.Model):
   name = models.CharField(verbose_name='Жанр',
@@ -21,10 +17,8 @@ class Genre(models.Model):
                           },
                           help_text="Введите жанр книги (например, научная фантастика, французская поэзия и т. д.)"
                           )
-
   def __str__(self):
     return self.name
-
 
 class Language(models.Model):
   """Модель, представляющая язык (например, английский, французский, японский и т. д.)"""
@@ -38,7 +32,6 @@ class Language(models.Model):
   def __str__(self):
     """Строка для представления объекта модели (в административном сайте и т. д.)"""
     return self.name
-
 
 class Book(models.Model):
   """Модель, представляющая книгу (но не конкретную копию книги)."""
@@ -75,7 +68,6 @@ class Book(models.Model):
     """Строка для представления объекта модели."""
     return self.title
 
-
 class AccountingBookCopy(models.Model):
   """Модель, представляющая учтённую копию книги (т. е. которой проставлен штамм)."""
   id = models.UUIDField(primary_key=True, default=uuid.uuid4,
@@ -87,7 +79,6 @@ class AccountingBookCopy(models.Model):
   def __str__(self):
     """Строка для представления объекта модели."""
     return '{0} ({1})'.format(self.id, self.worker, self.date_of_creation)
-
 
 class BookCopy(models.Model):
   """Модель, представляющая учтённую копию книги (т. е. которой проставлен штамм)."""
@@ -112,8 +103,7 @@ class BookCopy(models.Model):
   def __str__(self):
     """Строка для представления объекта модели."""
     title = self.book.title if self.book else 'Нет названия книги'
-    return '{0} ({1})'.format(self.imprint, title,)
-
+    return '{0} ({1})'.format(self.imprint, title, )
 
 class BookInstance(models.Model):
   """Модель, представляющая конкретную копию книги (т. е. которую можно взять в библиотеке)."""
@@ -152,7 +142,6 @@ class BookInstance(models.Model):
     """Строка для представления объекта модели."""
     return '{0} ({1})'.format(self.id, self.book.title)
 
-
 class Author(models.Model):
   """Модель, представляющая автора."""
   first_name = models.CharField(verbose_name='Имя', max_length=100)
@@ -172,10 +161,10 @@ class Author(models.Model):
     """Строка для представления объекта модели."""
     return '{0}, {1}'.format(self.last_name, self.first_name, self.middle_name)
 
-
 class Source(models.Model):
   name = models.CharField(verbose_name='Наименование', max_length=100)
   address = models.CharField(verbose_name='Адрес', max_length=100)
+
   def __str__(self):
     return f"{self.name}"
 
@@ -188,7 +177,6 @@ class FizPersonSource(models.Model):
 
   def __str__(self):
     return f"{self.last_name} - {self.source}"
-
 
 class AcceptAct(models.Model):
   number = models.CharField(verbose_name='Номер акта', max_length=100)
@@ -213,7 +201,6 @@ class AcceptAct(models.Model):
   def __str__(self):
     return f"{self.current_date} - {self.worker}"
 
-
 class PositionAcceptAct(models.Model):
   price = models.CharField(verbose_name='Цена', max_length=100)
   size = models.CharField(verbose_name='Количество', max_length=100)
@@ -224,7 +211,6 @@ class PositionAcceptAct(models.Model):
 
   def __str__(self):
     return f"{self.price} - {self.exemplar}"
-
 
 class BookExemplar(models.Model):
   date_of_manufacture = models.DateField('Дата изготовления', null=True, blank=True)
@@ -282,5 +268,6 @@ class PositionDebitingAct(models.Model):
 
   Tip = models.CharField(
     max_length=1, choices=ACCEPT_TIP, blank=True, default='п', verbose_name='Тип списания')
+
   def __str__(self):
     return f"{self.price} - {self.debiting_exemplar}"

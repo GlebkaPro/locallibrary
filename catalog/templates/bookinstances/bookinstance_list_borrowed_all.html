@@ -3,7 +3,7 @@
 {% block content %}
     <div class="container">
         <h1>Все выдачи</h1>
-        <a class="btn btn-primary" href="{% url 'add-bookinstance' %}">Добавить</a>
+        <a class="btn btn-primary" href="{% url 'add-bookinstance' %}">Создать выдачу</a>
       <form method="GET" action="{% url 'all-borrowed' %}">
     <label for="status">Выберите статус:</label>
     <select name="status" id="status">
@@ -13,6 +13,12 @@
         <option value="з" {% if request.GET.status == 'з' %}selected{% endif %}>Зарезервировано</option>
     </select>
     <button type="submit">Применить фильтр</button>
+          <form method="get">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Введите фамилию" name="search" value="{{ search_query }}">
+            <button class="btn btn-outline-secondary" type="submit">Искать</button>
+        </div>
+    </form>
       </form>
         {% if bookinstance_list %}
         <table class="table">
@@ -57,7 +63,7 @@
             </tbody>
         </table>
         {% else %}
-            <p>Нет абонированных книг</p>
+            <p>Нет выданных книг</p>
         {% endif %}
     </div>
 {% endblock %}

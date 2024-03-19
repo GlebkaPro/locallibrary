@@ -43,9 +43,9 @@
           <table class="table mt-3">
             <thead>
             <tr>
-              <th>Цена</th>
               <th>Экземпляр</th>
               <th>Тип списания</th>
+              <th>Цена (руб.)</th>
               <th>Действия</th>
               <th></th>
             </tr>
@@ -53,9 +53,10 @@
             <tbody>
             {% for position_debiting_act in position_debiting_acts %}
               <tr>
-                <td>{{ position_debiting_act.price }}</td>
+
                 <td>{{ position_debiting_act.debiting_exemplar }}</td>
                 <td>{{ position_debiting_act.get_Tip_display }}</td>
+                <td>{{ position_debiting_act.price }}</td>
                 <td>
                   <a href="{% url 'edit_position_debiting_act' pk=position_debiting_act.pk %}" class="btn btn-warning">Изменить</a>
                 </td>

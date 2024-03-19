@@ -1,0 +1,56 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <div class="container">
+    <h1>Продлить срок выдачи: {{ book_instance.book.title }}</h1>
+    <p>Абонент: {{ book_instance.borrower }}</p>
+    <p{% if book_instance.is_overdue %} class="text-danger"{% endif %}>Первоначальная дата
+      возврата: {{ book_instance.due_back }}</p>
+
+
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+          {% if message.tags == 'success' %}
+            <div class="alert alert-success" role="alert">{{ message }}</div>
+          {% elif message.tags == 'error' %}
+            <div class="alert alert-danger" role="alert">{{ message }}</div>
+          {% else %}
+            {{ message }}
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <form action="" method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="{{ form.renewal_date.id_for_label }}" class="form-label">Выберите дату продления (возможно продление
+        не более чем на 1 неделю вперед)</label>
+      <div class="input-group date">
+        <input type="date" class="form-control form-control-sm" id="{{ form.renewal_date.id_for_label }}"
+               name="{{ form.renewal_date.name }}" value="{{ form.renewal_date.value }}" style="max-width: 200px;">
+        <span class="input-group-addon">
+          <i class="glyphicon glyphicon-calendar"></i>
+        </span>
+      </div>
+    </div>
+
+    <input type="submit" value="Принять" class="btn btn-primary">
+  </form>
+  </div>
+
+<script>
+  $(document).ready(function () {
+    // Инициализация datepicker на поле с id "id_renewal_date" (замените на актуальный ID)
+    $('#id_renewal_date').datepicker({
+      format: 'yyyy-mm-dd',  // Формат даты (ваш формат)
+      todayBtn: "linked",
+      clearBtn: true,
+      autoclose: true
+    });
+  });
+</script>
+{% endblock %}

@@ -139,9 +139,11 @@ class AuthorForm(forms.ModelForm):
 
 class ProfileUserForm(forms.ModelForm):
   username = forms.CharField(disabled=True, label='Логин', widget=forms.TextInput(attrs={'class': 'form-input'}))
-  email = forms.CharField(disabled=True, label='E-mail', widget=forms.TextInput(attrs={'class': 'form-input'}))
+  email = forms.CharField(label='E-mail', widget=forms.TextInput(attrs={'class': 'form-input'}))
+  # email = forms.CharField(disabled=True, label='E-mail', widget=forms.TextInput(attrs={'class': 'form-input'}))
   this_year = datetime.date.today().year
   date_birth = forms.DateField(widget=forms.SelectDateWidget(years=tuple(range(this_year - 100, this_year - 5))))
+  avatar = forms.ImageField(label='Аватар', required=False)
 
   class Meta:
     model = get_user_model()
@@ -252,12 +254,14 @@ PositionDebitingActFormSet = inlineformset_factory(
 from django import forms
 from .models import Source, FizPersonSource
 
+
 class SourceForm(forms.ModelForm):
-    class Meta:
-        model = Source
-        fields = ['name', 'address']
+  class Meta:
+    model = Source
+    fields = ['name', 'address']
+
 
 class FizPersonSourceForm(forms.ModelForm):
-    class Meta:
-        model = FizPersonSource
-        fields = ['first_name', 'last_name', 'middle_name', 'source', 'contact_information']
+  class Meta:
+    model = FizPersonSource
+    fields = ['first_name', 'last_name', 'middle_name', 'source', 'contact_information']
