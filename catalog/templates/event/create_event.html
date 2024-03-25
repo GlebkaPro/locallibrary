@@ -1,0 +1,66 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Создание мероприятия</h1>
+  <form method="post" class="mt-4">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="{{ form.event_name.id_for_label }}" class="form-label">Наименование мероприятия</label>
+      <input type="text" class="form-control" id="{{ form.event_name.id_for_label }}" name="{{ form.event_name.name }}"
+             value="{% if form.event_name.value %}{{ form.event_name.value }}{% endif %}" style="max-width: 200px;">
+    </div>
+
+    <div class="mb-3">
+      <label for="{{ form.number_of_participants.id_for_label }}" class="form-label">Количество участников</label>
+      <input type="text" class="form-control" id="{{ form.number_of_participants.id_for_label }}"
+             name="{{ form.number_of_participants.name }}"
+             value="{% if form.number_of_participants.value %}{{ form.number_of_participants.value }}{% endif %}"
+             style="max-width: 200px;">
+    </div>
+
+    <div class="mb-3">
+      <label for="{{ form.date_start.id_for_label }}" class="form-label">Дата начала проведения</label>
+      <input type="date" class="form-control" id="{{ form.date_start.id_for_label }}" name="{{ form.date_start.name }}"
+             value="{{ form.date_start.value }}" style="max-width: 200px;">
+    </div>
+
+    <div class="mb-3">
+      <label for="{{ form.date_end.id_for_label }}" class="form-label">Дата конца проведения</label>
+      <input type="date" class="form-control" id="{{ form.date_end.id_for_label }}" name="{{ form.date_end.name }}"
+             value="{{ form.date_end.value }}" style="max-width: 200px;">
+    </div>
+
+    <div class="mb-3">
+      <label for="{{ form.date_end2.id_for_label }}" class="form-label">Дата фактического окончания</label>
+      <input type="date" class="form-control" id="{{ form.date_end2.id_for_label }}" name="{{ form.date_end2.name }}"
+             value="{{ form.date_end2.value }}" style="max-width: 200px;">
+    </div>
+
+    <div class="mb-3">
+      <label for="{{ form.worker.id_for_label }}" class="form-label">Сотрудник</label>
+      <select class="form-select" id="{{ form.worker.id_for_label }}" name="{{ form.worker.name }}"
+              style="max-width: 200px;">
+        {% for worker in form.worker.field.queryset %}
+          <option value="{{ worker.id }}" {% if worker.id == form.worker.value %}selected{% endif %}>{{ worker }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="{{ form.room.id_for_label }}" class="form-label">Помещение</label>
+      <select class="form-select" id="{{ form.room.id_for_label }}" name="{{ form.room.name }}"
+              style="max-width: 200px;">
+        {% for room in form.room.field.queryset %}
+          <option value="{{ room.id }}" {% if room.id == form.room.value %}selected{% endif %}>{{ room }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Создать</button>
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger mt-3" role="alert">
+        {{ form.non_field_errors }}
+      </div>
+    {% endif %}
+  </form>
+{% endblock %}

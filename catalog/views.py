@@ -1020,3 +1020,113 @@ class PrintAcceptActView(DetailView):
         p.save()
 
         return response
+
+from django.shortcuts import render, redirect
+from .forms import EventForm
+
+def create_event(request):
+    if request.method == 'POST':
+        form = EventForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('events_list')  # Перенаправляем пользователя на страницу со списком мероприятий после создания
+    else:
+        form = EventForm()
+    return render(request, 'event/create_event.html', {'form': form})
+
+from django.shortcuts import render, redirect
+from .models import Event
+
+def event_list(request):
+    events = Event.objects.all()
+    return render(request, 'event/event_list.html', {'events': events})
+
+from django.shortcuts import render
+from .models import Room
+
+def room_list(request):
+    rooms = Room.objects.all()
+    return render(request, 'event/room_list.html', {'rooms': rooms})
+
+from django.shortcuts import render, redirect
+from .forms import RoomForm
+
+def create_room(request):
+    if request.method == 'POST':
+        form = RoomForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('room_list')  # Перенаправляем пользователя на страницу со списком комнат после создания
+    else:
+        form = RoomForm()
+    return render(request, 'event/create_room.html', {'form': form})
+
+from django.shortcuts import render, redirect
+from .models import TypeRoom
+from .forms import TypeRoomForm
+
+def type_room_list(request):
+    type_rooms = TypeRoom.objects.all()
+    return render(request, 'event/type_room_list.html', {'type_rooms': type_rooms})
+
+def create_type_room(request):
+    if request.method == 'POST':
+        form = TypeRoomForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('type_room_list')  # Перенаправляем пользователя на страницу со списком типов комнат после создания
+    else:
+        form = TypeRoomForm()
+    return render(request, 'event/create_type_room.html', {'form': form})
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import TypeRoom
+from .forms import TypeRoomForm
+
+def edit_type_room(request, type_room_id):
+    type_room = get_object_or_404(TypeRoom, id=type_room_id)
+    if request.method == 'POST':
+        form = TypeRoomForm(request.POST, instance=type_room)
+        if form.is_valid():
+            form.save()
+            return redirect('type_room_list')
+    else:
+        form = TypeRoomForm(instance=type_room)
+    return render(request, 'event/edit_type_room.html', {'form': form, 'type_room': type_room})
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import TypeRoom
+
+def delete_type_room(request, type_room_id):
+    type_room = get_object_or_404(TypeRoom, id=type_room_id)
+    if request.method == 'POST':
+        type_room.delete()
+        return redirect('type_room_list')
+    return render(request, 'event/delete_type_room.html', {'type_room': type_room})
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Room
+from .forms import RoomForm
+
+def edit_room(request, room_id):
+    room = get_object_or_404(Room, id=room_id)
+    if request.method == 'POST':
+        form = RoomForm(request.POST, instance=room)
+        if form.is_valid():
+            form.save()
+            return redirect('room_list')
+    else:
+        form = RoomForm(instance=room)
+    return render(request, 'event/edit_room.html', {'form': form, 'room': room})
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Room
+
+def delete_room(request, room_id):
+    room = get_object_or_404(Room, id=room_id)
+    if request.method == 'POST':
+        room.delete()
+        return redirect('room_list')
+    return render(request, 'event/delete_room.html', {'room': room})
+
+

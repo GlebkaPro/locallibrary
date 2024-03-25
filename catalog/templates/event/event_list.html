@@ -1,0 +1,40 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Список мероприятий</h1>
+  <a href="{% url 'create_event' %}" class="btn btn-primary mb-3">Создать мероприятие</a>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Наименование мероприятия</th>
+        <th>Фамилия</th>
+        <th>Имя</th>
+        <th>Отчество</th>
+        <th>Цена</th>
+        <th>Дата начала</th>
+        <th>Дата конца</th>
+        <th>Дата фактического окончания</th>
+        <th>Сотрудник</th>
+        <th>Комната</th>
+        <th>Тип комнаты</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for event in events %}
+        <tr>
+          <td>{{ event.event_name }}</td>
+          <td>{{ event.last_name }}</td>
+          <td>{{ event.first_name }}</td>
+          <td>{{ event.middle_name }}</td>
+          <td>{{ event.number_of_participants }}</td>
+          <td>{{ event.date_start }}</td>
+          <td>{{ event.date_end }}</td>
+          <td>{{ event.date_end2 }}</td>
+          <td>{{ event.worker }}</td>
+          <td>{{ event.room }}</td>
+          <td>{{ event.typeroom }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

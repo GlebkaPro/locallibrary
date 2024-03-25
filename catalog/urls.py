@@ -83,3 +83,16 @@ urlpatterns += [
   path('accept_act/<int:pk>/', views.AcceptActDetailView.as_view(), name='accept_act_detail'),
   path('accept_act/<int:pk>/print/', views.PrintAcceptActView.as_view(), name='print_accept_act'),
 ]
+
+urlpatterns += [
+  path('create/', views.create_event, name='create_event'),
+  path('events/', views.event_list, name='event_list'),
+  path('rooms/', views.room_list, name='room_list'),
+  path('rooms/create/', views.create_room, name='create_room'),
+  path('type-rooms/', views.type_room_list, name='type_room_list'),
+  path('type-rooms/create/', views.create_type_room, name='create_type_room'),
+  path('type-rooms/edit/<int:type_room_id>/', views.edit_type_room, name='edit_type_room'),
+  path('type-rooms/delete/<int:type_room_id>/', views.delete_type_room, name='delete_type_room'),
+  path('rooms/edit/<int:room_id>/', views.edit_room, name='edit_room'),
+  path('rooms/delete/<int:room_id>/', views.delete_room, name='delete_room'),
+]

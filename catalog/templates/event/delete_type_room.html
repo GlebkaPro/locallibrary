@@ -1,0 +1,11 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Удаление типа комнаты</h1>
+  <p>Вы уверены, что хотите удалить тип комнаты "{{ type_room.name }}"?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Да, удалить</button>
+    <a href="{% url 'type_room_list' %}" class="btn btn-secondary">Отмена</a>
+  </form>
+{% endblock %}
