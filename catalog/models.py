@@ -305,7 +305,7 @@ class Room(models.Model):
   number_seats = models.CharField(verbose_name='Количество мест', max_length=100)
 
   def __str__(self):
-    return self.type
+    return f"{self.type} №{self.number} мест: {self.number_seats}"
 
 class TypeRoom(models.Model):
   name = models.CharField(verbose_name='Наименование', max_length=100)
