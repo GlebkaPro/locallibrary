@@ -13,7 +13,8 @@ from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views import View
 from django.shortcuts import redirect, get_object_or_404
-from catalog.forms import RenewBookForm, BookInstanceEditForm, GenreForm, LanguageForm, PositionDebitingActForm
+from catalog.forms import RenewBookForm, BookInstanceEditForm, GenreForm, LanguageForm, PositionDebitingActForm, \
+  ParticipantForm
 from users.models import User
 from .forms import AcceptActForm
 from .forms import AccountingBookCopyForm, BookCopyForm
@@ -1029,7 +1030,7 @@ def create_event(request):
         form = EventForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('events_list')  # Перенаправляем пользователя на страницу со списком мероприятий после создания
+            return redirect('event_list')  # Перенаправляем пользователя на страницу со списком мероприятий после создания
     else:
         form = EventForm()
     return render(request, 'event/create_event.html', {'form': form})
@@ -1129,4 +1130,78 @@ def delete_room(request, room_id):
         return redirect('room_list')
     return render(request, 'event/delete_room.html', {'room': room})
 
+from django.shortcuts import render, get_object_or_404
+from .models import PositionEvent, Event
 
+def participants_list(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    participants = PositionEvent.objects.filter(event=event)
+    context = {
+        'event': event,
+        'participants': participants,
+    }
+    return render(request, 'event/participants_list.html', context)
+
+
+from django.utils import timezone  # Импортируем timezone
+
+def add_participant(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    if request.method == 'POST':
+        form = ParticipantForm(request.POST)
+        if form.is_valid():
+            participant = form.save(commit=False)
+            participant.event = event
+            participant.date_record = timezone.now()  # Устанавливаем текущую дату
+            participant.save()
+            return redirect('participants_list', event_id=event.id)
+    else:
+        form = ParticipantForm()
+    return render(request, 'event/add_participant.html', {'form': form, 'event': event})
+
+
+def edit_participant(request, event_id, participant_id):
+  participant = get_object_or_404(PositionEvent, id=participant_id)
+  form = ParticipantForm(request.POST or None, instance=participant)
+  if request.method == 'POST' and form.is_valid():
+    form.save()
+    return redirect('participants_list', event_id=event_id)
+  return render(request, 'event/edit_participant.html', {'form': form, 'event_id': event_id})
+
+
+def delete_participant(request, event_id, participant_id):
+  participant = get_object_or_404(PositionEvent, id=participant_id)
+  if request.method == 'POST':
+    participant.delete()
+    return redirect('participants_list', event_id=event_id)
+  return render(request, 'event/delete_participant.html', {'participant': participant, 'event_id': event_id})
+
+# views.py
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Event
+from .forms import EventForm
+
+
+def edit_event(request, event_id):
+  event = get_object_or_404(Event, id=event_id)
+  if request.method == 'POST':
+    form = EventForm(request.POST, instance=event)
+    if form.is_valid():
+      form.save()
+      return redirect('event_list')
+  else:
+    form = EventForm(instance=event)
+  return render(request, 'event/create_event.html', {'form': form, 'event': event})
+
+# views.py
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Event
+
+def delete_event(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    if request.method == 'POST':
+        event.delete()
+        return redirect('event_list')
+    return render(request, 'event/delete_event.html', {'event': event})

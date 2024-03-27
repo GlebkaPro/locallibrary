@@ -273,9 +273,7 @@ class PositionDebitingAct(models.Model):
     return f"{self.price} - {self.debiting_exemplar}"
 
 class Event(models.Model):
-  last_name = models.CharField(verbose_name='Фамилия', max_length=100)
-  first_name = models.CharField(verbose_name='Имя', max_length=100)
-  middle_name = models.CharField(verbose_name='Отчество', null=True, max_length=100)
+  fio = models.CharField(verbose_name='ФИО организатора', max_length=100)
   event_name = models.CharField(verbose_name='Наименование мероприятия', max_length=100)
   number_of_participants = models.CharField(verbose_name='Количество участников', max_length=100)
   date_start = models.DateField(null=True, blank=True, verbose_name='Дата начала проведения')
@@ -285,10 +283,10 @@ class Event(models.Model):
                              verbose_name='Сотрудник')
   room = models.ForeignKey('Room', on_delete=models.SET_NULL, null=True)
   typeroom = models.ForeignKey('TypeRoom', on_delete=models.SET_NULL, null=True)
+  description = models.CharField(verbose_name='Описание', max_length=100)
 class PositionEvent(models.Model):
   event = models.ForeignKey('Event', on_delete=models.SET_NULL, null=True)
-  last_name = models.CharField(verbose_name='Фамилия', max_length=100)
-  date_record = models.DateField(null=True, blank=True, verbose_name='Дата начала проведения')
+  date_record = models.DateField(null=True, blank=True, verbose_name='Дата регистрации')
   borrower = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
                                verbose_name='Абонент')
   ACCEPT_status = (
@@ -297,7 +295,7 @@ class PositionEvent(models.Model):
   )
 
   status_record = models.CharField(
-    max_length=1, choices=ACCEPT_status, blank=True, default='н', verbose_name='Статус записи')
+    max_length=1, choices=ACCEPT_status, blank=True, default='з', verbose_name='Статус записи')
 
 class Room(models.Model):
   type = models.CharField(verbose_name='Тип', max_length=100)
@@ -308,7 +306,7 @@ class Room(models.Model):
     return f"{self.type} №{self.number} мест: {self.number_seats}"
 
 class TypeRoom(models.Model):
-  name = models.CharField(verbose_name='Наименование', max_length=100)
+  name = models.CharField(verbose_name='Наименование', max_length=20)
 
   def __str__(self):
     return self.name

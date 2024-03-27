@@ -266,26 +266,41 @@ class FizPersonSourceForm(forms.ModelForm):
     model = FizPersonSource
     fields = ['first_name', 'last_name', 'middle_name', 'source', 'contact_information']
 
+
 from django import forms
 from .models import Event
 
+
 class EventForm(forms.ModelForm):
-    class Meta:
-        model = Event
-        fields = ['last_name', 'first_name', 'middle_name', 'event_name', 'number_of_participants', 'date_start', 'date_end', 'date_end2', 'worker', 'room', 'typeroom']
+  class Meta:
+    model = Event
+    fields = ['event_name', 'number_of_participants', 'date_start', 'date_end', 'date_end2', 'worker', 'room',
+              'typeroom']
+
 
 from django import forms
 from .models import Room
 
+
 class RoomForm(forms.ModelForm):
-    class Meta:
-        model = Room
-        fields = ['type', 'number', 'number_seats']
+  class Meta:
+    model = Room
+    fields = ['type', 'number', 'number_seats']
+
 
 from django import forms
 from .models import TypeRoom
 
+
 class TypeRoomForm(forms.ModelForm):
+  class Meta:
+    model = TypeRoom
+    fields = ['name']
+
+from django import forms
+from .models import PositionEvent
+
+class ParticipantForm(forms.ModelForm):
     class Meta:
-        model = TypeRoom
-        fields = ['name']
+        model = PositionEvent
+        fields = ['borrower', 'status_record']  # Перечислите поля для добавления участника
