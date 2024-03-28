@@ -1224,15 +1224,16 @@ def delete_event(request, event_id):
 
 @login_required
 def register_to_event(request, event_id):
-  event = get_object_or_404(Event, id=event_id)
-  position_event, created = PositionEvent.objects.get_or_create(event=event, borrower=request.user)
-  if created:
-    position_event.date_record = date.today()  # Устанавливаем текущую дату при создании записи
-    position_event.save()
-    return redirect('participants_list', event_id=event.id)
-  else:
-    # Handle case where user is already registered for the event
-    return redirect('events_list')
+    event = get_object_or_404(Event, id=event_id)
+    # Проверяем, зарегистрирован ли пользователь на данное мероприятие
+    if PositionEvent.objects.filter(event=event, borrower=request.user).exists():
+        messages.error(request, 'Вы уже зарегистрированы на выбранное мероприятие.')
+        return redirect('event_list_borrower')  # Редиректим на страницу со списком мероприятий
+    else:
+        position_event = PositionEvent(event=event, borrower=request.user, date_record=date.today())
+        position_event.save()
+        return redirect('participants_list', event_id=event.id)
+
 
 # @login_required
 def event_list_borrower(request):
@@ -1263,3 +1264,12 @@ def cancel_registration(request, registration_id):
     redirect_url = reverse('profile') + '?tab=events'
     return redirect(redirect_url)
 
+# views.py (в вашем приложении)
+from django.shortcuts import render, get_object_or_404
+from .models import Event
+
+def detail_event(request, event_id):
+    # Получаем объект Event по event_id или возвращаем 404, если ивент не найден
+    event = get_object_or_404(Event, id=event_id)
+    context = {'event': event}
+    return render(request, 'event/detail_event.html', context)
