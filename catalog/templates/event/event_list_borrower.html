@@ -22,11 +22,7 @@
           <td>{{ event.date_end }}</td>
           <td>{{ event.description }}</td>
           <td>
-            <a href="{% url 'participants_list' event_id=event.id %}" class="btn btn-primary">Участники</a>
-{#            <form action="{% url 'delete_event' event_id=event.id %}" method="post" style="display: inline;">#}
-{#              {% csrf_token %}#}
-{#              <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Удалить</button>#}
-{#            </form>#}
+{#            <a href="{% url 'participants_list' event_id=event.id %}" class="btn btn-primary">Участники</a>#}
             <form action="{% url 'register_to_event' event_id=event.id %}" method="post" style="display: inline;">
               {% csrf_token %}
               <button type="submit" class="btn btn-success">Зарегистрироваться</button>

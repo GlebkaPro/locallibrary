@@ -105,4 +105,5 @@ urlpatterns += [
   path('events/<int:event_id>/participants/<int:participant_id>/delete/', views.delete_participant,
        name='delete_participant'),
   path('events/<int:event_id>/register/', views.register_to_event, name='register_to_event'),
+  path('cancel_registration/<int:registration_id>/', views.cancel_registration, name='cancel_registration'),
 ]

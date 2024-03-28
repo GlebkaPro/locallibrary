@@ -73,7 +73,7 @@ class BookListView(generic.ListView):
 class BookDetailView(generic.DetailView):
   """Общий класс-представление для детальной информации о книге."""
   model = Book
-
+  template_name = 'books/book_detail.html'
   # def book_detail(request, book_id):
   #   book = Book.objects.get(pk=book_id)
   #
@@ -467,26 +467,40 @@ def create_book_copy(request, book_id):
   return render(request, 'books/create_book_copy.html', {'book': book, 'form': form})
 
 
+from django.shortcuts import render
+from django.views.generic import UpdateView
+from django.urls import reverse_lazy
+from django.contrib.auth import get_user_model
+from .forms import ProfileUserForm
+
 class ProfileUser(UpdateView):
-  model = get_user_model()
-  form_class = ProfileUserForm
-  template_name = 'users/profile.html'
-  extra_context = {'title': "Профиль пользователя"}
+    model = get_user_model()
+    form_class = ProfileUserForm
+    template_name = 'users/profile.html'
+    extra_context = {'title': "Профиль пользователя"}
 
-  def get_success_url(self):
-    return reverse_lazy('profile')
+    def get_success_url(self):
+        return reverse_lazy('profile')
 
-  def form_valid(self, form):
-    # Сохраняем пользователя, включая аватар, если он был загружен
-    user = form.save(commit=False)
-    avatar = form.cleaned_data.get('avatar')
-    if avatar:
-      user.avatar = avatar
-    user.save()
-    return super().form_valid(form)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        # Получаем все мероприятия, в которых зарегистрирован текущий пользователь
+        registered_events = PositionEvent.objects.filter(borrower=user)
+        context['registered_events'] = registered_events
+        return context
 
-  def get_object(self, queryset=None):
-    return self.request.user
+    def form_valid(self, form):
+        user = form.save(commit=False)
+        avatar = form.cleaned_data.get('avatar')
+        if avatar:
+            user.avatar = avatar
+        user.save()
+        return super().form_valid(form)
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
 
 
 def add_genre(request):
@@ -1220,6 +1234,32 @@ def register_to_event(request, event_id):
     # Handle case where user is already registered for the event
     return redirect('events_list')
 
+# @login_required
 def event_list_borrower(request):
-  events = Event.objects.all()
-  return render(request, 'event/event_list_borrower.html', {'events': events})
+    events = Event.objects.all()
+    # Получаем текущего пользователя из запроса
+    # current_user = request.user
+    #
+    # # Фильтруем мероприятия на основе участия пользователя
+    # events = Event.objects.filter(positionevent__borrower=current_user)
+
+    return render(request, 'event/event_list_borrower.html', {'events': events})
+
+
+from django.shortcuts import redirect, get_object_or_404
+from .models import PositionEvent
+from urllib.parse import urljoin
+
+
+def cancel_registration(request, registration_id):
+  registration = get_object_or_404(PositionEvent, id=registration_id)
+
+  # Проверяем, что текущий пользователь зарегистрирован на это мероприятие
+  if registration.borrower == request.user:
+    # Удаляем регистрацию
+    registration.delete()
+
+    # Перенаправляем пользователя на страницу профиля с указанием активной вкладки "Мероприятия"
+    redirect_url = reverse('profile') + '?tab=events'
+    return redirect(redirect_url)
+
