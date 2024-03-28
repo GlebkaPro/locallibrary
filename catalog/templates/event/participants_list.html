@@ -19,7 +19,7 @@
           <td>{{ participant.get_status_record_display }}</td>
           <td>
             <a href="{% url 'edit_participant' event_id=event.id participant_id=participant.id %}" class="btn btn-sm btn-warning">Изменить</a>
-            <form action="{% url 'delete_event' event_id=event.id %}" method="post" style="display: inline;">
+            <form action="{% url 'delete_participant' event_id=event.id participant_id=participant.id %}" method="post" style="display: inline;">
               {% csrf_token %}
               <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Удалить</button>
             </form>

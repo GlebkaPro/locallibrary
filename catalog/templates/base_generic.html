@@ -51,7 +51,8 @@
 {#      {% endif %}#}
       {% if user.is_staff and perms.catalog.can_mark_returned %}
         <li class="nav-item" style="margin-right: 10px"><a href="{% url 'all-borrowed' %}" class="nav-link link-color border border-primary">Все выдачи</a></li>
-        <li class="nav-item" style="margin-right: 10px"><a href="{% url 'event_list' %}" class="nav-link link-color border border-primary">Мероприятия</a></li>
+        <li class="nav-item" style="margin-right: 10px"><a href="{% url 'event_list' %}" class="nav-link link-color border border-primary">Редактировать мероприятия</a></li>
+        <li class="nav-item" style="margin-right: 10px"><a href="{% url 'event_list_borrower' %}" class="nav-link link-color border border-primary">Мероприятия</a></li>
 {#        <li class="nav-item" style="margin-right: 10px"><a href="{% url 'user_list' %}" class="nav-link link-color border border-primary">Все пользователи</a></li>#}
 
         <div class="dropdown">

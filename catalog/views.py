@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.contrib import messages
 from django.contrib.auth import login, get_user_model
 from django.contrib.auth.decorators import login_required
@@ -1205,3 +1207,19 @@ def delete_event(request, event_id):
         event.delete()
         return redirect('event_list')
     return render(request, 'event/delete_event.html', {'event': event})
+
+@login_required
+def register_to_event(request, event_id):
+  event = get_object_or_404(Event, id=event_id)
+  position_event, created = PositionEvent.objects.get_or_create(event=event, borrower=request.user)
+  if created:
+    position_event.date_record = date.today()  # Устанавливаем текущую дату при создании записи
+    position_event.save()
+    return redirect('participants_list', event_id=event.id)
+  else:
+    # Handle case where user is already registered for the event
+    return redirect('events_list')
+
+def event_list_borrower(request):
+  events = Event.objects.all()
+  return render(request, 'event/event_list_borrower.html', {'events': events})

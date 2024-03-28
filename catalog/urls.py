@@ -89,6 +89,7 @@ urlpatterns += [
   path('edit/<int:event_id>/', views.edit_event, name='edit_event'),
   path('delete/<int:event_id>/', views.delete_event, name='delete_event'),
   path('events/', views.event_list, name='event_list'),
+  path('events_a/', views.event_list_borrower, name='event_list_borrower'),
   path('rooms/', views.room_list, name='room_list'),
   path('rooms/create/', views.create_room, name='create_room'),
   path('type-rooms/', views.type_room_list, name='type_room_list'),
@@ -103,4 +104,5 @@ urlpatterns += [
        name='edit_participant'),
   path('events/<int:event_id>/participants/<int:participant_id>/delete/', views.delete_participant,
        name='delete_participant'),
+  path('events/<int:event_id>/register/', views.register_to_event, name='register_to_event'),
 ]

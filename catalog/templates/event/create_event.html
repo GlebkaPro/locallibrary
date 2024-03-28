@@ -14,14 +14,16 @@
           <span class="invalid-feedback">{{ form.event_name.errors }}</span>
         {% endif %}
       </div>
-    
+
       <div class="mb-3">
         <label for="{{ form.typeroom.id_for_label }}" class="form-label">Тип мероприятия</label>
-        <select class="form-select {% if form.typeroom.errors %}is-invalid{% endif %}" id="{{ form.typeroom.id_for_label }}" name="{{ form.typeroom.name }}"
+        <select class="form-select {% if form.typeroom.errors %}is-invalid{% endif %}"
+                id="{{ form.typeroom.id_for_label }}" name="{{ form.typeroom.name }}"
                 style="max-width: 200px;">
           <option value="" {% if not form.typeroom.value %}selected{% endif %}>Выберите тип мероприятия:</option>
           {% for typeroom in form.typeroom.field.queryset %}
-            <option value="{{ typeroom.id }}" {% if form.typeroom.value == typeroom.id %}selected{% endif %}>{{ typeroom.name }}</option>
+            <option value="{{ typeroom.id }}"
+                    {% if form.typeroom.value == typeroom.id %}selected{% endif %}>{{ typeroom.name }}</option>
           {% endfor %}
         </select>
         {% if form.typeroom.errors %}
@@ -110,13 +112,15 @@
 
       <div class="mb-3">
         <label for="{{ form.description.id_for_label }}" class="form-label">Описание</label>
-        <input type="text" class="form-control {% if form.description.errors %}is-invalid{% endif %}"
-               id="{{ form.description.id_for_label }}" name="{{ form.description.name }}"
-               value="{% if form.description.value %}{{ form.description.value }}{% endif %}" style="max-width: 200px;">
+        <textarea class="form-control {% if form.description.errors %}is-invalid{% endif %}"
+                  id="{{ form.description.id_for_label }}" name="{{ form.description.name }}"
+                  style="max-width: 100%;" rows="5">{% if form.description.value %}
+          {{ form.description.value }}{% endif %}</textarea>
         {% if form.description.errors %}
           <span class="invalid-feedback">{{ form.description.errors }}</span>
         {% endif %}
       </div>
+
 
       <button type="submit" class="btn btn-primary">Создать</button>
       {% if form.non_field_errors %}
