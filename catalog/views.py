@@ -488,6 +488,11 @@ class ProfileUser(UpdateView):
         # Получаем все мероприятия, в которых зарегистрирован текущий пользователь
         registered_events = PositionEvent.objects.filter(borrower=user)
         context['registered_events'] = registered_events
+
+        # Получаем все арендованные книги текущего пользователя
+        bookinstance_list = BookInstance.objects.filter(borrower=user)
+        context['bookinstance_list'] = bookinstance_list
+
         return context
 
     def form_valid(self, form):
@@ -1199,16 +1204,39 @@ from .models import Event
 from .forms import EventForm
 
 
+from django.shortcuts import render, get_object_or_404, redirect
+from .forms import EventForm
+from .models import Event
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .forms import EventForm
+from .models import Event
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .forms import EventForm
+from .models import Event
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .forms import EventForm
+from .models import Event
+
 def edit_event(request, event_id):
-  event = get_object_or_404(Event, id=event_id)
-  if request.method == 'POST':
-    form = EventForm(request.POST, instance=event)
-    if form.is_valid():
-      form.save()
-      return redirect('event_list')
-  else:
-    form = EventForm(instance=event)
-  return render(request, 'event/create_event.html', {'form': form, 'event': event})
+    event = get_object_or_404(Event, id=event_id)
+
+    if request.method == 'POST':
+        form = EventForm(request.POST, instance=event)
+        if form.is_valid():
+            form.save()
+            return redirect('event_list')
+    else:
+        form = EventForm(instance=event, initial={'date_start': event.date_start,
+                                                  'date_end': event.date_end})
+
+    return render(request, 'event/edit_event.html', {'form': form, 'event': event})
+
+
+
+
 
 # views.py
 

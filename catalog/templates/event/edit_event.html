@@ -14,7 +14,7 @@
           <span class="invalid-feedback">{{ form.event_name.errors }}</span>
         {% endif %}
       </div>
-    
+
       <div class="mb-3">
         <label for="{{ form.typeroom.id_for_label }}" class="form-label">Тип мероприятия</label>
         <select class="form-select {% if form.typeroom.errors %}is-invalid{% endif %}" id="{{ form.typeroom.id_for_label }}" name="{{ form.typeroom.name }}"
@@ -38,6 +38,7 @@
           <span class="invalid-feedback">{{ form.fio.errors }}</span>
         {% endif %}
       </div>
+    
 
       <div class="mb-3">
         <label for="{{ form.number_of_participants.id_for_label }}" class="form-label">Количество участников</label>
@@ -50,25 +51,25 @@
         {% endif %}
       </div>
 
-      <div class="mb-3">
-        <label for="{{ form.date_start.id_for_label }}" class="form-label">Дата начала проведения</label>
-        <input type="date" class="form-control {% if form.date_start.errors %}is-invalid{% endif %}"
-               id="{{ form.date_start.id_for_label }}" name="{{ form.date_start.name }}"
-               value="{{ form.date_start.value }}" style="max-width: 200px;">
-        {% if form.date_start.errors %}
-          <span class="invalid-feedback">{{ form.date_start.errors }}</span>
-        {% endif %}
-      </div>
+    <div class="mb-3">
+      <label for="{{ form.date_start.id_for_label }}" class="form-label">Дата начала проведения</label>
+      <input type="date" class="form-control {% if form.date_start.errors %}is-invalid{% endif %}"
+             id="{{ form.date_start.id_for_label }}" name="{{ form.date_start.name }}"
+             value="{{ form.date_start.value|default_if_none:event.date_start }}" style="max-width: 200px;">
+      {% if form.date_start.errors %}
+        <span class="invalid-feedback">{{ form.date_start.errors }}</span>
+      {% endif %}
+    </div>
 
-      <div class="mb-3">
-        <label for="{{ form.date_end.id_for_label }}" class="form-label">Дата конца проведения</label>
-        <input type="date" class="form-control {% if form.date_end.errors %}is-invalid{% endif %}"
-               id="{{ form.date_end.id_for_label }}" name="{{ form.date_end.name }}" value="{{ form.date_end.value }}"
-               style="max-width: 200px;">
-        {% if form.date_end.errors %}
-          <span class="invalid-feedback">{{ form.date_end.errors }}</span>
-        {% endif %}
-      </div>
+    <div class="mb-3">
+      <label for="{{ form.date_end.id_for_label }}" class="form-label">Дата конца проведения</label>
+      <input type="date" class="form-control {% if form.date_end.errors %}is-invalid{% endif %}"
+             id="{{ form.date_end.id_for_label }}" name="{{ form.date_end.name }}"
+             value="{{ form.date_end.value|default_if_none:event.date_end }}" style="max-width: 200px;">
+      {% if form.date_end.errors %}
+        <span class="invalid-feedback">{{ form.date_end.errors }}</span>
+      {% endif %}
+    </div>
 
       <div class="mb-3">
         <label for="{{ form.date_end2.id_for_label }}" class="form-label">Дата фактического окончания</label>
@@ -86,7 +87,7 @@
                 name="{{ form.worker.name }}" style="max-width: 200px;">
           <option value="" {% if not form.worker.value %}selected{% endif %}>Выберите сотрудника:</option>
           {% for worker in form.worker.field.queryset %}
-            <option value="{{ worker.id }}">{{ worker }}</option>
+            <option value="{{ worker.id }}" {% if form.worker.value == worker.id %}selected{% endif %}>{{ worker }}</option>
           {% endfor %}
         </select>
         {% if form.worker.errors %}
@@ -100,7 +101,7 @@
                 name="{{ form.room.name }}" style="max-width: 200px;">
           <option value="" {% if not form.room.value %}selected{% endif %}>Выберите помещение:</option>
           {% for room in form.room.field.queryset %}
-            <option value="{{ room.id }}">{{ room }}</option>
+            <option value="{{ room.id }}" {% if form.room.value == room.id %}selected{% endif %}>{{ room }}</option>
           {% endfor %}
         </select>
         {% if form.room.errors %}
@@ -110,15 +111,16 @@
 
       <div class="mb-3">
         <label for="{{ form.description.id_for_label }}" class="form-label">Описание</label>
-        <input type="text" class="form-control {% if form.description.errors %}is-invalid{% endif %}"
-               id="{{ form.description.id_for_label }}" name="{{ form.description.name }}"
-               value="{% if form.description.value %}{{ form.description.value }}{% endif %}" style="max-width: 200px;">
+        <textarea class="form-control {% if form.description.errors %}is-invalid{% endif %}"
+                  id="{{ form.description.id_for_label }}" name="{{ form.description.name }}"
+                  style="max-width: 100%;" rows="5">{% if form.description.value %}
+          {{ form.description.value }}{% endif %}</textarea>
         {% if form.description.errors %}
           <span class="invalid-feedback">{{ form.description.errors }}</span>
         {% endif %}
       </div>
 
-      <button type="submit" class="btn btn-primary">Создать</button>
+      <button type="submit" class="btn btn-primary">Сохранить</button>
       {% if form.non_field_errors %}
         <div class="alert alert-danger mt-3" role="alert">
           {{ form.non_field_errors }}

@@ -274,8 +274,7 @@ from .models import Event
 class EventForm(forms.ModelForm):
   class Meta:
     model = Event
-    fields = ['event_name', 'number_of_participants', 'date_start', 'date_end', 'date_end2', 'worker', 'room',
-              'typeroom']
+    fields = '__all__'
 
 
 from django import forms
