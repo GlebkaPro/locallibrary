@@ -348,3 +348,6 @@ class Request(models.Model):
 
   status_record = models.CharField(
     max_length=1, choices=ACCEPT_status, blank=True, default='в', verbose_name='Статус заявки-')
+
+  class Meta:
+    ordering = ['title', 'author']

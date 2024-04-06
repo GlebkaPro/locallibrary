@@ -1301,3 +1301,70 @@ def detail_event(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     context = {'event': event}
     return render(request, 'event/detail_event.html', context)
+
+from django.shortcuts import render, redirect
+from .forms import RequestForm
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .forms import RequestForm
+
+@login_required
+def create_request(request):
+    if request.method == 'POST':
+        form = RequestForm(request.POST)
+        if form.is_valid():
+            # Присваиваем текущего пользователя полю "Абонент" перед сохранением формы
+            request_obj = form.save(commit=False)
+            request_obj.date_creation = timezone.now()  # Установка текущей даты и времени
+            request_obj.borrower = request.user
+            request_obj.save()
+            return redirect('request_list')  # Перенаправляем пользователя на страницу со списком заявок после создания
+    else:
+        form = RequestForm()
+    return render(request, 'request/create_request.html', {'form': form})
+
+
+# views.py
+from django.shortcuts import render
+from .models import Request
+
+def request_list(request):
+    requests = Request.objects.all()
+    return render(request, 'request/request_list.html', {'requests': requests})
+
+from django.shortcuts import get_object_or_404, redirect
+from .models import Request
+
+def delete_request(request, request_id):
+    request_obj = get_object_or_404(Request, id=request_id)
+    if request.method == 'POST':
+        request_obj.delete()
+        return redirect('request_list')
+    return redirect('request_list')  # В случае GET запроса перенаправляем обратно на страницу списка заявок
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .forms import RequestForm
+from .models import Request
+
+from django.utils import timezone
+
+
+def edit_request(request, request_id):
+  request_obj = get_object_or_404(Request, id=request_id)
+
+  if request.method == 'POST':
+    form = RequestForm(request.POST, instance=request_obj)
+    if form.is_valid():
+      request_obj = form.save(commit=False)
+      request_obj.date_creation = timezone.now()  # Обновляем дату редактирования
+      request_obj.save()
+      return redirect('request_list')
+  else:
+    form = RequestForm(instance=request_obj)
+
+  return render(request, 'request/edit_request.html', {'form': form, 'request_obj': request_obj})
+
+
+
+

@@ -303,3 +303,16 @@ class ParticipantForm(forms.ModelForm):
     class Meta:
         model = PositionEvent
         fields = ['borrower', 'status_record']  # Перечислите поля для добавления участника
+
+# forms.py
+from django import forms
+from .models import Request
+
+from django import forms
+from .models import Request
+
+class RequestForm(forms.ModelForm):
+    class Meta:
+        model = Request
+        fields = ['title', 'author', 'description']  # Поля, которые разрешено редактировать
+
