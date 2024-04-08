@@ -115,3 +115,8 @@ urlpatterns += [
   path('requests/<int:request_id>/edit/', views.edit_request, name='edit_request'),
   path('requests/<int:request_id>/delete/', views.delete_request, name='delete_request'),
 ]
+
+urlpatterns += [
+    # Другие URL-пути вашего приложения
+    path('request/<int:request_id>/delete/', views.profile_delete_request, name='profile_delete_request'),
+]

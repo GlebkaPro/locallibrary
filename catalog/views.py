@@ -106,6 +106,7 @@ class AuthorDetailView(generic.DetailView):
   model = Author
   template_name = 'authors/author_detail.html'
 
+
 class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
   """Общий класс-представление для списка книг, взятых на аренду текущим пользователем."""
   model = BookInstance
@@ -473,39 +474,42 @@ from django.urls import reverse_lazy
 from django.contrib.auth import get_user_model
 from .forms import ProfileUserForm
 
+
 class ProfileUser(UpdateView):
-    model = get_user_model()
-    form_class = ProfileUserForm
-    template_name = 'users/profile.html'
-    extra_context = {'title': "Профиль пользователя"}
+  model = get_user_model()
+  form_class = ProfileUserForm
+  template_name = 'users/profile.html'
+  extra_context = {'title': "Профиль пользователя"}
 
-    def get_success_url(self):
-        return reverse_lazy('profile')
+  def get_success_url(self):
+    return reverse_lazy('profile')
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
-        # Получаем все мероприятия, в которых зарегистрирован текущий пользователь
-        registered_events = PositionEvent.objects.filter(borrower=user)
-        context['registered_events'] = registered_events
+  def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    user = self.request.user
+    # Получаем все мероприятия, в которых зарегистрирован текущий пользователь
+    registered_events = PositionEvent.objects.filter(borrower=user)
+    context['registered_events'] = registered_events
 
-        # Получаем все арендованные книги текущего пользователя
-        bookinstance_list = BookInstance.objects.filter(borrower=user)
-        context['bookinstance_list'] = bookinstance_list
+    # Получаем все арендованные книги текущего пользователя
+    bookinstance_list = BookInstance.objects.filter(borrower=user)
+    context['bookinstance_list'] = bookinstance_list
 
-        return context
+    user_requests = Request.objects.filter(borrower=user)
+    context['user_requests'] = user_requests
 
-    def form_valid(self, form):
-        user = form.save(commit=False)
-        avatar = form.cleaned_data.get('avatar')
-        if avatar:
-            user.avatar = avatar
-        user.save()
-        return super().form_valid(form)
+    return context
 
-    def get_object(self, queryset=None):
-        return self.request.user
+  def form_valid(self, form):
+    user = form.save(commit=False)
+    avatar = form.cleaned_data.get('avatar')
+    if avatar:
+      user.avatar = avatar
+    user.save()
+    return super().form_valid(form)
 
+  def get_object(self, queryset=None):
+    return self.request.user
 
 
 def add_genre(request):
@@ -919,66 +923,72 @@ class DeletePositionDebitingActView(View):
     position_debiting_act.delete()
     return redirect('edit_debiting_act', pk=debiting_act_pk)
 
+
 # ваш_проект/views.py
 from django.views.generic import ListView
 from .models import BookInstance
 
+
 class UserLoansListView(ListView):
-    model = BookInstance
-    # template_name = 'catalog/user_loans_list.html'
-    template_name = 'catalog/templates/bookinstances/bookinstance_list_borrowed_all.html'
+  model = BookInstance
+  # template_name = 'catalog/user_loans_list.html'
+  template_name = 'catalog/templates/bookinstances/bookinstance_list_borrowed_all.html'
 
-    paginate_by = 10
+  paginate_by = 10
 
-    def get_queryset(self):
-        user_id = self.kwargs['pk']
-        return BookInstance.objects.filter(borrower__id=user_id, status__in=['р', 'з', 'п']).order_by('due_back')
-
-
-from django.shortcuts import render, redirect
-from .forms import SourceForm, FizPersonSourceForm
+  def get_queryset(self):
+    user_id = self.kwargs['pk']
+    return BookInstance.objects.filter(borrower__id=user_id, status__in=['р', 'з', 'п']).order_by('due_back')
 
 
 from django.shortcuts import render, redirect
 from .forms import SourceForm, FizPersonSourceForm
+
+from django.shortcuts import render, redirect
+from .forms import SourceForm, FizPersonSourceForm
+
 
 def create_source(request):
-    if request.method == 'POST':
-        form = SourceForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('source_list')  # Замените 'success_page' на URL успешной страницы
-    else:
-        form = SourceForm()
+  if request.method == 'POST':
+    form = SourceForm(request.POST)
+    if form.is_valid():
+      form.save()
+      return redirect('source_list')  # Замените 'success_page' на URL успешной страницы
+  else:
+    form = SourceForm()
 
-    return render(request, 'source/create_source.html', {'form': form})
+  return render(request, 'source/create_source.html', {'form': form})
+
 
 def create_fiz_person_source(request):
-    if request.method == 'POST':
-        form = FizPersonSourceForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('fiz_person_source_list')  # Замените 'success_page' на URL успешной страницы
-    else:
-        form = FizPersonSourceForm()
+  if request.method == 'POST':
+    form = FizPersonSourceForm(request.POST)
+    if form.is_valid():
+      form.save()
+      return redirect('fiz_person_source_list')  # Замените 'success_page' на URL успешной страницы
+  else:
+    form = FizPersonSourceForm()
 
-    return render(request, 'source/create_fiz_person_source.html', {'form': form})
+  return render(request, 'source/create_fiz_person_source.html', {'form': form})
 
 
 from django.shortcuts import render
 from .models import Source
 
+
 def source_list(request):
-    organizations = Source.objects.all()
-    return render(request, 'source/source_list.html', {'organizations': organizations})
+  organizations = Source.objects.all()
+  return render(request, 'source/source_list.html', {'organizations': organizations})
 
 
 from django.shortcuts import render
 from .models import FizPersonSource
 
+
 def fiz_person_source_list(request):
-    fiz_persons = FizPersonSource.objects.all()
-    return render(request, 'source/fiz_person_source_list.html', {'fiz_persons': fiz_persons})
+  fiz_persons = FizPersonSource.objects.all()
+  return render(request, 'source/fiz_person_source_list.html', {'fiz_persons': fiz_persons})
+
 
 from django.shortcuts import render
 from django.views.generic import DetailView
@@ -995,190 +1005,213 @@ pdfmetrics.registerFont(TTFont('LiberationSans', 'catalog/static/fonts/Liberatio
 
 
 class AcceptActDetailView(DetailView):
-    model = AcceptAct
-    template_name = 'accept_acts/accept_act_detail.html'
+  model = AcceptAct
+  template_name = 'accept_acts/accept_act_detail.html'
+
 
 class PrintAcceptActView(DetailView):
-    model = AcceptAct
-    template_name = 'print_accept_act.html'
+  model = AcceptAct
+  template_name = 'print_accept_act.html'
 
-    def render_to_response(self, context, **response_kwargs):
-        # Создаем объект HttpResponse с типом содержимого PDF.
-        response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = 'filename="accept_act.pdf"'
+  def render_to_response(self, context, **response_kwargs):
+    # Создаем объект HttpResponse с типом содержимого PDF.
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'filename="accept_act.pdf"'
 
-        # Создаем объект PDF, связанный с объектом HttpResponse.
-        p = canvas.Canvas(response)
+    # Создаем объект PDF, связанный с объектом HttpResponse.
+    p = canvas.Canvas(response)
 
-        # Устанавливаем шрифт
-        p.setFont('LiberationSans', 12)
+    # Устанавливаем шрифт
+    p.setFont('LiberationSans', 12)
 
-        # Получаем данные акта из контекста.
-        accept_act = context['object']
+    # Получаем данные акта из контекста.
+    accept_act = context['object']
 
-        # Добавляем данные акта в PDF.
-        p.drawString(100, 800, f"Акт о приёме №{accept_act.number}")
-        p.drawString(100, 780, f"Дата: {accept_act.current_date}")
-        p.drawString(100, 760, f"Сумма: {accept_act.summa}")
-        p.drawString(100, 740, f"Сотрудник: {accept_act.worker}")
-        p.drawString(100, 720, f"Источник: {accept_act.source}")
-        p.drawString(100, 700, f"Тип поступления: {accept_act.get_Tip_display()}")
+    # Добавляем данные акта в PDF.
+    p.drawString(100, 800, f"Акт о приёме №{accept_act.number}")
+    p.drawString(100, 780, f"Дата: {accept_act.current_date}")
+    p.drawString(100, 760, f"Сумма: {accept_act.summa}")
+    p.drawString(100, 740, f"Сотрудник: {accept_act.worker}")
+    p.drawString(100, 720, f"Источник: {accept_act.source}")
+    p.drawString(100, 700, f"Тип поступления: {accept_act.get_Tip_display()}")
 
+    # Добавляем заголовок для позиций.
+    p.drawString(100, 670, "Позиции в акте:")
 
-        # Добавляем заголовок для позиций.
-        p.drawString(100, 670, "Позиции в акте:")
+    # Получаем позиции акта и добавляем их в PDF.
+    positions = accept_act.position_accept_acts.all()
+    y_position = 650
+    for position in positions:
+      p.drawString(120, y_position, f"Цена: {position.price}")
+      p.drawString(120, y_position - 20, f"Количество: {position.size}")
+      p.drawString(120, y_position - 40, f"Экземпляр: {position.exemplar}")
+      y_position -= 60
 
-        # Получаем позиции акта и добавляем их в PDF.
-        positions = accept_act.position_accept_acts.all()
-        y_position = 650
-        for position in positions:
-            p.drawString(120, y_position, f"Цена: {position.price}")
-            p.drawString(120, y_position - 20, f"Количество: {position.size}")
-            p.drawString(120, y_position - 40, f"Экземпляр: {position.exemplar}")
-            y_position -= 60
+    # Завершаем создание PDF.
+    p.showPage()
+    p.save()
 
-        # Завершаем создание PDF.
-        p.showPage()
-        p.save()
+    return response
 
-        return response
 
 from django.shortcuts import render, redirect
 from .forms import EventForm
 
+
 def create_event(request):
-    if request.method == 'POST':
-        form = EventForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('event_list')  # Перенаправляем пользователя на страницу со списком мероприятий после создания
-    else:
-        form = EventForm()
-    return render(request, 'event/create_event.html', {'form': form})
+  if request.method == 'POST':
+    form = EventForm(request.POST)
+    if form.is_valid():
+      form.save()
+      return redirect('event_list')  # Перенаправляем пользователя на страницу со списком мероприятий после создания
+  else:
+    form = EventForm()
+  return render(request, 'event/create_event.html', {'form': form})
+
 
 from django.shortcuts import render, redirect
 from .models import Event
 
+
 def event_list(request):
-    events = Event.objects.all()
-    return render(request, 'event/event_list.html', {'events': events})
+  events = Event.objects.all()
+  return render(request, 'event/event_list.html', {'events': events})
+
 
 from django.shortcuts import render
 from .models import Room
 
+
 def room_list(request):
-    rooms = Room.objects.all()
-    return render(request, 'event/room_list.html', {'rooms': rooms})
+  rooms = Room.objects.all()
+  return render(request, 'event/room_list.html', {'rooms': rooms})
+
 
 from django.shortcuts import render, redirect
 from .forms import RoomForm
+
 
 def create_room(request):
-    if request.method == 'POST':
-        form = RoomForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('room_list')  # Перенаправляем пользователя на страницу со списком комнат после создания
-    else:
-        form = RoomForm()
-    return render(request, 'event/create_room.html', {'form': form})
+  if request.method == 'POST':
+    form = RoomForm(request.POST)
+    if form.is_valid():
+      form.save()
+      return redirect('room_list')  # Перенаправляем пользователя на страницу со списком комнат после создания
+  else:
+    form = RoomForm()
+  return render(request, 'event/create_room.html', {'form': form})
+
 
 from django.shortcuts import render, redirect
 from .models import TypeRoom
 from .forms import TypeRoomForm
 
+
 def type_room_list(request):
-    type_rooms = TypeRoom.objects.all()
-    return render(request, 'event/type_room_list.html', {'type_rooms': type_rooms})
+  type_rooms = TypeRoom.objects.all()
+  return render(request, 'event/type_room_list.html', {'type_rooms': type_rooms})
+
 
 def create_type_room(request):
-    if request.method == 'POST':
-        form = TypeRoomForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('type_room_list')  # Перенаправляем пользователя на страницу со списком типов комнат после создания
-    else:
-        form = TypeRoomForm()
-    return render(request, 'event/create_type_room.html', {'form': form})
+  if request.method == 'POST':
+    form = TypeRoomForm(request.POST)
+    if form.is_valid():
+      form.save()
+      return redirect(
+        'type_room_list')  # Перенаправляем пользователя на страницу со списком типов комнат после создания
+  else:
+    form = TypeRoomForm()
+  return render(request, 'event/create_type_room.html', {'form': form})
+
 
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import TypeRoom
 from .forms import TypeRoomForm
 
+
 def edit_type_room(request, type_room_id):
-    type_room = get_object_or_404(TypeRoom, id=type_room_id)
-    if request.method == 'POST':
-        form = TypeRoomForm(request.POST, instance=type_room)
-        if form.is_valid():
-            form.save()
-            return redirect('type_room_list')
-    else:
-        form = TypeRoomForm(instance=type_room)
-    return render(request, 'event/edit_type_room.html', {'form': form, 'type_room': type_room})
+  type_room = get_object_or_404(TypeRoom, id=type_room_id)
+  if request.method == 'POST':
+    form = TypeRoomForm(request.POST, instance=type_room)
+    if form.is_valid():
+      form.save()
+      return redirect('type_room_list')
+  else:
+    form = TypeRoomForm(instance=type_room)
+  return render(request, 'event/edit_type_room.html', {'form': form, 'type_room': type_room})
+
 
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import TypeRoom
 
+
 def delete_type_room(request, type_room_id):
-    type_room = get_object_or_404(TypeRoom, id=type_room_id)
-    if request.method == 'POST':
-        type_room.delete()
-        return redirect('type_room_list')
-    return render(request, 'event/delete_type_room.html', {'type_room': type_room})
+  type_room = get_object_or_404(TypeRoom, id=type_room_id)
+  if request.method == 'POST':
+    type_room.delete()
+    return redirect('type_room_list')
+  return render(request, 'event/delete_type_room.html', {'type_room': type_room})
+
 
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Room
 from .forms import RoomForm
 
+
 def edit_room(request, room_id):
-    room = get_object_or_404(Room, id=room_id)
-    if request.method == 'POST':
-        form = RoomForm(request.POST, instance=room)
-        if form.is_valid():
-            form.save()
-            return redirect('room_list')
-    else:
-        form = RoomForm(instance=room)
-    return render(request, 'event/edit_room.html', {'form': form, 'room': room})
+  room = get_object_or_404(Room, id=room_id)
+  if request.method == 'POST':
+    form = RoomForm(request.POST, instance=room)
+    if form.is_valid():
+      form.save()
+      return redirect('room_list')
+  else:
+    form = RoomForm(instance=room)
+  return render(request, 'event/edit_room.html', {'form': form, 'room': room})
+
 
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Room
 
+
 def delete_room(request, room_id):
-    room = get_object_or_404(Room, id=room_id)
-    if request.method == 'POST':
-        room.delete()
-        return redirect('room_list')
-    return render(request, 'event/delete_room.html', {'room': room})
+  room = get_object_or_404(Room, id=room_id)
+  if request.method == 'POST':
+    room.delete()
+    return redirect('room_list')
+  return render(request, 'event/delete_room.html', {'room': room})
+
 
 from django.shortcuts import render, get_object_or_404
 from .models import PositionEvent, Event
 
+
 def participants_list(request, event_id):
-    event = get_object_or_404(Event, id=event_id)
-    participants = PositionEvent.objects.filter(event=event)
-    context = {
-        'event': event,
-        'participants': participants,
-    }
-    return render(request, 'event/participants_list.html', context)
+  event = get_object_or_404(Event, id=event_id)
+  participants = PositionEvent.objects.filter(event=event)
+  context = {
+    'event': event,
+    'participants': participants,
+  }
+  return render(request, 'event/participants_list.html', context)
 
 
 from django.utils import timezone  # Импортируем timezone
 
+
 def add_participant(request, event_id):
-    event = get_object_or_404(Event, id=event_id)
-    if request.method == 'POST':
-        form = ParticipantForm(request.POST)
-        if form.is_valid():
-            participant = form.save(commit=False)
-            participant.event = event
-            participant.date_record = timezone.now()  # Устанавливаем текущую дату
-            participant.save()
-            return redirect('participants_list', event_id=event.id)
-    else:
-        form = ParticipantForm()
-    return render(request, 'event/add_participant.html', {'form': form, 'event': event})
+  event = get_object_or_404(Event, id=event_id)
+  if request.method == 'POST':
+    form = ParticipantForm(request.POST)
+    if form.is_valid():
+      participant = form.save(commit=False)
+      participant.event = event
+      participant.date_record = timezone.now()  # Устанавливаем текущую дату
+      participant.save()
+      return redirect('participants_list', event_id=event.id)
+  else:
+    form = ParticipantForm()
+  return render(request, 'event/add_participant.html', {'form': form, 'event': event})
 
 
 def edit_participant(request, event_id, participant_id):
@@ -1197,13 +1230,13 @@ def delete_participant(request, event_id, participant_id):
     return redirect('participants_list', event_id=event_id)
   return render(request, 'event/delete_participant.html', {'participant': participant, 'event_id': event_id})
 
+
 # views.py
 
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Event
 from .forms import EventForm
 
-
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import EventForm
 from .models import Event
@@ -1219,23 +1252,21 @@ from .models import Event
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import EventForm
 from .models import Event
+
 
 def edit_event(request, event_id):
-    event = get_object_or_404(Event, id=event_id)
+  event = get_object_or_404(Event, id=event_id)
 
-    if request.method == 'POST':
-        form = EventForm(request.POST, instance=event)
-        if form.is_valid():
-            form.save()
-            return redirect('event_list')
-    else:
-        form = EventForm(instance=event, initial={'date_start': event.date_start,
-                                                  'date_end': event.date_end})
+  if request.method == 'POST':
+    form = EventForm(request.POST, instance=event)
+    if form.is_valid():
+      form.save()
+      return redirect('event_list')
+  else:
+    form = EventForm(instance=event, initial={'date_start': event.date_start,
+                                              'date_end': event.date_end})
 
-    return render(request, 'event/edit_event.html', {'form': form, 'event': event})
-
-
-
+  return render(request, 'event/edit_event.html', {'form': form, 'event': event})
 
 
 # views.py
@@ -1243,36 +1274,38 @@ def edit_event(request, event_id):
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Event
 
+
 def delete_event(request, event_id):
-    event = get_object_or_404(Event, id=event_id)
-    if request.method == 'POST':
-        event.delete()
-        return redirect('event_list')
-    return render(request, 'event/delete_event.html', {'event': event})
+  event = get_object_or_404(Event, id=event_id)
+  if request.method == 'POST':
+    event.delete()
+    return redirect('event_list')
+  return render(request, 'event/delete_event.html', {'event': event})
+
 
 @login_required
 def register_to_event(request, event_id):
-    event = get_object_or_404(Event, id=event_id)
-    # Проверяем, зарегистрирован ли пользователь на данное мероприятие
-    if PositionEvent.objects.filter(event=event, borrower=request.user).exists():
-        messages.error(request, 'Вы уже зарегистрированы на выбранное мероприятие.')
-        return redirect('event_list_borrower')  # Редиректим на страницу со списком мероприятий
-    else:
-        position_event = PositionEvent(event=event, borrower=request.user, date_record=date.today())
-        position_event.save()
-        return redirect('participants_list', event_id=event.id)
+  event = get_object_or_404(Event, id=event_id)
+  # Проверяем, зарегистрирован ли пользователь на данное мероприятие
+  if PositionEvent.objects.filter(event=event, borrower=request.user).exists():
+    messages.error(request, 'Вы уже зарегистрированы на выбранное мероприятие.')
+    return redirect('event_list_borrower')  # Редиректим на страницу со списком мероприятий
+  else:
+    position_event = PositionEvent(event=event, borrower=request.user, date_record=date.today())
+    position_event.save()
+    return redirect('participants_list', event_id=event.id)
 
 
 # @login_required
 def event_list_borrower(request):
-    events = Event.objects.all()
-    # Получаем текущего пользователя из запроса
-    # current_user = request.user
-    #
-    # # Фильтруем мероприятия на основе участия пользователя
-    # events = Event.objects.filter(positionevent__borrower=current_user)
+  events = Event.objects.all()
+  # Получаем текущего пользователя из запроса
+  # current_user = request.user
+  #
+  # # Фильтруем мероприятия на основе участия пользователя
+  # events = Event.objects.filter(positionevent__borrower=current_user)
 
-    return render(request, 'event/event_list_borrower.html', {'events': events})
+  return render(request, 'event/event_list_borrower.html', {'events': events})
 
 
 from django.shortcuts import redirect, get_object_or_404
@@ -1292,15 +1325,18 @@ def cancel_registration(request, registration_id):
     redirect_url = reverse('profile') + '?tab=events'
     return redirect(redirect_url)
 
+
 # views.py (в вашем приложении)
 from django.shortcuts import render, get_object_or_404
 from .models import Event
 
+
 def detail_event(request, event_id):
-    # Получаем объект Event по event_id или возвращаем 404, если ивент не найден
-    event = get_object_or_404(Event, id=event_id)
-    context = {'event': event}
-    return render(request, 'event/detail_event.html', context)
+  # Получаем объект Event по event_id или возвращаем 404, если ивент не найден
+  event = get_object_or_404(Event, id=event_id)
+  context = {'event': event}
+  return render(request, 'event/detail_event.html', context)
+
 
 from django.shortcuts import render, redirect
 from .forms import RequestForm
@@ -1309,39 +1345,44 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import RequestForm
 
+
 @login_required
 def create_request(request):
-    if request.method == 'POST':
-        form = RequestForm(request.POST)
-        if form.is_valid():
-            # Присваиваем текущего пользователя полю "Абонент" перед сохранением формы
-            request_obj = form.save(commit=False)
-            request_obj.date_creation = timezone.now()  # Установка текущей даты и времени
-            request_obj.borrower = request.user
-            request_obj.save()
-            return redirect('request_list')  # Перенаправляем пользователя на страницу со списком заявок после создания
-    else:
-        form = RequestForm()
-    return render(request, 'request/create_request.html', {'form': form})
+  if request.method == 'POST':
+    form = RequestForm(request.POST)
+    if form.is_valid():
+      # Присваиваем текущего пользователя полю "Абонент" перед сохранением формы
+      request_obj = form.save(commit=False)
+      request_obj.date_creation = timezone.now()  # Установка текущей даты и времени
+      request_obj.borrower = request.user
+      request_obj.save()
+      return redirect('request_list')  # Перенаправляем пользователя на страницу со списком заявок после создания
+  else:
+    form = RequestForm()
+  return render(request, 'request/create_request.html', {'form': form})
 
 
 # views.py
 from django.shortcuts import render
 from .models import Request
 
+
 def request_list(request):
-    requests = Request.objects.all()
-    return render(request, 'request/request_list.html', {'requests': requests})
+  requests = Request.objects.all()
+  return render(request, 'request/request_list.html', {'requests': requests})
+
 
 from django.shortcuts import get_object_or_404, redirect
 from .models import Request
 
+
 def delete_request(request, request_id):
-    request_obj = get_object_or_404(Request, id=request_id)
-    if request.method == 'POST':
-        request_obj.delete()
-        return redirect('request_list')
-    return redirect('request_list')  # В случае GET запроса перенаправляем обратно на страницу списка заявок
+  request_obj = get_object_or_404(Request, id=request_id)
+  if request.method == 'POST':
+    request_obj.delete()
+    return redirect('request_list')
+  return redirect('request_list')  # В случае GET запроса перенаправляем обратно на страницу списка заявок
+
 
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import RequestForm
@@ -1358,6 +1399,7 @@ def edit_request(request, request_id):
     if form.is_valid():
       request_obj = form.save(commit=False)
       request_obj.date_creation = timezone.now()  # Обновляем дату редактирования
+      request_obj.worker = request.user
       request_obj.save()
       return redirect('request_list')
   else:
@@ -1366,5 +1408,24 @@ def edit_request(request, request_id):
   return render(request, 'request/edit_request.html', {'form': form, 'request_obj': request_obj})
 
 
+from django.urls import reverse
+
+from django.shortcuts import redirect
+from django.views.generic import View
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404
+
+@login_required
+def profile_delete_request(request, request_id):
+    # Получаем заявку текущего пользователя
+    request_obj = get_object_or_404(Request, id=request_id, worker=request.user)
+
+    if request.method == 'POST':
+        # Удаляем заявку
+        request_obj.delete()
+        # Перенаправляем пользователя на текущую страницу и вкладку
+        return redirect(request.path)
+
+    return render(request, 'request/delete_request.html', {'request_obj': request_obj})
 
 
