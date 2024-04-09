@@ -1231,27 +1231,7 @@ def delete_participant(request, event_id, participant_id):
   return render(request, 'event/delete_participant.html', {'participant': participant, 'event_id': event_id})
 
 
-# views.py
-
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Event
 from .forms import EventForm
-
-from django.shortcuts import render, get_object_or_404, redirect
-from .forms import EventForm
-from .models import Event
-
-from django.shortcuts import render, get_object_or_404, redirect
-from .forms import EventForm
-from .models import Event
-
-from django.shortcuts import render, get_object_or_404, redirect
-from .forms import EventForm
-from .models import Event
-
-from django.shortcuts import render, get_object_or_404, redirect
-from .forms import EventForm
-from .models import Event
 
 
 def edit_event(request, event_id):
@@ -1267,12 +1247,6 @@ def edit_event(request, event_id):
                                               'date_end': event.date_end})
 
   return render(request, 'event/edit_event.html', {'form': form, 'event': event})
-
-
-# views.py
-
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Event
 
 
 def delete_event(request, event_id):
@@ -1300,36 +1274,30 @@ def register_to_event(request, event_id):
 def event_list_borrower(request):
   events = Event.objects.all()
   # Получаем текущего пользователя из запроса
-  # current_user = request.user
-  #
-  # # Фильтруем мероприятия на основе участия пользователя
-  # events = Event.objects.filter(positionevent__borrower=current_user)
+  current_user = request.user
+
+  # Фильтруем мероприятия на основе участия пользователя
+  events = Event.objects.filter(positionevent__borrower=current_user)
 
   return render(request, 'event/event_list_borrower.html', {'events': events})
 
 
-from django.shortcuts import redirect, get_object_or_404
 from .models import PositionEvent
-from urllib.parse import urljoin
-
-
 def cancel_registration(request, registration_id):
   registration = get_object_or_404(PositionEvent, id=registration_id)
 
   # Проверяем, что текущий пользователь зарегистрирован на это мероприятие
   if registration.borrower == request.user:
-    # Удаляем регистрацию
-    registration.delete()
+    # Изменяем статус записи на "не записан"
+    registration.status_record = 'н'
+    registration.save()
 
-    # Перенаправляем пользователя на страницу профиля с указанием активной вкладки "Мероприятия"
-    redirect_url = reverse('profile') + '?tab=events'
-    return redirect(redirect_url)
+  # Перенаправляем пользователя на страницу профиля с указанием активной вкладки "Мероприятия"
+  redirect_url = reverse('profile') + '?tab=events'
+  return redirect(redirect_url)
 
 
-# views.py (в вашем приложении)
-from django.shortcuts import render, get_object_or_404
 from .models import Event
-
 
 def detail_event(request, event_id):
   # Получаем объект Event по event_id или возвращаем 404, если ивент не найден
@@ -1337,14 +1305,7 @@ def detail_event(request, event_id):
   context = {'event': event}
   return render(request, 'event/detail_event.html', context)
 
-
-from django.shortcuts import render, redirect
-from .forms import RequestForm
-
-from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .forms import RequestForm
-
 
 @login_required
 def create_request(request):
@@ -1362,18 +1323,9 @@ def create_request(request):
   return render(request, 'request/create_request.html', {'form': form})
 
 
-# views.py
-from django.shortcuts import render
-from .models import Request
-
-
 def request_list(request):
   requests = Request.objects.all()
   return render(request, 'request/request_list.html', {'requests': requests})
-
-
-from django.shortcuts import get_object_or_404, redirect
-from .models import Request
 
 
 def delete_request(request, request_id):
@@ -1384,10 +1336,9 @@ def delete_request(request, request_id):
   return redirect('request_list')  # В случае GET запроса перенаправляем обратно на страницу списка заявок
 
 
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render
 from .forms import RequestForm
 from .models import Request
-
 from django.utils import timezone
 
 
@@ -1411,21 +1362,15 @@ def edit_request(request, request_id):
 from django.urls import reverse
 
 from django.shortcuts import redirect
-from django.views.generic import View
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 
-@login_required
 def profile_delete_request(request, request_id):
-    # Получаем заявку текущего пользователя
-    request_obj = get_object_or_404(Request, id=request_id, worker=request.user)
+  request_obj = get_object_or_404(Request, id=request_id)
 
-    if request.method == 'POST':
-        # Удаляем заявку
-        request_obj.delete()
-        # Перенаправляем пользователя на текущую страницу и вкладку
-        return redirect(request.path)
+  if request.method == 'POST':
+    # Удаляем заявку
+    request_obj.delete()
 
-    return render(request, 'request/delete_request.html', {'request_obj': request_obj})
-
-
+  # Перенаправляем пользователя на страницу профиля с указанием активной вкладки "Мероприятия"
+  redirect_url = reverse('profile') + '?tab=my_requests'
+  return redirect(redirect_url)
