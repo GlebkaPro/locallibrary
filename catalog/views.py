@@ -1359,11 +1359,6 @@ def edit_request(request, request_id):
   return render(request, 'request/edit_request.html', {'form': form, 'request_obj': request_obj})
 
 
-from django.urls import reverse
-
-from django.shortcuts import redirect
-from django.shortcuts import get_object_or_404
-
 def profile_delete_request(request, request_id):
   request_obj = get_object_or_404(Request, id=request_id)
 
@@ -1373,4 +1368,25 @@ def profile_delete_request(request, request_id):
 
   # Перенаправляем пользователя на страницу профиля с указанием активной вкладки "Мероприятия"
   redirect_url = reverse('profile') + '?tab=my_requests'
+  return redirect(redirect_url)
+
+
+from django.shortcuts import get_object_or_404, redirect
+from .models import PositionEvent
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse
+
+
+@login_required
+def profile_register_to_event(request, registration_id):
+  registration = get_object_or_404(PositionEvent, id=registration_id)
+
+  # Проверяем, что текущий пользователь зарегистрирован на это мероприятие
+  if registration.borrower == request.user:
+    # Изменяем статус записи на "записан"
+    registration.status_record = 'з'
+    registration.save()
+
+  # Перенаправляем пользователя на страницу профиля с указанием активной вкладки "Мероприятия"
+  redirect_url = reverse('profile') + '?tab=events'
   return redirect(redirect_url)

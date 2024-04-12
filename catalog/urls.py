@@ -117,6 +117,8 @@ urlpatterns += [
 ]
 
 urlpatterns += [
-    # Другие URL-пути вашего приложения
-    path('request/<int:request_id>/delete/', views.profile_delete_request, name='profile_delete_request'),
+  # Другие URL-пути вашего приложения
+  path('request/<int:request_id>/delete/', views.profile_delete_request, name='profile_delete_request'),
+  path('register_to_event_again/<int:registration_id>/', views.profile_register_to_event,
+       name='profile_register_to_event'),
 ]

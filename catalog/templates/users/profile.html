@@ -165,104 +165,114 @@
     </div>
 
 
-<!-- Events Tab Content -->
-<div class="tab-pane fade {% if request.GET.tab == 'events' %}show active{% endif %}" id="events" role="tabpanel"
-     aria-labelledby="events-tab">
-  <table class="table table-striped">
-    <thead>
-    <tr>
-      <th>№</th>
-      <th>Наименование мероприятия</th>
-      <th>Мест</th>
-      <th>Дата начала</th>
-      <th>Дата конца</th>
-      <th>Описание</th>
-      <th>Статус</th>
-      <th>Действия</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for event in registered_events %}
-      <tr>
-        <td>{{ forloop.counter }}</td>
-        <td>{{ event.event.event_name }}</td>
-        <td>{{ event.event.number_of_participants }}</td>
-        <td>{{ event.event.date_start }}</td>
-        <td>{{ event.event.date_end }}</td>
-        <td>
-          {% if event.status_record == 'з' %}
-            Записан
-          {% elif event.status_record == 'н' %}
-            Не записан
-          {% endif %}
-        </td>
-        <td>{{ event.event.description }}</td>
-        <td>
-          <form action="{% url 'cancel_registration' registration_id=event.id %}" method="post"
-                style="display: inline;">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger"
-                    onclick="return confirm('Вы уверены?')">Отменить регистрацию
-            </button>
-          </form>
-        </td>
-      </tr>
-    {% empty %}
-      <tr>
-        <td colspan="6">Вы не зарегистрированы ни на одно мероприятие.</td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
-</div>
+    <!-- Events Tab Content -->
+    <div class="tab-pane fade {% if request.GET.tab == 'events' %}show active{% endif %}" id="events" role="tabpanel"
+         aria-labelledby="events-tab">
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>№</th>
+          <th>Наименование мероприятия</th>
+          <th>Мест</th>
+          <th>Дата начала</th>
+          <th>Дата конца</th>
+          <th>Описание</th>
+          <th>Статус</th>
+          <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for event in registered_events %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ event.event.event_name }}</td>
+            <td>{{ event.event.number_of_participants }}</td>
+            <td>{{ event.event.date_start }}</td>
+            <td>{{ event.event.date_end }}</td>
+            <td>{{ event.event.description }}</td>
+            <td>
+              {% if event.status_record == 'з' %}
+                Записан
+              {% elif event.status_record == 'н' %}
+                Не записан
+              {% endif %}
+            </td>
+            <td>
+              {% if event.status_record == 'з' %}
+                <form action="{% url 'cancel_registration' registration_id=event.id %}" method="post"
+                      style="display: inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger"
+                          onclick="return confirm('Вы уверены?')">Отменить регистрацию
+                  </button>
+                </form>
+              {% elif event.status_record == 'н' %}
+                <form action="{% url 'profile_register_to_event' registration_id=event.id %}" method="post"
+                      style="display: inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-success">Зарегистрироваться вновь</button>
+                </form>
+                
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6">Вы не зарегистрированы ни на одно мероприятие.</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
 
     <!-- Events Tab Content -->
     <div class="tab-pane fade {% if request.GET.tab == 'my_requests' %}show active{% endif %}" id="my_requests"
          role="tabpanel" aria-labelledby="my_requests-tab">
-    
-        <div>
-          <a href="{% url 'create_request' %}" class="btn btn-primary mb-3">Создать заявку</a>
-        </div>
-        <div class="table-responsive border " style="height: 600px; overflow-y: auto;">
-          <table class="table" id="positions_table">
-            <thead>
+
+      <div>
+        <a href="{% url 'create_request' %}" class="btn btn-primary mb-3">Создать заявку</a>
+      </div>
+      <div class="table-responsive border " style="height: 600px; overflow-y: auto;">
+        <table class="table" id="positions_table">
+          <thead>
+          <tr>
+            <th>№</th>
+            <th>Название заявки</th>
+            <th>Автор</th>
+            <th>Описание</th>
+            <th>Дата создания</th>
+            <th>Статус</th>
+            <th>Действия</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for request in user_requests %}
             <tr>
-              <th>№</th>
-              <th>Название заявки</th>
-              <th>Автор</th>
-              <th>Описание</th>
-              <th>Дата создания</th>
-              <th>Статус</th>
-              <th>Действия</th>
+              <td>{{ forloop.counter }}</td>
+              <td>{{ request.title }}</td>
+              <td>{{ request.author }}</td>
+              <td>{{ request.description }}</td>
+              <td>{{ request.date_creation }}</td>
+              <td>{{ request.get_status_record_display }}</td>
+              <td>
+                <form action="{% url 'profile_delete_request' request_id=request.id %}" method="post"
+                      style="display: inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger"
+                          onclick="return confirm('Вы уверены?')">Удалить
+                  </button>
+                </form>
+              </td>
             </tr>
-            </thead>
-            <tbody>
-            {% for request in user_requests %}
-              <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ request.title }}</td>
-                <td>{{ request.author }}</td>
-                <td>{{ request.description }}</td>
-                <td>{{ request.date_creation }}</td>
-                <td>{{ request.get_status_record_display }}</td>
-                <td>
-          <form action="{% url 'profile_delete_request' request_id=request.id %}" method="post"
-                style="display: inline;">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger"
-                    onclick="return confirm('Вы уверены?')">Удалить
-            </button>
-          </form>
-                </td>
-              </tr>
-            {% empty %}
-              <tr>
-                <td colspan="5">У вас нет заявок.</td>
-              </tr>
-            {% endfor %}
-            </tbody>
-          </table>
-        </div>
+          {% empty %}
+            <tr>
+              <td colspan="5">У вас нет заявок.</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 {% endblock %}
