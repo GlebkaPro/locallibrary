@@ -70,3 +70,8 @@ body {
   border-radius: 50%; /* Закругление углов для круглой формы */
 }
 
+.table-card {
+  background-color: white;
+  border-radius: 0.25rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}

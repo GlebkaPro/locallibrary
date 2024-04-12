@@ -297,11 +297,11 @@ class Event(models.Model):
                              verbose_name='Сотрудник')
   room = models.ForeignKey('Room', on_delete=models.SET_NULL, null=True)
   typeroom = models.ForeignKey('TypeRoom', on_delete=models.SET_NULL, null=True)
-  description = models.CharField(verbose_name='Описание', max_length=100)
+  description = models.CharField(verbose_name='Описание', max_length=1000)
 
 
 class PositionEvent(models.Model):
-  event = models.ForeignKey('Event', on_delete=models.SET_NULL, null=True)
+  event = models.ForeignKey('Event', on_delete=models.CASCADE, null=True)
   date_record = models.DateField(null=True, blank=True, verbose_name='Дата регистрации')
   borrower = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
                                verbose_name='Абонент')

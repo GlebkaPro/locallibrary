@@ -1,5 +1,6 @@
 {% extends "base_generic.html" %}
 {% block content %}
+  {% load static %}
   <h1>Профиль</h1>
 
   <!-- Bootstrap Tabs -->
@@ -126,7 +127,8 @@
       <form method="post" enctype="multipart/form-data" class="card">
         <div class="container">
           {% if bookinstance_list %}
-            <table class="table">
+            <table class="table table-striped">
+{#            <table class="table table-striped"> полосы таблицы разного цвета#}
               <thead>
               <tr>
                 <th>№</th>
@@ -168,15 +170,13 @@
     <!-- Events Tab Content -->
     <div class="tab-pane fade {% if request.GET.tab == 'events' %}show active{% endif %}" id="events" role="tabpanel"
          aria-labelledby="events-tab">
-      <table class="table table-striped">
+      <table class="table table table-card">
         <thead>
         <tr>
           <th>№</th>
           <th>Наименование мероприятия</th>
-          <th>Мест</th>
           <th>Дата начала</th>
           <th>Дата конца</th>
-          <th>Описание</th>
           <th>Статус</th>
           <th>Действия</th>
         </tr>
@@ -185,11 +185,9 @@
         {% for event in registered_events %}
           <tr>
             <td>{{ forloop.counter }}</td>
-            <td>{{ event.event.event_name }}</td>
-            <td>{{ event.event.number_of_participants }}</td>
+          <td><a href="{% url 'detail_event' event_id=event.event.id %}">{{ event.event.event_name }}</a></td>
             <td>{{ event.event.date_start }}</td>
             <td>{{ event.event.date_end }}</td>
-            <td>{{ event.event.description }}</td>
             <td>
               {% if event.status_record == 'з' %}
                 Записан
@@ -212,7 +210,7 @@
                   {% csrf_token %}
                   <button type="submit" class="btn btn-success">Зарегистрироваться вновь</button>
                 </form>
-                
+
               {% endif %}
             </td>
           </tr>
@@ -233,8 +231,7 @@
       <div>
         <a href="{% url 'create_request' %}" class="btn btn-primary mb-3">Создать заявку</a>
       </div>
-      <div class="table-responsive border " style="height: 600px; overflow-y: auto;">
-        <table class="table" id="positions_table">
+        <table class="table table table-card" id="positions_table">
           <thead>
           <tr>
             <th>№</th>
@@ -252,7 +249,7 @@
               <td>{{ forloop.counter }}</td>
               <td>{{ request.title }}</td>
               <td>{{ request.author }}</td>
-              <td>{{ request.description }}</td>
+              <td>{{ request.description|slice:":30" }}</td>
               <td>{{ request.date_creation }}</td>
               <td>{{ request.get_status_record_display }}</td>
               <td>
@@ -274,7 +271,6 @@
         </table>
       </div>
     </div>
-  </div>
 {% endblock %}
 
 <script>
@@ -314,5 +310,4 @@
     });
   });
 </script>
-
 
