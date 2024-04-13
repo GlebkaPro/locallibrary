@@ -121,50 +121,58 @@
       </form>
     </div>
 
-    <!-- Books Tab Content -->
-    <div class="tab-pane fade {% if request.GET.tab == 'books' %}show active{% endif %}" id="books" role="tabpanel"
-         aria-labelledby="books-tab">
-      <form method="post" enctype="multipart/form-data" class="card">
-        <div class="container">
-          {% if bookinstance_list %}
-            <table class="table table-striped">
-{#            <table class="table table-striped"> полосы таблицы разного цвета#}
-              <thead>
-              <tr>
-                <th>№</th>
-                <th>Название книги</th>
-                <th>Штамп</th>
-                <th>Дата начала</th>
-                <th>Дата окончания</th>
-                <th>Дата продления</th>
-                <th>Статус</th>
-              </tr>
-              </thead>
-              <tbody>
-              {% for bookinst in bookinstance_list %}
-                <tr class="{% if bookinst.is_overdue %}text-danger{% endif %}">
-                  <td>{{ forloop.counter }}</td>
-                  <td>
-                    <a href="{% url 'book-detail' bookinst.book.pk %}">{{ bookinst.book.title }}</a>
-                  </td>
-                  <td>{{ bookinst.loan.imprint }}</td>
-                  <td>{{ bookinst.current_date }}</td>
-                  <td>{{ bookinst.due_back }}</td>
-                  <td>{{ bookinst.renewal_date }}</td>
-                  <td>{{ bookinst.get_status_display }}</td>
-                  <td>
-                    <a href="{% url 'renew-book-librarian' bookinst.id %}">Продлить</a>
-                  </td>
-                </tr>
-              {% endfor %}
-              </tbody>
-            </table>
-          {% else %}
-            <p>У вас нет взятых книг.</p>
-          {% endif %}
-        </div>
-      </form>
+<!-- Books Tab Content -->
+<div class="tab-pane fade {% if request.GET.tab == 'books' %}show active{% endif %}" id="books" role="tabpanel"
+     aria-labelledby="books-tab">
+    <div class="container">
+      {% if bookinstance_list %}
+        <table class="table table table-card">
+          <thead>
+          <tr>
+            <th>№</th>
+            <th>Название книги</th>
+            <th>Штамп</th>
+            <th>Дата начала</th>
+            <th>Дата окончания</th>
+            <th>Дата продления</th>
+            <th>Статус</th>
+            <th>Действие</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for bookinst in bookinstance_list %}
+            <tr class="{% if bookinst.is_overdue %}text-danger{% endif %} {% if bookinst.status == 'р' %}table-success{% elif bookinst.status == 'з' %}table-warning{% elif bookinst.status == 'п' %}table-info{% endif %}">
+              <td>{{ forloop.counter }}</td>
+              <td>
+                <a href="{% url 'book-detail' bookinst.book.pk %}">{{ bookinst.book.title }}</a>
+              </td>
+              <td>{{ bookinst.loan.imprint }}</td>
+              <td>{{ bookinst.current_date }}</td>
+              <td>{{ bookinst.due_back }}</td>
+              <td>{{ bookinst.renewal_date }}</td>
+              <td>{{ bookinst.get_status_display }}</td>
+              <td>
+                {% if bookinst.can_renew %}
+                  <a href="{% url 'renew-book-librarian' bookinst.id %}" class="btn btn-warning">Продлить</a>
+                {% elif bookinst.status == 'з' %}
+                  <form action="{% url 'cancel_reservation' bookinst.id %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Отменить резерв</button>
+                  </form>
+                {% else %}
+                  <span class="text-danger">Невозможно выполнить действие</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p>У вас нет взятых книг.</p>
+      {% endif %}
     </div>
+</div>
+
 
 
     <!-- Events Tab Content -->
@@ -174,7 +182,7 @@
         <thead>
         <tr>
           <th>№</th>
-          <th>Наименование мероприятия</th>
+          <th>Название мероприятия</th>
           <th>Дата начала</th>
           <th>Дата конца</th>
           <th>Статус</th>
@@ -183,9 +191,10 @@
         </thead>
         <tbody>
         {% for event in registered_events %}
-          <tr>
+          <tr {% if event.status_record == 'з' %}class="table-success"
+              {% elif event.status_record == 'н' %}class="table-danger"{% endif %}>
             <td>{{ forloop.counter }}</td>
-          <td><a href="{% url 'detail_event' event_id=event.event.id %}">{{ event.event.event_name }}</a></td>
+            <td><a href="{% url 'detail_event' event_id=event.event.id %}">{{ event.event.event_name }}</a></td>
             <td>{{ event.event.date_start }}</td>
             <td>{{ event.event.date_end }}</td>
             <td>
@@ -224,35 +233,37 @@
     </div>
 
 
-    <!-- Events Tab Content -->
+    <!-- Requests Tab Content -->
     <div class="tab-pane fade {% if request.GET.tab == 'my_requests' %}show active{% endif %}" id="my_requests"
          role="tabpanel" aria-labelledby="my_requests-tab">
-
       <div>
         <a href="{% url 'create_request' %}" class="btn btn-primary mb-3">Создать заявку</a>
       </div>
-        <table class="table table table-card" id="positions_table">
-          <thead>
-          <tr>
-            <th>№</th>
-            <th>Название заявки</th>
-            <th>Автор</th>
-            <th>Описание</th>
-            <th>Дата создания</th>
-            <th>Статус</th>
-            <th>Действия</th>
-          </tr>
-          </thead>
-          <tbody>
-          {% for request in user_requests %}
-            <tr>
-              <td>{{ forloop.counter }}</td>
-              <td>{{ request.title }}</td>
-              <td>{{ request.author }}</td>
-              <td>{{ request.description|slice:":30" }}</td>
-              <td>{{ request.date_creation }}</td>
-              <td>{{ request.get_status_record_display }}</td>
-              <td>
+      <table class="table table table-card" id="positions_table">
+        <thead>
+        <tr>
+          <th>№</th>
+          <th>Название книги</th>
+          <th>Автор</th>
+          <th>Описание</th>
+          <th>Дата создания</th>
+          <th>Статус</th>
+          <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for request in user_requests %}
+          <tr
+            class="{% if request.status_record == 'п' %}table-success{% elif request.status_record == 'з' %}table-danger{% elif request.status_record == 'в' %}table-warning{% elif request.status_record == 'о' %}table-secondary{% endif %}">
+            <td>{{ forloop.counter }}</td>
+            <td>{{ request.title }}</td>
+            <td>{{ request.author }}</td>
+            <td>{{ request.description|slice:":30" }}</td>
+            <td>{{ request.date_creation }}</td>
+            <td>{{ request.get_status_record_display }}</td>
+            <td>
+              {% if request.status_record == 'в' %}
+                <a href="{% url 'edit_request' request_id=request.id %}" class="btn btn-warning">Редактировать</a>
                 <form action="{% url 'profile_delete_request' request_id=request.id %}" method="post"
                       style="display: inline;">
                   {% csrf_token %}
@@ -260,17 +271,20 @@
                           onclick="return confirm('Вы уверены?')">Удалить
                   </button>
                 </form>
-              </td>
-            </tr>
-          {% empty %}
-            <tr>
-              <td colspan="5">У вас нет заявок.</td>
-            </tr>
-          {% endfor %}
-          </tbody>
-        </table>
-      </div>
+              {% else %}
+                <span class="text-danger">Невозможно редактировать или удалять</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="5">У вас нет заявок.</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
     </div>
+  </div>
 {% endblock %}
 
 <script>

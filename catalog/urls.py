@@ -38,6 +38,7 @@ urlpatterns += [
   path('book/<int:book_id>/reserve/', views.reserve_book, name='reserve-book'),
   path('edit-bookinstance/<uuid:bookinstance_id>/', views.edit_bookinstance, name='edit-bookinstance'),
   path('book/<uuid:pk>/renew/', views.renew_book_librarian, name='renew-book-librarian'),
+  path('cancel_reservation/<uuid:bookinst_id>/', views.cancel_reservation, name='cancel_reservation'),
 ]
 
 urlpatterns += [

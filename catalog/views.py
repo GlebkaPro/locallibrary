@@ -1,4 +1,5 @@
 from datetime import date
+from uuid import UUID
 
 from django.contrib import messages
 from django.contrib.auth import login, get_user_model
@@ -1283,6 +1284,8 @@ def event_list_borrower(request):
 
 
 from .models import PositionEvent
+
+
 def cancel_registration(request, registration_id):
   registration = get_object_or_404(PositionEvent, id=registration_id)
 
@@ -1299,13 +1302,16 @@ def cancel_registration(request, registration_id):
 
 from .models import Event
 
+
 def detail_event(request, event_id):
   # Получаем объект Event по event_id или возвращаем 404, если ивент не найден
   event = get_object_or_404(Event, id=event_id)
   context = {'event': event}
   return render(request, 'event/detail_event.html', context)
 
+
 from django.contrib.auth.decorators import login_required
+
 
 @login_required
 def create_request(request):
@@ -1342,25 +1348,44 @@ from .models import Request
 from django.utils import timezone
 
 
+from django.shortcuts import redirect
+
+from django.shortcuts import redirect
+
 def edit_request(request, request_id):
-  request_obj = get_object_or_404(Request, id=request_id)
+    request_obj = get_object_or_404(Request, id=request_id)
 
-  if request.method == 'POST':
-    form = RequestForm(request.POST, instance=request_obj)
-    if form.is_valid():
-      request_obj = form.save(commit=False)
-      request_obj.date_creation = timezone.now()  # Обновляем дату редактирования
-      request_obj.worker = request.user
-      request_obj.save()
-      return redirect('request_list')
-  else:
-    form = RequestForm(instance=request_obj)
+    # Проверяем, что статус записи равен 'в'
+    if request_obj.status_record != 'в':
+        # Если статус не 'в', перенаправляем пользователя на страницу профиля
+        redirect_url = reverse('profile') + '?tab=my_requests'
+        return redirect(redirect_url)
 
-  return render(request, 'request/edit_request.html', {'form': form, 'request_obj': request_obj})
+    if request.method == 'POST':
+        form = RequestForm(request.POST, instance=request_obj)
+        if form.is_valid():
+            request_obj = form.save(commit=False)
+            request_obj.date_creation = timezone.now()  # Обновляем дату редактирования
+            request_obj.worker = request.user
+            request_obj.save()
+            # Формируем URL для редиректа
+            redirect_url = reverse('profile') + '?tab=my_requests'
+            # Редирект на страницу профиля с активной вкладкой "Мои заявки"
+            return redirect(redirect_url)
+    else:
+        form = RequestForm(instance=request_obj)
+
+    return render(request, 'request/edit_request.html', {'form': form, 'request_obj': request_obj})
 
 
 def profile_delete_request(request, request_id):
   request_obj = get_object_or_404(Request, id=request_id)
+
+  # Проверяем, что статус записи равен 'в'
+  if request_obj.status_record != 'в':
+    # Если статус не 'в', перенаправляем пользователя на страницу профиля
+    redirect_url = reverse('profile') + '?tab=my_requests'
+    return redirect(redirect_url)
 
   if request.method == 'POST':
     # Удаляем заявку
@@ -1390,3 +1415,19 @@ def profile_register_to_event(request, registration_id):
   # Перенаправляем пользователя на страницу профиля с указанием активной вкладки "Мероприятия"
   redirect_url = reverse('profile') + '?tab=events'
   return redirect(redirect_url)
+
+def cancel_reservation(request, bookinst_id):
+
+    bookinst = get_object_or_404(BookInstance, pk=bookinst_id)
+
+    if request.method == 'POST':
+        # Удаляем запись о резерве
+        bookinst.delete()
+        messages.success(request, "Резерв успешно отменен.")
+    else:
+        messages.error(request, "Ошибка при отмене резерва.")
+
+    # Перенаправляем пользователя на страницу профиля
+    redirect_url = reverse('profile') + '?tab=books'
+    return redirect(redirect_url)
+
