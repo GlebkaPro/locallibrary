@@ -121,58 +121,60 @@
       </form>
     </div>
 
-<!-- Books Tab Content -->
-<div class="tab-pane fade {% if request.GET.tab == 'books' %}show active{% endif %}" id="books" role="tabpanel"
-     aria-labelledby="books-tab">
-    <div class="container">
-      {% if bookinstance_list %}
-        <table class="table table table-card">
-          <thead>
-          <tr>
-            <th>№</th>
-            <th>Название книги</th>
-            <th>Штамп</th>
-            <th>Дата начала</th>
-            <th>Дата окончания</th>
-            <th>Дата продления</th>
-            <th>Статус</th>
-            <th>Действие</th>
-          </tr>
-          </thead>
-          <tbody>
-          {% for bookinst in bookinstance_list %}
-            <tr class="{% if bookinst.is_overdue %}text-danger{% endif %} {% if bookinst.status == 'р' %}table-success{% elif bookinst.status == 'з' %}table-warning{% elif bookinst.status == 'п' %}table-info{% endif %}">
-              <td>{{ forloop.counter }}</td>
-              <td>
-                <a href="{% url 'book-detail' bookinst.book.pk %}">{{ bookinst.book.title }}</a>
-              </td>
-              <td>{{ bookinst.loan.imprint }}</td>
-              <td>{{ bookinst.current_date }}</td>
-              <td>{{ bookinst.due_back }}</td>
-              <td>{{ bookinst.renewal_date }}</td>
-              <td>{{ bookinst.get_status_display }}</td>
-              <td>
-                {% if bookinst.can_renew %}
-                  <a href="{% url 'renew-book-librarian' bookinst.id %}" class="btn btn-warning">Продлить</a>
-                {% elif bookinst.status == 'з' %}
-                  <form action="{% url 'cancel_reservation' bookinst.id %}" method="post" style="display: inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Отменить резерв</button>
-                  </form>
-                {% else %}
-                  <span class="text-danger">Невозможно выполнить действие</span>
-                {% endif %}
-              </td>
+    <!-- Books Tab Content -->
+    <div class="tab-pane fade {% if request.GET.tab == 'books' %}show active{% endif %}" id="books" role="tabpanel"
+         aria-labelledby="books-tab">
+      <div>
+        {% if bookinstance_list %}
+          <table class="table table table-card">
+            <thead>
+            <tr>
+              <th>№</th>
+              <th>Название книги</th>
+              <th>Штамп</th>
+              <th>Дата начала</th>
+              <th>Дата окончания</th>
+              <th>Дата продления</th>
+              <th>Статус</th>
+              <th>Действие</th>
             </tr>
-          {% endfor %}
-          </tbody>
-        </table>
-      {% else %}
-        <p>У вас нет взятых книг.</p>
-      {% endif %}
+            </thead>
+            <tbody>
+            {% for bookinst in bookinstance_list %}
+              <tr
+                class="{% if bookinst.is_overdue %}text-danger{% endif %} {% if bookinst.status == 'р' %}table-success{% elif bookinst.status == 'з' %}table-warning{% elif bookinst.status == 'п' %}table-info{% endif %}">
+                <td>{{ forloop.counter }}</td>
+                <td>
+                  <a href="{% url 'book-detail' bookinst.book.pk %}">{{ bookinst.book.title }}</a>
+                </td>
+                <td>{{ bookinst.loan.imprint }}</td>
+                <td>{{ bookinst.current_date }}</td>
+                <td>{{ bookinst.due_back }}</td>
+                <td>{{ bookinst.renewal_date }}</td>
+                <td>{{ bookinst.get_status_display }}</td>
+                <td>
+                  {% if bookinst.can_renew %}
+                    <a href="{% url 'renew-book-librarian' bookinst.id %}" class="btn btn-warning">Продлить</a>
+                  {% elif bookinst.status == 'з' %}
+                    <form action="{% url 'cancel_reservation' bookinst.id %}" method="post" style="display: inline;">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Отменить
+                        резерв
+                      </button>
+                    </form>
+                  {% else %}
+                    <span class="text-danger">Невозможно выполнить действие</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p>У вас нет взятых книг.</p>
+        {% endif %}
+      </div>
     </div>
-</div>
-
 
 
     <!-- Events Tab Content -->
