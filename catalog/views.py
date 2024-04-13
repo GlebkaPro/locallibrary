@@ -426,30 +426,40 @@ def return_book(request, book_instance_id):
   return redirect('all-borrowed')
 
 
+from django.core.exceptions import PermissionDenied
+
 @login_required
 def reserve_book(request, book_id):
-  book = get_object_or_404(Book, pk=book_id)
-  user = request.user
+    user = request.user
+    # Получите все резервы текущего пользователя
+    user_reservations_count = BookInstance.objects.filter(borrower=user, status='з').count()
 
-  # Проверка наличия доступных экземпляров для резервации
-  available_copy = book.bookcopy_set.filter(status='д').first()
+    # Проверьте количество резервов
+    if user_reservations_count < 3:
+        book = get_object_or_404(Book, pk=book_id)
+        # Проверка наличия доступных экземпляров для резервации
+        available_copy = book.bookcopy_set.filter(status='д').first()
 
-  if available_copy:
-    # Создайте аренду экземпляра и заполните поле 'loan' доступным экземпляром
-    new_copy = BookInstance(book=book, borrower=user, status='з', loan=available_copy)
-    new_copy.save()
+        if available_copy:
+            # Создайте аренду экземпляра и заполните поле 'loan' доступным экземпляром
+            new_copy = BookInstance(book=book, borrower=user, status='з', loan=available_copy)
+            new_copy.save()
 
-    # Измените статус экземпляра на 'з'
-    available_copy.status = 'з'
-    available_copy.borrower = user
-    available_copy.save()
+            # Измените статус экземпляра на 'з'
+            available_copy.status = 'з'
+            available_copy.borrower = user
+            available_copy.save()
 
-    messages.success(request, "Экземпляр успешно зарезервирован.")
-  else:
-    # Если нет доступных экземпляров, установите сообщение об ошибке
-    messages.error(request, "Нет доступных экземпляров для резервации")
+            messages.success(request, "Экземпляр успешно зарезервирован.")
+        else:
+            # Если нет доступных экземпляров, установите сообщение об ошибке
+            messages.error(request, "Нет доступных экземпляров для резервации")
+    else:
+        # Если количество резервов больше или равно трём, выдайте ошибку разрешения
+        messages.error(request, "Вы уже зарезервировали максимальное количество книг (3шт.).")
 
-  return redirect('book-detail', pk=book_id)
+    return redirect('book-detail', pk=book_id)
+
 
 
 def create_book_copy(request, book_id):

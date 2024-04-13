@@ -153,7 +153,7 @@
                 <td>{{ bookinst.renewal_date }}</td>
                 <td>{{ bookinst.get_status_display }}</td>
                 <td>
-                  {% if bookinst.can_renew %}
+                  {% if bookinst.status == 'р' %}
                     <a href="{% url 'renew-book-librarian' bookinst.id %}" class="btn btn-warning">Продлить</a>
                   {% elif bookinst.status == 'з' %}
                     <form action="{% url 'cancel_reservation' bookinst.id %}" method="post" style="display: inline;">
