@@ -238,9 +238,7 @@
     <!-- Requests Tab Content -->
     <div class="tab-pane fade {% if request.GET.tab == 'my_requests' %}show active{% endif %}" id="my_requests"
          role="tabpanel" aria-labelledby="my_requests-tab">
-      <div>
-        <a href="{% url 'create_request' %}" class="btn btn-primary mb-3">Создать заявку</a>
-      </div>
+
       <table class="table table table-card" id="positions_table">
         <thead>
         <tr>
@@ -285,6 +283,9 @@
         {% endfor %}
         </tbody>
       </table>
+          <div>
+        <a href="{% url 'create_request' %}" class="btn btn-primary mb-3">Создать заявку</a>
+      </div>
     </div>
   </div>
 {% endblock %}
