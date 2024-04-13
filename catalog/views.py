@@ -29,7 +29,7 @@ from .models import AcceptAct, FizPersonSource
 from .models import Book, BookInstance, Author, Genre, Language
 from .models import BookCopy
 from .models import BookExemplar
-
+from django.views import View
 
 def index(request):
   """Функция представления для домашней страницы сайта."""
@@ -168,6 +168,7 @@ def renew_book_librarian(request, pk):
       else:
         proposed_renewal_date = form.cleaned_data['renewal_date']
         book_instance.renewal_date = proposed_renewal_date  # Обновляем атрибут
+        book_instance.status = 'д'
         book_instance.save()
         messages.success(request, 'Выдача успешно продлена.')
         return redirect('my-borrowed')
@@ -763,13 +764,6 @@ class CreateAccountingView(View):
     return render(request, self.template_name,
                   {'position_accept_act': position_accept_act, 'accounting_form': accounting_form,
                    'book_copy_formset': formset})
-
-
-from django.shortcuts import render, redirect
-from django.views import View
-from .models import DebitingAct, PositionDebitingAct
-from .forms import DebitingActForm, PositionDebitingActFormSet
-
 
 class CreateDebitingActView(View):
   template_name = 'debiting_acts/create_debiting_act.html'
