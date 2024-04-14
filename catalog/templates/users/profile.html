@@ -113,7 +113,7 @@
 
 
     <!-- Books Tab Content -->
-    <div class="tab-pane fade {% if request.GET.tab == 'books' %}show active{% endif %}" id="books" role="tabpanel"
+<div class="tab-pane fade {% if request.GET.tab == 'books' %}show active{% endif %}" id="books" role="tabpanel"
          aria-labelledby="books-tab">
       <div>
         {% if bookinstance_list %}
@@ -123,9 +123,9 @@
               <th>№</th>
               <th>Название книги</th>
               <th>Штамп</th>
-              <th>Дата начала</th>
-              <th>Дата окончания</th>
-              <th>Дата продления</th>
+              <th style="cursor:pointer;" data-sort="date-start" data-order="desc">Дата начала &#9660;</th>
+              <th style="cursor:pointer;" data-sort="date-end" data-order="desc">Дата окончания &#9660;</th>
+              <th style="cursor:pointer;" data-sort="renewal-date" data-order="desc">Дата продления &#9660;</th>
               <th>Статус</th>
               <th>Действие</th>
             </tr>
@@ -168,6 +168,7 @@
     </div>
 
 
+
     <!-- Events Tab Content -->
     <div class="tab-pane fade {% if request.GET.tab == 'events' %}show active{% endif %}" id="events" role="tabpanel"
          aria-labelledby="events-tab">
@@ -177,8 +178,8 @@
           <th>№</th>
           <th>Название мероприятия</th>
           <th style="cursor:pointer;" data-sort="date" data-order="desc">Дата начала &#9660;</th>
-          <th>Дата конца</th>
-          <th style="cursor:pointer;" data-sort="status" data-order="desc">Статус &#9660;</th>
+          <th style="cursor:pointer;" data-sort="date-end" data-order="desc">Дата окончания &#9660;</th>
+          <th>Статус</th>
           <th>Действия</th>
         </tr>
         </thead>
@@ -238,7 +239,7 @@
           <th>Автор</th>
           <th>Описание</th>
           <th style="cursor:pointer;" data-sort="date" data-order="desc">Дата создания &#9660;</th>
-          <th style="cursor:pointer;" data-sort="status" data-order="desc">Статус &#9660;</th>
+          <th>Статус</th>
           <th>Действия</th>
         </tr>
         </thead>
@@ -306,12 +307,13 @@ document.addEventListener('DOMContentLoaded', function () {
             
             rows.sort(function (a, b) {
                 let aText, bText;
-                if (type === 'date') {
-                    aText = new Date(a.cells[4].textContent);
-                    bText = new Date(b.cells[4].textContent);
+                if (type === 'date' || type === 'date-start' || type === 'date-end') {
+                    // Преобразуем текст ячейки в объект Date для корректной сортировки
+                    aText = new Date(a.cells[3].textContent);
+                    bText = new Date(b.cells[3].textContent);
                 } else { // status
-                    aText = a.cells[5].textContent.trim();
-                    bText = b.cells[5].textContent.trim();
+                    aText = a.cells[6].textContent.trim();
+                    bText = b.cells[6].textContent.trim();
                 }
                 
                 // Учитываем направление сортировки
@@ -324,6 +326,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+
   
   <script>
   document.addEventListener('DOMContentLoaded', function () {
