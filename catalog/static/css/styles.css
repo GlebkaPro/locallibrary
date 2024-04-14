@@ -14,7 +14,7 @@
 }
 
 body {
-  background: #89ABD9;
+  background: -webkit-linear-gradient(#3931af, #00c6ff);
 }
 
 .base-container {

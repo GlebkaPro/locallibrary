@@ -2,7 +2,6 @@
 {% block content %}
   {% load static %}
   <h1>Профиль</h1>
-
   <!-- Bootstrap Tabs -->
   <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
@@ -36,114 +35,81 @@
   <!-- Content for Tabs -->
   <div class="tab-content" id="myTabContent">
     <!-- Profile Tab Content -->
-<style>
-  .profile-container {
-    padding: 20px;
-  }
-  .avatar-img {
-    max-width: 200px;
-    border-radius: 50%;
-  }
-  .form-error {
-    color: red;
-  }
-  .custom-file-input::-webkit-file-upload-button {
-    visibility: hidden;
-  }
-  .custom-file-input::before {
-    content: 'Выбрать файл';
-    display: inline-block;
-    background: -webkit-linear-gradient(top, #f9f9f9, #e3e3e3);
-    border: 1px solid #999;
-    border-radius: 3px;
-    padding: 5px 8px;
-    outline: none;
-    white-space: nowrap;
-    -webkit-user-select: none;
-    cursor: pointer;
-    text-shadow: 1px 1px #fff;
-    font-weight: 700;
-    font-size: 10pt;
-  }
-  .custom-file-input:hover::before {
-    border-color: black;
-  }
-  .custom-file-input:active::before {
-    background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
-  }
-</style>
 
-<div class="tab-pane fade {% if not request.GET.tab or request.GET.tab == 'profile' %}show active{% endif %}"
-     id="profile" role="tabpanel" aria-labelledby="profile-tab">
-  <form method="post" enctype="multipart/form-data" class="card profile-container">
-    {% csrf_token %}
-    <div class="row">
-      <div class="col-md-4 text-center">
-        <div class="image-container">
-          {% if user.avatar %}
-            <img src="{{ user.avatar.url }}" class="img-fluid avatar-img" alt="Аватар">
-          {% else %}
-            <img src="/images/users/default.png" class="img-fluid avatar-img" alt="Заполнитель: Эскиз">
-          {% endif %}
-        </div>
-        <div class="mb-3">
-          <input type="file" class="form-control custom-file-input" id="{{ form.avatar.id_for_label }}" name="{{ form.avatar.name }}">
-          <div class="form-error">{{ form.avatar.errors }}</div>
-        </div>
-                <div class="mb-3">
-            <label for="{{ form.username.id_for_label }}" class="form-label">Имя пользователя</label>
-            <input type="text" class="form-control" id="{{ form.username.id_for_label }}"
-                   name="{{ form.username.name }}" value="{{ form.username.value }}" readonly>
-            <div class="form-error">{{ form.username.errors }}</div>
+
+
+    <div class="tab-pane fade {% if not request.GET.tab or request.GET.tab == 'profile' %}show active{% endif %}"
+         id="profile" role="tabpanel" aria-labelledby="profile-tab">
+      <form method="post" enctype="multipart/form-data" class="card profile-container">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-md-4 text-center">
+            <div class="image-container">
+              {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" class="img-fluid avatar-img" alt="Аватар">
+              {% else %}
+                <img src="/images/users/default.png" class="img-fluid avatar-img" alt="Заполнитель: Эскиз">
+              {% endif %}
+            </div>
+            <div class="mb-3">
+              <input type="file" class="form-control custom-file-input" id="{{ form.avatar.id_for_label }}"
+                     name="{{ form.avatar.name }}">
+              <div class="form-error">{{ form.avatar.errors }}</div>
+            </div>
+            <div class="mb-3">
+              <label for="{{ form.username.id_for_label }}" class="form-label">Имя пользователя</label>
+              <input type="text" class="form-control" id="{{ form.username.id_for_label }}"
+                     name="{{ form.username.name }}" value="{{ form.username.value }}" readonly>
+              <div class="form-error">{{ form.username.errors }}</div>
+            </div>
+            <div class="mb-3">
+              <label for="{{ form.email.id_for_label }}">Email</label>
+              <input type="text" class="form-control" id="{{ form.email.id_for_label }}" name="{{ form.email.name }}"
+                     value="{{ form.email.value }}">
+              <div class="form-error">{{ form.email.errors }}</div>
+            </div>
           </div>
-          <div class="mb-3">
-            <label for="{{ form.email.id_for_label }}">Email</label>
-            <input type="text" class="form-control" id="{{ form.email.id_for_label }}" name="{{ form.email.name }}"
-                   value="{{ form.email.value }}">
-            <div class="form-error">{{ form.email.errors }}</div>
-          </div>
-      </div>
-      <div class="col-md-8">
-        
-        <div class="text-container card-body">
-                    <div class="mb-3">
-            <label for="{{ form.last_name.id_for_label }}" class="form-label">Фамилия</label>
-            <input type="text" class="form-control" id="{{ form.last_name.id_for_label }}"
-                   name="{{ form.last_name.name }}" value="{{ form.last_name.value }}">
-            <div class="form-error">{{ form.last_name.errors }}</div>
-          </div>
-          <div class="mb-3">
-            <label for="{{ form.first_name.id_for_label }}" class="form-label">Имя</label>
-            <input type="text" class="form-control" id="{{ form.first_name.id_for_label }}"
-                   name="{{ form.first_name.name }}" value="{{ form.first_name.value }}">
-            <div class="form-error">{{ form.first_name.errors }}</div>
-          </div>
-          <div class="mb-3">
-            <label for="{{ form.middle_name.id_for_label }}" class="form-label">Отчество</label>
-            <input type="text" class="form-control" id="{{ form.middle_name.id_for_label }}"
-                   name="{{ form.middle_name.name }}" value="{{ form.middle_name.value }}">
-            <div class="form-error">{{ form.middle_name.errors }}</div>
-          </div>
-          <div class="mb-3">
-            <label for="{{ form.date_birth.id_for_label }}" class="form-label">Дата рождения</label>
-            <div class="input-group date">
-              {{ form.date_birth }}
-              <span class="input-group-addon">
+          <div class="col-md-8">
+
+            <div class="text-container card-body">
+              <div class="mb-3">
+                <label for="{{ form.last_name.id_for_label }}" class="form-label">Фамилия</label>
+                <input type="text" class="form-control" id="{{ form.last_name.id_for_label }}"
+                       name="{{ form.last_name.name }}" value="{{ form.last_name.value }}">
+                <div class="form-error">{{ form.last_name.errors }}</div>
+              </div>
+              <div class="mb-3">
+                <label for="{{ form.first_name.id_for_label }}" class="form-label">Имя</label>
+                <input type="text" class="form-control" id="{{ form.first_name.id_for_label }}"
+                       name="{{ form.first_name.name }}" value="{{ form.first_name.value }}">
+                <div class="form-error">{{ form.first_name.errors }}</div>
+              </div>
+              <div class="mb-3">
+                <label for="{{ form.middle_name.id_for_label }}" class="form-label">Отчество</label>
+                <input type="text" class="form-control" id="{{ form.middle_name.id_for_label }}"
+                       name="{{ form.middle_name.name }}" value="{{ form.middle_name.value }}">
+                <div class="form-error">{{ form.middle_name.errors }}</div>
+              </div>
+              <div class="mb-3">
+                <label for="{{ form.date_birth.id_for_label }}" class="form-label">Дата рождения</label>
+                <div class="input-group date">
+                  {{ form.date_birth }}
+                  <span class="input-group-addon">
                   <i class="glyphicon glyphicon-calendar"></i>
               </span>
-            </div>
-          <div class="form-error">{{ form.non_field_errors }}</div>
+                </div>
+                <div class="form-error">{{ form.non_field_errors }}</div>
 
-            <div class="form-error">{{ form.date_birth.errors }}</div>
-          </div>
-          <div class="mb-3">
-            <button type="submit" class="btn btn-primary">Сохранить</button>
+                <div class="form-error">{{ form.date_birth.errors }}</div>
+              </div>
+              <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </form>
     </div>
-  </form>
-</div>
 
 
     <!-- Books Tab Content -->
@@ -167,7 +133,7 @@
             <tbody>
             {% for bookinst in bookinstance_list %}
               <tr
-                class="{% if bookinst.is_overdue %}text-danger{% endif %} {% if bookinst.status == 'р' %}table-success{% elif bookinst.status == 'з' %}table-warning{% elif bookinst.status == 'п' %}table-info{% endif %}">
+                class="{% if bookinst.is_overdue %}text-danger{% endif %} {% if bookinst.status == 'р' %}table-success{% elif bookinst.status == 'з' %}table-warning{% elif bookinst.status == 'д' %}table-info{% endif %}">
                 <td>{{ forloop.counter }}</td>
                 <td>
                   <a href="{% url 'book-detail' bookinst.book.pk %}">{{ bookinst.book.title }}</a>
@@ -205,14 +171,14 @@
     <!-- Events Tab Content -->
     <div class="tab-pane fade {% if request.GET.tab == 'events' %}show active{% endif %}" id="events" role="tabpanel"
          aria-labelledby="events-tab">
-      <table class="table table table-card">
+      <table class="table table table-card" id="eventsTable">
         <thead>
         <tr>
           <th>№</th>
           <th>Название мероприятия</th>
-          <th>Дата начала</th>
+          <th style="cursor:pointer;" data-sort="date" data-order="desc">Дата начала &#9660;</th>
           <th>Дата конца</th>
-          <th>Статус</th>
+          <th style="cursor:pointer;" data-sort="status" data-order="desc">Статус &#9660;</th>
           <th>Действия</th>
         </tr>
         </thead>
@@ -271,8 +237,8 @@
           <th>Название книги</th>
           <th>Автор</th>
           <th>Описание</th>
-          <th>Дата создания</th>
-          <th>Статус</th>
+          <th style="cursor:pointer;" data-sort="date" data-order="desc">Дата создания &#9660;</th>
+          <th style="cursor:pointer;" data-sort="status" data-order="desc">Статус &#9660;</th>
           <th>Действия</th>
         </tr>
         </thead>
@@ -303,19 +269,63 @@
           </tr>
         {% empty %}
           <tr>
-            <td colspan="5">У вас нет заявок.</td>
+            <td colspan="7">У вас нет заявок.</td>
           </tr>
         {% endfor %}
         </tbody>
       </table>
-          <div>
+      <div>
         <a href="{% url 'create_request' %}" class="btn btn-primary mb-3">Создать заявку</a>
       </div>
     </div>
-  </div>
-{% endblock %}
 
+
+  </div>
+  
 <script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('th[data-sort]').forEach(header => {
+        header.addEventListener('click', function () {
+            let table = header.closest('table');
+            let tbody = table.querySelector('tbody');
+            let isAscending = header.getAttribute('data-order') === 'asc';
+            let type = header.getAttribute('data-sort');
+            let rows = Array.from(tbody.querySelectorAll('tr'));
+
+            // Инвертируем направление сортировки при каждом клике
+            isAscending = !isAscending;
+
+            // Обновляем символы для отображения текущего направления сортировки
+            if (isAscending) {
+                header.setAttribute('data-order', 'asc');
+                header.innerHTML = header.innerHTML.replace('&#9660;', '&#9650;'); // Изменение символа на "вверх"
+            } else {
+                header.setAttribute('data-order', 'desc');
+                header.innerHTML = header.innerHTML.replace('&#9650;', '&#9660;'); // Изменение символа на "вниз"
+            }
+            
+            rows.sort(function (a, b) {
+                let aText, bText;
+                if (type === 'date') {
+                    aText = new Date(a.cells[4].textContent);
+                    bText = new Date(b.cells[4].textContent);
+                } else { // status
+                    aText = a.cells[5].textContent.trim();
+                    bText = b.cells[5].textContent.trim();
+                }
+                
+                // Учитываем направление сортировки
+                return (aText < bText ? -1 : 1) * (isAscending ? 1 : -1);
+            });
+
+            // Перестраиваем строки в теле таблицы
+            rows.forEach(row => tbody.appendChild(row));
+        });
+    });
+});
+</script>
+  
+  <script>
   document.addEventListener('DOMContentLoaded', function () {
     // Находим все кнопки вкладок
     const tabButtons = document.querySelectorAll('.nav-link');
@@ -352,4 +362,49 @@
     });
   });
 </script>
+      <style>
+      .profile-container {
+        padding: 20px;
+      }
+
+      .avatar-img {
+        max-width: 400px;
+        border-radius: 500%;
+      }
+
+      .form-error {
+        color: red;
+      }
+
+      .custom-file-input::-webkit-file-upload-button {
+        visibility: hidden;
+      }
+
+      .custom-file-input::before {
+        content: 'Выбрать файл';
+        display: inline-block;
+        background: -webkit-linear-gradient( #f9f9f9, #e3e3e3);
+        border: 1px solid #999;
+        border-radius: 3px;
+        padding: 5px 1px;
+        outline: none;
+        white-space: nowrap;
+        -webkit-user-select: none;
+        cursor: pointer;
+        text-shadow: 1px 1px #fff;
+        font-weight: 700;
+        font-size: 10pt;
+      }
+
+      .custom-file-input:hover::before {
+        border-color: black;
+      }
+
+      .custom-file-input:active::before {
+        background: -webkit-linear-gradient(#e3e3e3, #f9f9f9);
+      }
+    </style>
+{% endblock %}
+
+
 
