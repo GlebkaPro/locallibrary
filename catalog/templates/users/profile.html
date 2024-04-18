@@ -2,7 +2,7 @@
 {% block content %}
   {% load static %}
   <h1>Профиль</h1>
-  <!-- Bootstrap Tabs -->
+ <!-- Bootstrap Tabs -->
   <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
       <button class="nav-link {% if not request.GET.tab or request.GET.tab == 'profile' %}active{% endif %}"
@@ -32,12 +32,10 @@
     </li>
   </ul>
 
+
   <!-- Content for Tabs -->
   <div class="tab-content" id="myTabContent">
     <!-- Profile Tab Content -->
-
-
-
     <div class="tab-pane fade {% if not request.GET.tab or request.GET.tab == 'profile' %}show active{% endif %}"
          id="profile" role="tabpanel" aria-labelledby="profile-tab">
       <form method="post" enctype="multipart/form-data" class="card profile-container">
@@ -53,7 +51,7 @@
             </div>
             <div class="mb-3">
               <input type="file" class="form-control custom-file-input" id="{{ form.avatar.id_for_label }}"
-                     name="{{ form.avatar.name }}">
+                     name="{{ form.avatar.name }}" >
               <div class="form-error">{{ form.avatar.errors }}</div>
             </div>
             <div class="mb-3">
@@ -113,7 +111,7 @@
 
 
     <!-- Books Tab Content -->
-<div class="tab-pane fade {% if request.GET.tab == 'books' %}show active{% endif %}" id="books" role="tabpanel"
+    <div class="tab-pane fade {% if request.GET.tab == 'books' %}show active{% endif %}" id="books" role="tabpanel"
          aria-labelledby="books-tab">
       <div>
         {% if bookinstance_list %}
@@ -166,7 +164,6 @@
         {% endif %}
       </div>
     </div>
-
 
 
     <!-- Events Tab Content -->
@@ -282,131 +279,92 @@
 
 
   </div>
-  
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('th[data-sort]').forEach(header => {
-        header.addEventListener('click', function () {
-            let table = header.closest('table');
-            let tbody = table.querySelector('tbody');
-            let isAscending = header.getAttribute('data-order') === 'asc';
-            let type = header.getAttribute('data-sort');
-            let rows = Array.from(tbody.querySelectorAll('tr'));
 
-            // Инвертируем направление сортировки при каждом клике
-            isAscending = !isAscending;
-
-            // Обновляем символы для отображения текущего направления сортировки
-            if (isAscending) {
-                header.setAttribute('data-order', 'asc');
-                header.innerHTML = header.innerHTML.replace('&#9660;', '&#9650;'); // Изменение символа на "вверх"
-            } else {
-                header.setAttribute('data-order', 'desc');
-                header.innerHTML = header.innerHTML.replace('&#9650;', '&#9660;'); // Изменение символа на "вниз"
-            }
-            
-            rows.sort(function (a, b) {
-                let aText, bText;
-                if (type === 'date' || type === 'date-start' || type === 'date-end') {
-                    // Преобразуем текст ячейки в объект Date для корректной сортировки
-                    aText = new Date(a.cells[3].textContent);
-                    bText = new Date(b.cells[3].textContent);
-                } else { // status
-                    aText = a.cells[6].textContent.trim();
-                    bText = b.cells[6].textContent.trim();
-                }
-                
-                // Учитываем направление сортировки
-                return (aText < bText ? -1 : 1) * (isAscending ? 1 : -1);
-            });
-
-            // Перестраиваем строки в теле таблицы
-            rows.forEach(row => tbody.appendChild(row));
-        });
-    });
-});
-</script>
-
-  
   <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    // Находим все кнопки вкладок
-    const tabButtons = document.querySelectorAll('.nav-link');
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('th[data-sort]').forEach(header => {
+        header.addEventListener('click', function () {
+          let table = header.closest('table');
+          let tbody = table.querySelector('tbody');
+          let isAscending = header.getAttribute('data-order') === 'asc';
+          let type = header.getAttribute('data-sort');
+          let rows = Array.from(tbody.querySelectorAll('tr'));
 
-    // Добавляем обработчик события клика для каждой кнопки вкладки
-    tabButtons.forEach(function (button) {
-      button.addEventListener('click', function (event) {
-        // Отменяем стандартное поведение ссылки
-        event.preventDefault();
+          // Инвертируем направление сортировки при каждом клике
+          isAscending = !isAscending;
 
-        // Удаляем класс 'active' у всех кнопок вкладок
-        tabButtons.forEach(function (btn) {
-          btn.classList.remove('active');
+          // Обновляем символы для отображения текущего направления сортировки
+          if (isAscending) {
+            header.setAttribute('data-order', 'asc');
+            header.innerHTML = header.innerHTML.replace('&#9660;', '&#9650;'); // Изменение символа на "вверх"
+          } else {
+            header.setAttribute('data-order', 'desc');
+            header.innerHTML = header.innerHTML.replace('&#9650;', '&#9660;'); // Изменение символа на "вниз"
+          }
+
+          rows.sort(function (a, b) {
+            let aText, bText;
+            if (type === 'date' || type === 'date-start' || type === 'date-end') {
+              // Преобразуем текст ячейки в объект Date для корректной сортировки
+              aText = new Date(a.cells[3].textContent);
+              bText = new Date(b.cells[3].textContent);
+            } else { // status
+              aText = a.cells[6].textContent.trim();
+              bText = b.cells[6].textContent.trim();
+            }
+
+            // Учитываем направление сортировки
+            return (aText < bText ? -1 : 1) * (isAscending ? 1 : -1);
+          });
+
+          // Перестраиваем строки в теле таблицы
+          rows.forEach(row => tbody.appendChild(row));
         });
-
-        // Добавляем класс 'active' только к нажатой кнопке вкладки
-        button.classList.add('active');
-
-        // Получаем целевую вкладку по атрибуту data-bs-target кнопки вкладки
-        const targetTabId = button.getAttribute('data-bs-target');
-
-        // Находим все вкладки содержимого
-        const tabContents = document.querySelectorAll('.tab-pane');
-
-        // Скрываем все вкладки содержимого
-        tabContents.forEach(function (tab) {
-          tab.classList.remove('show', 'active');
-        });
-
-        // Показываем только целевую вкладку содержимого
-        const targetTab = document.querySelector(targetTabId);
-        targetTab.classList.add('show', 'active');
       });
     });
-  });
-</script>
-      <style>
-      .profile-container {
-        padding: 20px;
-      }
+  </script>
 
-      .avatar-img {
-        max-width: 400px;
-        border-radius: 500%;
-      }
 
-      .form-error {
-        color: red;
-      }
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Находим все кнопки вкладок
+      const tabButtons = document.querySelectorAll('.nav-link');
 
-      .custom-file-input::-webkit-file-upload-button {
-        visibility: hidden;
-      }
+      // Добавляем обработчик события клика для каждой кнопки вкладки
+      tabButtons.forEach(function (button) {
+        button.addEventListener('click', function (event) {
+          // Отменяем стандартное поведение ссылки
+          event.preventDefault();
 
-      .custom-file-input::before {
-        content: 'Выбрать файл';
-        display: inline-block;
-        background: -webkit-linear-gradient( #f9f9f9, #e3e3e3);
-        border: 1px solid #999;
-        border-radius: 3px;
-        padding: 5px 1px;
-        outline: none;
-        white-space: nowrap;
-        -webkit-user-select: none;
-        cursor: pointer;
-        text-shadow: 1px 1px #fff;
-        font-weight: 700;
-        font-size: 10pt;
-      }
+          // Удаляем класс 'active' у всех кнопок вкладок
+          tabButtons.forEach(function (btn) {
+            btn.classList.remove('active');
+          });
 
-      .custom-file-input:hover::before {
-        border-color: black;
-      }
+          // Добавляем класс 'active' только к нажатой кнопке вкладки
+          button.classList.add('active');
 
-      .custom-file-input:active::before {
-        background: -webkit-linear-gradient(#e3e3e3, #f9f9f9);
-      }
-    </style>
+          // Получаем целевую вкладку по атрибуту data-bs-target кнопки вкладки
+          const targetTabId = button.getAttribute('data-bs-target');
+
+          // Находим все вкладки содержимого
+          const tabContents = document.querySelectorAll('.tab-pane');
+
+          // Скрываем все вкладки содержимого
+          tabContents.forEach(function (tab) {
+            tab.classList.remove('show', 'active');
+          });
+
+          // Показываем только целевую вкладку содержимого
+          const targetTab = document.querySelector(targetTabId);
+          targetTab.classList.add('show', 'active');
+        });
+      });
+    });
+  </script>
+  <style>
+
+  </style>
 {% endblock %}
 
 

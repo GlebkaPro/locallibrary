@@ -117,11 +117,11 @@ class BookInstance(models.Model):
   id = models.UUIDField(primary_key=True, default=uuid.uuid4,
                         help_text="Уникальный идентификатор")
   book = models.ForeignKey('Book', on_delete=models.RESTRICT, null=True, verbose_name='Книга')
-  due_back = models.DateField(null=True, blank=True, verbose_name='Дата возврата')
+  due_back = models.DateField(null=True, blank=True, verbose_name='Дата начала')
   borrower = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
                                verbose_name='Абонент')
-  renewal_date = models.DateField(null=True, blank=True, verbose_name='Дата возврата')
-  current_date = models.DateField(default=timezone.now, verbose_name='Текущая дата')
+  renewal_date = models.DateField(null=True, blank=True, verbose_name='Дата продления')
+  current_date = models.DateField(default=timezone.now, verbose_name='Дата начала')
   loan = models.ForeignKey('BookCopy', on_delete=models.SET_NULL, null=True, blank=True)
   worker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
                              related_name='worked_books', verbose_name='Сотрудник')

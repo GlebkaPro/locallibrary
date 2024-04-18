@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container">
-    <h1>Редактировать выдачу</h1>
+    <h1>Оформление выдачи</h1>
     <form method="post" class="mt-4">
         {% csrf_token %}
 <div class="mb-3">
@@ -24,21 +24,21 @@
     </div>
 </div>
 <div class="mb-3">
-    <label for="{{ form.borrower.id_for_label }}" class="form-label">Заёмщик</label>
+    <label for="{{ form.borrower.id_for_label }}" class="form-label">Абонент</label>
     <select class="form-select" id="{{ form.borrower.id_for_label }}" name="{{ form.borrower.name }}" style="max-width: 200px;">
         {% for user in form.borrower.field.queryset %}
             <option value="{{ user.id }}" {% if user.id == form.borrower.value %}selected{% endif %}>{{ user }}</option>
         {% endfor %}
     </select>
 </div>
-<div class="mb-3">
-    <label for="{{ form.status.id_for_label }}" class="form-label">Статус</label>
-    <select class="form-select" id="{{ form.status.id_for_label }}" name="{{ form.status.name }}" style="max-width: 200px;">
-        {% for choice in form.status.field.choices %}
-            <option value="{{ choice.0 }}" {% if choice.0 == form.status.value %}selected{% endif %}>{{ choice.1 }}</option>
-        {% endfor %}
-    </select>
-</div>
+{#<div class="mb-3">#}
+{#    <label for="{{ form.status.id_for_label }}" class="form-label">Статус</label>#}
+{#    <select class="form-select" id="{{ form.status.id_for_label }}" name="{{ form.status.name }}" style="max-width: 200px;">#}
+{#        {% for choice in form.status.field.choices %}#}
+{#            <option value="{{ choice.0 }}" {% if choice.0 == form.status.value %}selected{% endif %}>{{ choice.1 }}</option>#}
+{#        {% endfor %}#}
+{#    </select>#}
+{#</div>#}
         <button type="submit" class="btn btn-primary">Сохранить</button>
         {% if form.non_field_errors %}
             <div class="alert alert-danger" role="alert">

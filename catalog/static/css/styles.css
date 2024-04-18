@@ -64,10 +64,10 @@ body {
 }
 
 .avatar-img {
-  width: 150px; /* Ширина изображения */
-  height: 150px; /* Высота изображения */
+  width: 200px; /* Ширина изображения */
+  height: 128px; /* Высота изображения */
   object-fit: contain; /* Заполнение контейнера */
-  border-radius: 50%; /* Закругление углов для круглой формы */
+  border-radius: 10%; /* Закругление углов для круглой формы */
 }
 
 .table-card {
@@ -76,3 +76,38 @@ body {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+.profile-container {
+  padding: 20px;
+}
+
+.form-error {
+  color: red;
+}
+
+.custom-file-input::-webkit-file-upload-button {
+  visibility: hidden;
+}
+
+.custom-file-input::before {
+  content: 'Выбрать файл';
+  display: inline-block;
+  background: -webkit-linear-gradient(#f9f9f9, #e3e3e3);
+  border: 1px solid #999;
+  border-radius: 3px;
+  padding: 5px 1px;
+  outline: none;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  cursor: pointer;
+  text-shadow: 1px 1px #fff;
+  font-weight: 700;
+  font-size: 10pt;
+}
+
+/*.custom-file-input:hover::before {*/
+/*  border-color: black;*/
+/*}*/
+
+/*.custom-file-input:active::before {*/
+/*  background: -webkit-linear-gradient(#e3e3e3, #f9f9f9);*/
+/*}*/

@@ -295,9 +295,10 @@ def edit_bookinstance(request, bookinstance_id):
       form = BookInstanceEditForm(request.POST, instance=book_instance)
 
       if form.is_valid():
-        # Если статус был изменен, разрешите сохранение
-        if form.cleaned_data['status'] != 'з':
-          form.save()
+        # Устанавливаем статус 'р' (Выдано)
+        form.instance.status = 'р'
+        form.save()
+
         # Получите соответствующий экземпляр в BookCopy
         book_copy = BookCopy.objects.filter(book=book_instance.book, status='з').first()
 
@@ -305,7 +306,7 @@ def edit_bookinstance(request, bookinstance_id):
         if book_copy:
           book_copy.status = book_instance.status
           book_copy.save()
-        form.save()
+
         return redirect('all-borrowed')
 
     else:
@@ -314,7 +315,7 @@ def edit_bookinstance(request, bookinstance_id):
     return render(request, 'bookinstances/edit_bookinstance.html', {'form': form, 'book_instance': book_instance})
   else:
     # Обработка случая, когда экземпляр не имеет статус 'з'
-    return redirect('all-borrowed')  # Пример: вернуться на страницу с информацией о книге
+    return redirect('all-borrowed')
 
 
 def add_book(request):
@@ -1080,7 +1081,7 @@ from .models import Event
 
 def event_list(request):
   events = Event.objects.all()
-  return render(request, 'event/event_list.html', {'events': events})
+  return render(request, 'event/event_list.html',  {'events': events})
 
 
 from django.shortcuts import render
