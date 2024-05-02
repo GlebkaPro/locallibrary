@@ -2,17 +2,21 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <h1>Детальная информация о мероприятии:</h1>
-  <div>
-    <p>Наименование: {{ event.event_name }}</p>
-    <p>Мест: {{ event.number_of_participants }}</p>
-    <p>Дата начала: {{ event.date_start }}</p>
-    <p>Дата окончания: {{ event.date_end }}</p>
-    <p>Описание: {{ event.description }}</p>
-    <form action="{% url 'register_to_event' event_id=event.id %}" method="post" style="display: inline;">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-success">Зарегистрироваться</button>
-    </form>
-    <!-- Здесь можно добавить другие поля для детальной информации об ивенте -->
+  <h1>Подробная информация о мероприятии:</h1>
+  <div class="card" style="padding: 20px;">
+    <div style="overflow: hidden;">
+      <img src="https://avatars.mds.yandex.net/i?id=7e4d54318eb9d91061b239dedf00acb77b39b0ed-11506583-images-thumbs&n=13" alt="Изображение мероприятия" style="float: left; margin-right: 20px; max-width: 400px;">
+      <div style="margin-left: 220px;"> <!-- Ширина изображения + отступ -->
+        <h4>Наименование: {{ event.event_name }}</h4>
+        <p>Мест: {{ event.number_of_participants }}</p>
+        <p>Дата начала: {{ event.date_start }}</p>
+        <p>Дата окончания: {{ event.date_end }}</p>
+        <p>Описание: {{ event.description }}</p>
+        <form action="{% url 'register_to_event' event_id=event.id %}" method="post" style="display: inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-success">Зарегистрироваться</button>
+        </form>
+      </div>
+    </div>
   </div>
 {% endblock %}

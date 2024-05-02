@@ -31,14 +31,6 @@
         {% endfor %}
     </select>
 </div>
-{#<div class="mb-3">#}
-{#    <label for="{{ form.status.id_for_label }}" class="form-label">Статус</label>#}
-{#    <select class="form-select" id="{{ form.status.id_for_label }}" name="{{ form.status.name }}" style="max-width: 200px;">#}
-{#        {% for choice in form.status.field.choices %}#}
-{#            <option value="{{ choice.0 }}" {% if choice.0 == form.status.value %}selected{% endif %}>{{ choice.1 }}</option>#}
-{#        {% endfor %}#}
-{#    </select>#}
-{#</div>#}
         <button type="submit" class="btn btn-primary">Сохранить</button>
         {% if form.non_field_errors %}
             <div class="alert alert-danger" role="alert">

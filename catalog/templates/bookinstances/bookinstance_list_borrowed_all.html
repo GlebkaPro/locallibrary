@@ -3,7 +3,7 @@
 {% block content %}
   <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h1>Все выдачи</h1>
+      <h1>Список выдачи</h1>
       <a class="btn btn-success my-3" href="{% url 'add-bookinstance' %}">Создать выдачу</a>
     </div>
     <form method="GET" action="{% url 'all-borrowed' %}">
@@ -56,8 +56,12 @@
                       <a class="btn btn-success btn-sm" href="{% url 'renew-book-librarian' bookinst.id %}">Продлить</a>
                       <a class="btn btn-warning btn-sm" href="{% url 'return-book' bookinst.id %}">Возврат</a>
                     {% elif bookinst.status == 'з' %}
-                      <a class="btn btn-info btn-sm" href="{% url 'edit-bookinstance' bookinst.id %}">Оформить
-                        выдачу</a>
+                      <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#myModal"
+                              data-book-id="{{ bookinst.book.id }}" data-borrower-id="{{ bookinst.borrower.id }}">
+                        Оформить выдачу
+                      </button>
+                      {#                      <a class="btn btn-warning btn-sm" href="{% url 'edit-bookinstance' bookinst.id %}">Оформить выдачу</a>#}
+
                     {% else %}
                       {% if bookinst.status == 'д' %}
                         <a class="btn btn-warning btn-sm" href="{% url 'return-book' bookinst.id %}">Возврат</a>
@@ -78,4 +82,87 @@
       <p>Нет выданных книг</p>
     {% endif %}
   </div>
+  <!-- Модальное окно для оформления выдачи -->
+  <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Оформление выдачи</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form method="post" id="loanForm">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="id_book" class="form-label">Книга</label>
+              <select class="form-select" id="id_book" name="book" style="max-width: 300px;">
+                {% for book in books %}
+                  <option value="{{ book.id }}">{{ book.title }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="id_borrower" class="form-label">Абонент</label>
+              <select class="form-select" id="id_borrower" name="borrower" style="max-width: 300px;">
+                {% for user in users %}
+                  <option value="{{ user.id }}">{{ user.username }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="id_due_back" class="form-label">Дата возврата</label>
+              <input type="date" class="form-control form-control-sm" id="id_due_back" name="due_back"
+                     style="max-width: 300px;">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger" role="alert">
+                {{ form.non_field_errors }}
+              </div>
+            {% endif %}
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <script>
+    $(document).ready(function () {
+      $('#myModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var bookId = button.data('book-id');
+        var borrowerId = button.data('borrower-id');
+        var modal = $(this);
+
+        // Установка значений в поля формы
+        modal.find('#id_book').val(bookId);
+        modal.find('#id_borrower').val(borrowerId);
+      });
+
+      $('#loanForm').submit(function (event) {
+        event.preventDefault(); // Предотвращаем отправку формы по умолчанию
+
+        $.ajax({
+          type: 'POST',
+          url: $(this).attr('action'), // Получаем URL из атрибута action формы
+          data: $(this).serialize(), // Получаем данные формы
+          success: function (response) {
+            // Обработка успешного ответа
+            // Например, закрываем модальное окно или обновляем страницу
+            $('#myModal').modal('hide');
+            location.reload();
+          },
+          error: function (xhr, errmsg, err) {
+            // Обработка ошибки
+            console.log(xhr.status + ": " + xhr.responseText); // Выводим ошибку в консоль
+            // Можно также выводить ошибку пользователю на странице
+          }
+        });
+      });
+    });
+  </script>
+
 {% endblock %}
