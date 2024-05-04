@@ -1463,20 +1463,31 @@ from .models import Request
 from django.template.loader import render_to_string
 
 
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
+from django.template.loader import render_to_string
+from .models import Request
+
 def filtered_requests(request):
-  start_date = request.GET.get('start_date')
-  end_date = request.GET.get('end_date')
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    status = request.GET.get('status')
 
-  # Применяем фильтр к запросам на основе даты создания
-  filtered_requests = Request.objects.filter(date_creation__range=[start_date, end_date])
+    filtered_requests = Request.objects.all()
 
-  context = {
-    'requests': filtered_requests,
-  }
+    if start_date and end_date:
+        filtered_requests = filtered_requests.filter(date_creation__range=[start_date, end_date])
 
-  # Рендерим только строки таблицы без обертки
-  rows_html = render_to_string('request/filtered_requests.html', context)
+    if status:
+        filtered_requests = filtered_requests.filter(status_record=status)
 
-  return JsonResponse({'rows_html': rows_html})
+    context = {
+        'requests': filtered_requests,
+    }
+
+    rows_html = render_to_string('request/filtered_requests.html', context)
+
+    return JsonResponse({'rows_html': rows_html})
+
 
 
