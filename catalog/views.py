@@ -1454,3 +1454,29 @@ def reject_request(request, request_id):
         req.save()
         return redirect('request_list')
     return render(request, 'request/reject_request.html')
+
+
+from django.shortcuts import render
+from django.http import JsonResponse
+from .models import Request
+
+from django.template.loader import render_to_string
+
+
+def filtered_requests(request):
+  start_date = request.GET.get('start_date')
+  end_date = request.GET.get('end_date')
+
+  # Применяем фильтр к запросам на основе даты создания
+  filtered_requests = Request.objects.filter(date_creation__range=[start_date, end_date])
+
+  context = {
+    'requests': filtered_requests,
+  }
+
+  # Рендерим только строки таблицы без обертки
+  rows_html = render_to_string('request/filtered_requests.html', context)
+
+  return JsonResponse({'rows_html': rows_html})
+
+

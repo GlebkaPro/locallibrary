@@ -115,8 +115,9 @@ urlpatterns += [
   path('requests/', views.request_list, name='request_list'),
   path('requests/<int:request_id>/edit/', views.edit_request, name='edit_request'),
   path('requests/<int:request_id>/delete/', views.delete_request, name='delete_request'),
-  path('accept/<int:request_id>/', views.accept_request, name='accept_request'),  # Новый URL для принятия запроса
+  path('accept/<int:request_id>/', views.accept_request, name='accept_request'),
   path('reject/<int:request_id>/reason/', views.reject_request, name='reject_request'),
+  path('filtered_requests/', views.filtered_requests, name='filtered_requests'),
 ]
 
 urlpatterns += [

@@ -3,7 +3,14 @@
 {% block content %}
   <h1>Список заявок</h1>
   <a href="{% url 'create_request' %}" class="btn btn-primary mb-3">Создать заявку</a>
-  <table class="table table-striped">
+    <form id="filter-form">
+    <label for="start-date">Начальная дата:</label>
+    <input type="date" id="start-date" name="start_date">
+    <label for="end-date">Конечная дата:</label>
+    <input type="date" id="end-date" name="end_date">
+    <button type="submit" class="btn btn-primary">Применить</button>
+  </form>
+  <table id="request-table" class="table table-striped">
     <thead>
       <tr>
         <th>Название</th>
@@ -37,18 +44,38 @@
             {% endif %}
           </td>
           <td>
-{#            {% if request.status_record == 'в' %}#}
+            {% if request.status_record == 'в' %}
               <form action="{% url 'accept_request' request_id=request.id %}" method="post" style="display: inline;">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-success" onclick="return confirm('Вы уверены?')">Принять</button>
               </form>
               <a href="{% url 'reject_request' request_id=request.id %}" class="btn btn-danger">Отклонить</a>
-{#            {% else %}#}
-{#              <span>Действия невозможны</span>#}
-{#            {% endif %}#}
+            {% else %}
+              <span>Действия невозможны</span>
+            {% endif %}
           </td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
+  <script>
+$(document).ready(function() {
+    $('#filter-form').submit(function(event) {
+        event.preventDefault();
+        var formData = $(this).serialize();
+        $.ajax({
+            type: 'GET',
+            url: '{% url "filtered_requests" %}',
+            data: formData,
+            success: function(response) {
+                $('#request-table tbody').html(response.rows_html);  // Заменяем только строки таблицы
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    });
+});
+
+  </script>
 {% endblock %}
