@@ -79,21 +79,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr class="formset_row">
-        <td>1</td>
-        <td>
-          <select name="{{ position_formset.prefix }}-0-exemplar" class="form-control">
-            {% for exemplar in position_formset.empty_form.exemplar.field.queryset %}
-              <option value="{{ exemplar.pk }}">{{ exemplar }}</option>
-            {% endfor %}
-          </select>
-        </td>
-        <td><input type="text" name="{{ position_formset.prefix }}-0-size" class="form-control" autocomplete="off"></td>
-        <td><input type="text" name="{{ position_formset.prefix }}-0-price" class="form-control" autocomplete="off"></td>
-        <td>
-          <button type="button" onclick="removeRow(this)" class="btn btn-danger">Удалить</button>
-        </td>
-      </tr>
+      
     </tbody>
   </table>
 </div>
@@ -112,7 +98,7 @@
 
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
-  var rowNumber = 2;
+  var rowNumber = 1;
 
   function addPosition() {
     var formsetPrefix = '{{ position_formset.prefix }}';

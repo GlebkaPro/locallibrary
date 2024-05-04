@@ -113,7 +113,7 @@ class BookCopy(models.Model):
 
 
 class BookInstance(models.Model):
-  """Модель, представляющая выдачи книг"""
+  """Модель, представляющая конкретную копию книги (т. е. которую можно взять в библиотеке)."""
   id = models.UUIDField(primary_key=True, default=uuid.uuid4,
                         help_text="Уникальный идентификатор")
   book = models.ForeignKey('Book', on_delete=models.RESTRICT, null=True, verbose_name='Книга')

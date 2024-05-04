@@ -2,8 +2,7 @@
 {% block content %}
   {% load static %}
   <h1>Профиль</h1>
-
-  <!-- Bootstrap Tabs -->
+ <!-- Bootstrap Tabs -->
   <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
       <button class="nav-link {% if not request.GET.tab or request.GET.tab == 'profile' %}active{% endif %}"
@@ -52,7 +51,7 @@
             </div>
             <div class="mb-3">
               <input type="file" class="form-control custom-file-input" id="{{ form.avatar.id_for_label }}"
-                     name="{{ form.avatar.name }}">
+                     name="{{ form.avatar.name }}" >
               <div class="form-error">{{ form.avatar.errors }}</div>
             </div>
             <div class="mb-3">
@@ -145,8 +144,6 @@
                 <td>
                   {% if bookinst.status == 'р' %}
                     <a href="{% url 'renew-book-librarian' bookinst.id %}" class="btn btn-warning">Продлить</a>
-{#                                          <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"#}
-{#                              data-bs-target="#myModal">Продлить#}
                   {% elif bookinst.status == 'з' %}
                     <form action="{% url 'cancel_reservation' bookinst.id %}" method="post" style="display: inline;">
                       {% csrf_token %}
@@ -279,45 +276,9 @@
         <a href="{% url 'create_request' %}" class="btn btn-primary mb-3">Создать заявку</a>
       </div>
     </div>
+
+
   </div>
-
-{#  <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">#}
-{#    <div class="modal-dialog">#}
-{#      <div class="modal-content">#}
-{#        <div class="modal-header">#}
-{#          <h5 class="modal-title" id="exampleModalLabel">Оформление выдачи</h5>#}
-{#          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>#}
-{#        </div>#}
-{#        <div class="modal-body">#}
-{#          <form method="post">#}
-{#            {% csrf_token %}#}
-{#            <div class="mb-3">#}
-{#              <label for="{{ form.renewal_date.id_for_label }}" class="form-label">Выберите дату продления (возможно#}
-{#                продление#}
-{#                не более чем на 1 неделю вперед)</label>#}
-{#              <div class="input-group date">#}
-{#                <input type="date" class="form-control form-control-sm" id="{{ form.renewal_date.id_for_label }}"#}
-{#                       name="{{ form.renewal_date.name }}" value="{{ form.renewal_date.value }}"#}
-{#                       style="max-width: 200px;">#}
-{#                <span class="input-group-addon">#}
-{#          <i class="glyphicon glyphicon-calendar"></i>#}
-{#        </span>#}
-{#              </div>#}
-{#            </div>#}
-{##}
-{#            <button type="submit" class="btn btn-primary">Сохранить</button>#}
-{#            {% if form.non_field_errors %}#}
-{#              <div class="alert alert-danger" role="alert">#}
-{#                {{ form.non_field_errors }}#}
-{#              </div>#}
-{#            {% endif %}#}
-{#          </form>#}
-{#        </div>#}
-{#      </div>#}
-{#    </div>#}
-{#  </div>#}
-
-
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -401,6 +362,9 @@
       });
     });
   </script>
+  <style>
+
+  </style>
 {% endblock %}
 
 

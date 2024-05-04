@@ -21,7 +21,7 @@
         <tr>
           <td>{{ request.title }}</td>
           <td>{{ request.author }}</td>
-          <td>{{ request.description }}</td>
+          <td>{{ request.description|slice:":30" }}</td>
           <td>{{ request.date_creation }}</td>
           <td>{{ request.borrower }}</td>
           <td>{{ request.worker }}</td>
@@ -37,11 +37,18 @@
             {% endif %}
           </td>
           <td>
-            <a href="{% url 'edit_request' request_id=request.id %}" class="btn btn-warning">Редактировать</a>
-            <form action="{% url 'delete_request' request_id=request.id %}" method="post" style="display: inline;">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Удалить</button>
-            </form>
+{#            {% if request.status_record == 'в' %}#}
+              <form action="{% url 'accept_request' request_id=request.id %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success" onclick="return confirm('Вы уверены?')">Принять</button>
+              </form>
+              <form action="{% url 'reject_request' request_id=request.id %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Отклонить</button>
+              </form>
+{#            {% else %}#}
+{#              <span class="text-danger">Действия невозможны</span>#}
+{#            {% endif %}#}
           </td>
         </tr>
       {% endfor %}

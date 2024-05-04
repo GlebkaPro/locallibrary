@@ -15,10 +15,12 @@
         {#      </form>#}
       </div>
     {% endif %}
+      <h0 class="card-title">Название: {{ book.title }}</h0>
+    <h5><a href="{{ book.author.get_absolute_url }}">{{ book.author.last_name }} {{ book.author.first_name }} {{ book.author.middle_name }}</a></h5>
+  
+  
     <div class="book-info card">
-        <h1 class="card-title">Название: {{ book.title }}</h1>
-    <p><strong>Автор:</strong> <a href="{{ book.author.get_absolute_url }}">{{ book.author }}</a></p>
-      <div class="d-flex flex-row">
+    <div class="d-flex flex-row">
         <div class="image-container order-first">
           {% if book.image %}
             <img src="{{ book.image.url }}" class="card-img-top img-fluid" alt="Book Image"
@@ -30,6 +32,11 @@
           <p class="card-text">ISBN: {{ book.isbn }}</p>
           <p class="card-text">Язык: {{ book.language }}</p>
           <p class="card-text">Жанр: {{ book.genre.all|join:", " }}</p>
+          
+        </div>
+      <div class="text-container card-body order-last">
+        <div class="card" style="height: 100%">
+          <h4>Доступно экземпляров (шт.): {{ book.bookcopy_set.all.count }}</h4>
           <p class="card-text">Всего копий: {{ book.bookcopy_set.all.count }}</p>
           {#                <p class="card-text">Копий доступно: {{ available_copies }}</p>#}
           <form method="get" action="{% url 'reserve-book' book_id=book.id %}">
@@ -54,9 +61,11 @@
             {% endif %}
           </form>
         </div>
+        
       </div>
-    <h4>Доступно экземпляров (шт.): 2</h4>
-    {% if user.is_staff %}
+      </div>
+      <div class="card" style="margin-top: 16px">
+      {% if user.is_staff %}
       <h4>Статусы экземпляров:</h4>
       {% for copy in book.bookcopy_set.all %}
         <hr>
@@ -75,6 +84,8 @@
     </div>
   </div>
 {% endif %}
+      </div>
+    
   <style>
     .book-info {
       display: flex;

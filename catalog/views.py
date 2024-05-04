@@ -148,13 +148,6 @@ class LoanedBooksAllListView(PermissionRequiredMixin, generic.ListView):
 
     return BookInstance.objects.filter(status__in=status).order_by('due_back')
 
-  def get_context_data(self, **kwargs):
-    context = super().get_context_data(**kwargs)
-    books = Book.objects.all()
-    users = User.objects.all()
-    context['books'] = books
-    context['users'] = users
-    return context
 
 # @login_required
 # @permission_required('catalog.can_mark_returned', raise_exception=True)
@@ -293,40 +286,36 @@ def add_bookinstance(request):
   return render(request, 'bookinstances/add_bookinstance.html', {'form': form})
 
 
-from django.http import JsonResponse
-
 @login_required
 def edit_bookinstance(request, bookinstance_id):
-    book_instance = get_object_or_404(BookInstance, id=bookinstance_id)
+  book_instance = get_object_or_404(BookInstance, id=bookinstance_id)
 
+  if book_instance.status == 'з':  # Проверьте статус экземпляра
     if request.method == 'POST':
-        form = BookInstanceEditForm(request.POST, instance=book_instance)
+      form = BookInstanceEditForm(request.POST, instance=book_instance)
 
-        if form.is_valid():
-            # Устанавливаем статус 'р' (Выдано)
-            form.instance.status = 'р'
-            form.save()
+      if form.is_valid():
+        # Устанавливаем статус 'р' (Выдано)
+        form.instance.status = 'р'
+        form.save()
 
-            # Получаем соответствующий экземпляр в BookCopy
-            book_copy = BookCopy.objects.filter(book=book_instance.book, status='з').first()
+        # Получите соответствующий экземпляр в BookCopy
+        book_copy = BookCopy.objects.filter(book=book_instance.book, status='з').first()
 
-            # Устанавливаем статус book_copy как в book_instance
-            if book_copy:
-                book_copy.status = book_instance.status
-                book_copy.save()
+        # Установите статус book_copy как в book_instance
+        if book_copy:
+          book_copy.status = book_instance.status
+          book_copy.save()
 
-            # Возвращаем JSON-ответ с сообщением об успешном сохранении
-            return JsonResponse({'success': True})
-
-        else:
-            # Возвращаем JSON-ответ с ошибками валидации формы
-            errors = form.errors.as_json()
-            return JsonResponse({'success': False, 'errors': errors}, status=400)
+        return redirect('all-borrowed')
 
     else:
-        # Если запрос не POST, возвращаем пустой ответ
-        return JsonResponse({}, status=405)  # Метод не разрешен
+      form = BookInstanceEditForm(instance=book_instance)
 
+    return render(request, 'bookinstances/edit_bookinstance.html', {'form': form, 'book_instance': book_instance})
+  else:
+    # Обработка случая, когда экземпляр не имеет статус 'з'
+    return redirect('all-borrowed')
 
 
 def add_book(request):
@@ -1364,10 +1353,6 @@ from .models import Request
 from django.utils import timezone
 
 
-from django.shortcuts import redirect
-
-from django.shortcuts import redirect
-
 def edit_request(request, request_id):
     request_obj = get_object_or_404(Request, id=request_id)
 
@@ -1447,3 +1432,18 @@ def cancel_reservation(request, bookinst_id):
     redirect_url = reverse('profile') + '?tab=books'
     return redirect(redirect_url)
 
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Request
+from .forms import RequestForm
+
+def accept_request(request, request_id):
+    req = get_object_or_404(Request, id=request_id)
+    req.status_record = 'п'
+    req.save()
+    return redirect('request_list')
+
+def reject_request(request, request_id):
+    req = get_object_or_404(Request, id=request_id)
+    req.status_record = 'о'
+    req.save()
+    return redirect('request_list')
