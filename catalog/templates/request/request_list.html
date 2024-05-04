@@ -42,12 +42,9 @@
                 {% csrf_token %}
                 <button type="submit" class="btn btn-success" onclick="return confirm('Вы уверены?')">Принять</button>
               </form>
-              <form action="{% url 'reject_request' request_id=request.id %}" method="post" style="display: inline;">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Отклонить</button>
-              </form>
+              <a href="{% url 'reject_request' request_id=request.id %}" class="btn btn-danger">Отклонить</a>
 {#            {% else %}#}
-{#              <span class="text-danger">Действия невозможны</span>#}
+{#              <span>Действия невозможны</span>#}
 {#            {% endif %}#}
           </td>
         </tr>

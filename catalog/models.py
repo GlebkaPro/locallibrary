@@ -340,6 +340,8 @@ class Request(models.Model):
                                verbose_name='Абонент')
   worker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
                              related_name='worked_request', verbose_name='Сотрудник')
+  reason = models.TextField(blank=True, null=True, verbose_name='Причина')
+
   ACCEPT_status = (
     ('п', 'принята'),
     ('з', 'закрыта'),

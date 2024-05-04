@@ -1,0 +1,15 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<div class="container">
+  <h1>Причина отклонения заявки</h1>
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="reason">Введите причину:</label>
+      <textarea class="form-control" id="reason" name="reason" rows="5" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Отправить</button>
+  </form>
+</div>
+{% endblock %}

@@ -237,6 +237,7 @@
           <th>Описание</th>
           <th style="cursor:pointer;" data-sort="date" data-order="desc">Дата создания &#9660;</th>
           <th>Статус</th>
+          <th>Причина</th>
           <th>Действия</th>
         </tr>
         </thead>
@@ -250,6 +251,7 @@
             <td>{{ request.description|slice:":30" }}</td>
             <td>{{ request.date_creation }}</td>
             <td>{{ request.get_status_record_display }}</td>
+            <td>{{ request.reason|slice:":30" }}</td>
             <td>
               {% if request.status_record == 'в' %}
                 <a href="{% url 'edit_request' request_id=request.id %}" class="btn btn-warning">Редактировать</a>

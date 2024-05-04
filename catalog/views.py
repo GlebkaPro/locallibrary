@@ -1436,14 +1436,21 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Request
 from .forms import RequestForm
 
+@login_required
 def accept_request(request, request_id):
     req = get_object_or_404(Request, id=request_id)
     req.status_record = 'п'
+    req.worker = request.user
     req.save()
     return redirect('request_list')
 
+@login_required
 def reject_request(request, request_id):
     req = get_object_or_404(Request, id=request_id)
-    req.status_record = 'о'
-    req.save()
-    return redirect('request_list')
+    if request.method == 'POST':
+        req.reason = request.POST.get('reason')
+        req.status_record = 'о'
+        req.worker = request.user
+        req.save()
+        return redirect('request_list')
+    return render(request, 'request/reject_request.html')
