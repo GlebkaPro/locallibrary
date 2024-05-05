@@ -8,21 +8,21 @@
       возврата: {{ book_instance.due_back }}</p>
 
 
-  {% if messages %}
-    <ul class="messages">
-      {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
-          {% if message.tags == 'success' %}
-            <div class="alert alert-success" role="alert">{{ message }}</div>
-          {% elif message.tags == 'error' %}
-            <div class="alert alert-danger" role="alert">{{ message }}</div>
-          {% else %}
-            {{ message }}
-          {% endif %}
-        </li>
-      {% endfor %}
-    </ul>
-  {% endif %}
+{#  {% if messages %}#}
+{#    <ul class="messages">#}
+{#      {% for message in messages %}#}
+{#        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>#}
+{#          {% if message.tags == 'success' %}#}
+{#            <div class="alert alert-success" role="alert">{{ message }}</div>#}
+{#          {% elif message.tags == 'error' %}#}
+{#            <div class="alert alert-danger" role="alert">{{ message }}</div>#}
+{#          {% else %}#}
+{#            {{ message }}#}
+{#          {% endif %}#}
+{#        </li>#}
+{#      {% endfor %}#}
+{#    </ul>#}
+{#  {% endif %}#}
 
   <form action="" method="post">
     {% csrf_token %}

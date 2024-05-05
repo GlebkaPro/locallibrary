@@ -174,7 +174,7 @@ def renew_book_librarian(request, pk):
         book_instance.status = 'д'
         book_instance.save()
         messages.success(request, 'Выдача успешно продлена.')
-        return redirect('my-borrowed')
+        return redirect('all-borrowed')
     else:
       messages.error(request, 'Введённая дата не входит в рамки 1 недели.')
   # Если это GET (или любой другой метод), создаем форму по умолчанию
@@ -1522,6 +1522,25 @@ def export_requests_xml(request):
     response['Content-Disposition'] = 'attachment; filename="requests.xml"'
 
     return response
+
+
+from django.shortcuts import redirect
+from .models import BookInstance
+from django.contrib import messages
+from django.urls import reverse
+
+
+def change_status_to_overdue(request):
+  overdue_instances = BookInstance.objects.filter(status='р').filter(
+    (Q(due_back__lt=date.today()) & Q(renewal_date__isnull=True)) |
+    (Q(renewal_date__lt=date.today()) & Q(renewal_date__isnull=False))
+  )
+
+  overdue_instances.update(status='о')
+
+  messages.success(request, "Статус всех просроченных книг был успешно изменен на 'Просрочено'.")
+  return redirect(reverse('all-borrowed'))
+
 
 
 

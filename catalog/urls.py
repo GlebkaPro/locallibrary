@@ -119,6 +119,7 @@ urlpatterns += [
   path('reject/<int:request_id>/reason/', views.reject_request, name='reject_request'),
   path('filtered_requests/', views.filtered_requests, name='filtered_requests'),
   path('export-requests-xml/', views.export_requests_xml, name='export_requests_xml'),
+  path('change-status/', views.change_status_to_overdue, name='change-status-to-overdue'),
 ]
 
 urlpatterns += [
