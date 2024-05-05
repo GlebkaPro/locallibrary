@@ -144,12 +144,17 @@ class LoanedBooksAllListView(PermissionRequiredMixin, generic.ListView):
 
   def get_queryset(self):
     status = self.request.GET.get('status', None)
+    borrower_lastname = self.request.GET.get('lastname', None)
 
-    if status is None or status == "":
-      # Если параметр status не указан или пустой, возвращаем все записи без фильтрации
-      return BookInstance.objects.all().order_by('due_back')
-    else:
-      return BookInstance.objects.filter(status=status).order_by('due_back')
+    queryset = BookInstance.objects.all().order_by('due_back')
+
+    if status:
+      queryset = queryset.filter(status=status)
+
+    if borrower_lastname:
+      queryset = queryset.filter(borrower__last_name__icontains=borrower_lastname)
+
+    return queryset
 
 
 # @login_required
