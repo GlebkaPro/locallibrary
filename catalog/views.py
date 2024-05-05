@@ -124,6 +124,8 @@ class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
     context = super().get_context_data(**kwargs)
     context['search_query'] = self.request.GET.get('search', '')
     return context
+
+
   # def get_queryset(self):
   #   status = self.request.GET.get('status', None)
   #
@@ -138,15 +140,16 @@ class LoanedBooksAllListView(PermissionRequiredMixin, generic.ListView):
   model = BookInstance
   permission_required = 'catalog.can_mark_returned'
   template_name = 'bookinstances/bookinstance_list_borrowed_all.html'
-  paginate_by = 10
+  paginate_by = 20
 
   def get_queryset(self):
     status = self.request.GET.get('status', None)
 
-    if status is None:
-      status = ['р', 'з', 'п']
-
-    return BookInstance.objects.filter(status__in=status).order_by('due_back')
+    if status is None or status == "":
+      # Если параметр status не указан или пустой, возвращаем все записи без фильтрации
+      return BookInstance.objects.all().order_by('due_back')
+    else:
+      return BookInstance.objects.filter(status=status).order_by('due_back')
 
 
 # @login_required

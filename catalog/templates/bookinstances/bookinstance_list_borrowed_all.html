@@ -4,7 +4,7 @@
   <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h1>Все выдачи</h1>
-      <a class="btn btn-success my-3" href="{% url 'add-bookinstance' %}">Создать выдачу</a>
+      <a class="btn btn-success my-3" href="{% url 'add-bookinstance' %}">Выдать книгу</a>
     </div>
     <form method="GET" action="{% url 'all-borrowed' %}">
       <div class="input-group mb-3">
@@ -12,7 +12,7 @@
         <select name="status" id="status" class="form-select">
           <option value="">Все статусы</option>
           <option value="р" {% if request.GET.status == 'р' %}selected{% endif %}>Выдано</option>
-          {#<option value="д" {% if request.GET.status == 'д' %}selected{% endif %}>Доступно</option>#}
+          <option value="п" {% if request.GET.status == 'п' %}selected{% endif %}>Погашено</option>
           <option value="з" {% if request.GET.status == 'з' %}selected{% endif %}>Зарезервировано</option>
         </select>
         <button type="submit" class="btn btn-primary">Применить фильтр</button>
@@ -26,7 +26,6 @@
               <thead>
               <tr>
                 <th>Фамилия</th>
-                <th>Имя</th>
                 <th>Логин</th>
                 <th>Название книги</th>
                 <th>Штамп</th>
@@ -40,16 +39,15 @@
               <tbody>
               {% for bookinst in bookinstance_list %}
                 <tr class="{% if bookinst.is_overdue %}text-danger{% endif %}">
-                  <td>{{ bookinst.borrower.last_name }}</td>
-                  <td>{{ bookinst.borrower.first_name }}</td>
+                  <td>{{ bookinst.borrower.last_name }} {{ bookinst.borrower.first_name|slice:":1" }}. {{ bookinst.borrower.middle_name|slice:":1" }}.</td>
                   <td>{{ bookinst.borrower.username }}</td>
                   <td>
                     <a href="{% url 'book-detail' bookinst.book.pk %}">{{ bookinst.book.title }}</a>
                   </td>
                   <td>{{ bookinst.loan.imprint }}</td>
-                  <td>{{ bookinst.current_date }}</td>
-                  <td>{{ bookinst.due_back }}</td>
-                  <td>{{ bookinst.renewal_date }}</td>
+                  <td>{{ bookinst.current_date|date:"Y-m-d" }}</td>
+                  <td>{{ bookinst.due_back|date:"Y-m-d" }}</td>
+                  <td>{{ bookinst.renewal_date|date:"Y-m-d" }}</td>
                   <td>{{ bookinst.get_status_display }}</td>
                   <td>
                     {% if bookinst.status == 'р' %}

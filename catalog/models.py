@@ -113,7 +113,7 @@ class BookCopy(models.Model):
 
 
 class BookInstance(models.Model):
-  """Модель, представляющая конкретную копию книги (т. е. которую можно взять в библиотеке)."""
+  """Модель, представляющая выданных эксемпляров книг"""
   id = models.UUIDField(primary_key=True, default=uuid.uuid4,
                         help_text="Уникальный идентификатор")
   book = models.ForeignKey('Book', on_delete=models.RESTRICT, null=True, verbose_name='Книга')
@@ -136,6 +136,7 @@ class BookInstance(models.Model):
     ('д', 'Продлено'),
     ('з', 'Зарезервировано'),
     ('п', 'Погашено'),
+    ('о', 'Просрочено'),
   )
 
   status = models.CharField(
