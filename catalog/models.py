@@ -113,11 +113,11 @@ class BookCopy(models.Model):
 
 
 class BookInstance(models.Model):
-  """Модель, представляющая выданных эксемпляров книг"""
+  """Модель, представляющая аренду эксемпляров книг"""
   id = models.UUIDField(primary_key=True, default=uuid.uuid4,
                         help_text="Уникальный идентификатор")
   book = models.ForeignKey('Book', on_delete=models.RESTRICT, null=True, verbose_name='Книга')
-  due_back = models.DateField(null=True, blank=True, verbose_name='Дата начала')
+  due_back = models.DateField(null=True, blank=True, verbose_name='Дата окончания')
   borrower = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
                                verbose_name='Абонент')
   renewal_date = models.DateField(null=True, blank=True, verbose_name='Дата продления')
