@@ -1489,5 +1489,36 @@ def filtered_requests(request):
 
     return JsonResponse({'rows_html': rows_html})
 
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from .models import Request
+
+def export_requests_xml(request):
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    status = request.GET.get('status')
+
+    filtered_requests = Request.objects.all()
+
+    if start_date and end_date:
+        filtered_requests = filtered_requests.filter(date_creation__range=[start_date, end_date])
+
+    if status:
+        filtered_requests = filtered_requests.filter(status_record=status)
+
+    context = {
+        'requests': filtered_requests,
+    }
+
+    # Render XML template with filtered requests
+    xml_content = render_to_string('request/requests_xml.xml', context)
+
+    # Set response content type as XML
+    response = HttpResponse(xml_content, content_type='text/xml')
+    # Set attachment header to trigger download
+    response['Content-Disposition'] = 'attachment; filename="requests.xml"'
+
+    return response
+
 
 

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'catalog.apps.CatalogConfig',
     "users.apps.UsersConfig",
     'crispy_forms',
+    'django.contrib.humanize',
 
 ]
 

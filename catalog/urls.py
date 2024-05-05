@@ -118,6 +118,7 @@ urlpatterns += [
   path('accept/<int:request_id>/', views.accept_request, name='accept_request'),
   path('reject/<int:request_id>/reason/', views.reject_request, name='reject_request'),
   path('filtered_requests/', views.filtered_requests, name='filtered_requests'),
+  path('export-requests-xml/', views.export_requests_xml, name='export_requests_xml'),
 ]
 
 urlpatterns += [

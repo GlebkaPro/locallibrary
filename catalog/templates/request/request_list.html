@@ -1,5 +1,4 @@
 {% extends "base_generic.html" %}
-
 {% block content %}
   <h1>Список заявок</h1>
   <a href="{% url 'create_request' %}" class="btn btn-primary mb-3">Создать заявку</a>
@@ -21,7 +20,7 @@
       </div>
     </div>
   </form>
-
+<button id="export-xml-btn" class="btn btn-primary mb-3">Скачать в XML</button>
   <table id="request-table" class="table table-bordered">
     <thead>
     <tr>
@@ -87,7 +86,10 @@
           }
         });
       });
-    });
 
+      $('#export-xml-btn').click(function () {
+        window.location.href = '{% url "export_requests_xml" %}?{{ request.GET.urlencode }}';
+      });
+    });
   </script>
 {% endblock %}

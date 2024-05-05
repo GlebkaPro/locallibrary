@@ -1,0 +1,15 @@
+{% load humanize %}
+
+<requests>
+  {% for request in requests %}
+  <request>
+    <title>{{ request.title }}</title>
+    <author>{{ request.author }}</author>
+    <description>{{ request.description }}</description>
+    <date_creation>{{ request.date_creation|date:"Y-m-d" }}</date_creation>
+    <borrower>{{ request.borrower }}</borrower>
+    <worker>{{ request.worker }}</worker>
+    <status_record>{{ request.get_status_record_display }}</status_record>
+  </request>
+  {% endfor %}
+</requests>
