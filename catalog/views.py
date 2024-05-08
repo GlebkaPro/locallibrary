@@ -1077,7 +1077,7 @@ def create_event(request):
     form = EventForm(request.POST)
     if form.is_valid():
       form.save()
-      return redirect('event_list')  # Перенаправляем пользователя на страницу со списком мероприятий после создания
+      return redirect('event_list')
   else:
     form = EventForm()
   return render(request, 'event/create_event.html', {'form': form})
