@@ -72,7 +72,7 @@
                       {% elif bookinst.status == 'о' %}
                         <a class="btn btn-warning btn-sm" href="{% url 'return-book' bookinst.id %}" onclick="return confirm('Вы уверены?')">Возврат</a>
                         <a class="btn btn-success btn-sm" href="{% url 'renew-book-librarian' bookinst.id %}">Продлить</a>
-                        <a class="btn btn-danger btn-sm history-btn" href="{% url 'add-appeal' bookinst.id %}">История</a>
+                        <a class="btn btn-danger btn-sm history-btn" href="{% url 'history-of-appeals' bookinst.id %}">История</a>
                       {% else %}
                         {% if bookinst.status == 'д' %}
                           <a class="btn btn-warning btn-sm" href="{% url 'return-book' bookinst.id %}">Возврат</a>

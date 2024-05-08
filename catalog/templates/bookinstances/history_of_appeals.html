@@ -3,15 +3,39 @@
 {% block content %}
 <div class="container">
     <h1>История обращений</h1>
-    <div class="row">
+    <div class="row mt-3">
         <div class="col">
-            <ul class="list-group">
-                {% for history in history_list %}
-                <li class="list-group-item">{{ history.title }} - {{ history.note }}</li>
-                {% empty %}
-                <li class="list-group-item">Нет истории обращений</li>
-                {% endfor %}
-            </ul>
+            <a href="{% url 'add-appeal' bookinst_id=book_instance.id %}" style="margin-bottom: 10px" class="btn btn-primary">Добавить историю обращения</a>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>№</th>
+                            <th>Дата</th>
+                            <th>Название</th>
+                            <th>Примечание</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for history in history_list %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ history.date_creation|date:"d.m.Y" }}</td>
+                            <td>{{ history.title }}</td>
+                            <td>{{ history.note }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3">Нет истории обращений</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

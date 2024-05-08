@@ -1575,6 +1575,7 @@ def add_appeal(request, bookinst_id):
             appeal = form.save(commit=False)
             appeal.bookinstance = book_instance
             appeal.worker = request.user
+            appeal.date_creation = timezone.now()
             appeal.save()
             return redirect(reverse('history-of-appeals', kwargs={'bookinst_id': bookinst_id}))  # Перенаправить пользователя к списку историй для этой аренды
         else:

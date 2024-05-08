@@ -28,15 +28,23 @@
           <span class="invalid-feedback">{{ form.note.errors }}</span>
         {% endif %}
       </div>
-      <div class="mb-3" style="display: none;">
+{#      <div class="mb-3" style="display: none;">#}
+{#        <label for="id_bookinstance" class="form-label">Аренда</label>#}
+{#        {{ form.bookinstance }}#}
+{#      </div>#}
+{#        <div class="mb-3" style="display: none;">#}
+{#            <label for="id_worker" class="form-label">Сотрудник</label>#}
+{#            {{ form.worker }}#}
+{#        </div>#}
+          <div class="mb-3">
         <label for="id_bookinstance" class="form-label">Аренда</label>
         {{ form.bookinstance }}
       </div>
-        <div class="mb-3" style="display: none;">
+        <div class="mb-3">
             <label for="id_worker" class="form-label">Сотрудник</label>
             {{ form.worker }}
         </div>
-      <button type="submit" class="btn btn-primary">Добавить</button>
+      <button type="submit" class="btn btn-primary">Сохранить</button>
     </form>
   </div>
 {% endblock %}

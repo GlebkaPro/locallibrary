@@ -360,6 +360,7 @@ class Request(models.Model):
 class History_of_appeals(models.Model):
   title = models.CharField(max_length=200)
   note = models.CharField(max_length=200)
+  date_creation = models.DateField(null=True, blank=True, verbose_name='Дата создания')
   bookinstance = models.ForeignKey('BookInstance', on_delete=models.CASCADE, null=True)
   worker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
                              related_name='worked_history', verbose_name='Сотрудник')
