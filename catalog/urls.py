@@ -129,6 +129,6 @@ urlpatterns += [
 ]
 
 urlpatterns += [
-    path('history-of-appeals/', views.history_of_appeals, name='history-of-appeals'),
-    path('add-appeal/<uuid:bookinst_id>/', views.add_appeal, name='add-appeal'),
+  path('history-of-appeals/<uuid:bookinst_id>/', views.history_of_appeals, name='history-of-appeals'),
+  path('add-appeal/<uuid:bookinst_id>/', views.add_appeal, name='add-appeal'),
 ]

@@ -1546,21 +1546,24 @@ def change_status_to_overdue(request):
   messages.success(request, "Статус всех просроченных книг был успешно изменен на 'Просрочено'.")
   return redirect(reverse('all-borrowed'))
 
-def history_of_appeals(request):
-    if request.method == 'GET':
-      bookinst_id = request.GET.get('id')
-      bookinst = get_object_or_404(BookInstance, id=bookinst_id)
-      history_list = bookinst.history_of_appeals_set.all()
-      if history_list.exists():
-        return render(request, 'bookinstances/history_of_appeals.html', {'history_list': history_list})
-      else:
-        return redirect('add-appeal')
+from django.shortcuts import get_object_or_404, redirect
+
+@login_required
+def history_of_appeals(request, bookinst_id):
+    bookinst = get_object_or_404(BookInstance, id=bookinst_id)
+    history_list = bookinst.history_of_appeals_set.all()
+    return render(request, 'bookinstances/history_of_appeals.html', {'book_instance': bookinst, 'history_list': history_list})
+
 
 
 from .forms import AppealForm
 from django.shortcuts import render, redirect
 from .models import BookInstance
 from django.contrib.auth.decorators import login_required
+
+from django.urls import reverse
+
+from django.urls import reverse
 
 @login_required
 def add_appeal(request, bookinst_id):
@@ -1573,18 +1576,11 @@ def add_appeal(request, bookinst_id):
             appeal.bookinstance = book_instance
             appeal.worker = request.user
             appeal.save()
-            return redirect('history-of-appeals')
+            return redirect(reverse('history-of-appeals', kwargs={'bookinst_id': bookinst_id}))  # Перенаправить пользователя к списку историй для этой аренды
         else:
             error_message = "Ошибка: Введите корректные данные."
     else:
-        form = AppealForm(initial={'bookinstance': book_instance, 'worker': request.user})  # Установить текущего пользователя в качестве начального значения
+        form = AppealForm(initial={'bookinstance': book_instance, 'worker': request.user})
         error_message = None
 
     return render(request, 'bookinstances/add_appeal.html', {'form': form, 'book_instance': book_instance, 'error_message': error_message})
-
-
-
-
-
-
-
