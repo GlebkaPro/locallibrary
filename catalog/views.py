@@ -17,7 +17,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views import View
 from django.shortcuts import redirect, get_object_or_404
 from catalog.forms import RenewBookForm, BookInstanceEditForm, GenreForm, LanguageForm, PositionDebitingActForm, \
-  ParticipantForm
+  ParticipantForm, AppealForm
 from users.models import User
 from .forms import AcceptActForm
 from .forms import AccountingBookCopyForm, BookCopyForm
@@ -1545,6 +1545,45 @@ def change_status_to_overdue(request):
 
   messages.success(request, "Статус всех просроченных книг был успешно изменен на 'Просрочено'.")
   return redirect(reverse('all-borrowed'))
+
+def history_of_appeals(request):
+    if request.method == 'GET':
+      bookinst_id = request.GET.get('id')
+      bookinst = get_object_or_404(BookInstance, id=bookinst_id)
+      history_list = bookinst.history_of_appeals_set.all()
+      if history_list.exists():
+        return render(request, 'bookinstances/history_of_appeals.html', {'history_list': history_list})
+      else:
+        return redirect('add-appeal')
+
+
+from .forms import AppealForm
+from django.shortcuts import render, redirect
+from .models import BookInstance
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def add_appeal(request, bookinst_id):
+    book_instance = BookInstance.objects.get(id=bookinst_id)
+
+    if request.method == 'POST':
+        form = AppealForm(request.POST)
+        if form.is_valid():
+            appeal = form.save(commit=False)
+            appeal.bookinstance = book_instance
+            appeal.worker = request.user
+            appeal.save()
+            return redirect('history-of-appeals')
+        else:
+            error_message = "Ошибка: Введите корректные данные."
+    else:
+        form = AppealForm(initial={'bookinstance': book_instance, 'worker': request.user})  # Установить текущего пользователя в качестве начального значения
+        error_message = None
+
+    return render(request, 'bookinstances/add_appeal.html', {'form': form, 'book_instance': book_instance, 'error_message': error_message})
+
+
+
 
 
 

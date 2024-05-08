@@ -2,7 +2,8 @@ from django.contrib.auth import get_user_model
 from django.forms import DateInput
 from django.utils.translation import gettext_lazy as _
 import datetime
-from .models import Book, Author, BookCopy, BookInstance, Genre, Language, BookExemplar, AccountingBookCopy, Source
+from .models import Book, Author, BookCopy, BookInstance, Genre, Language, BookExemplar, AccountingBookCopy, Source, \
+  History_of_appeals
 from django.core.exceptions import ValidationError
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
@@ -316,3 +317,8 @@ class RequestForm(forms.ModelForm):
         model = Request
         fields = ['title', 'author', 'description']  # Поля, которые разрешено редактировать
 
+
+class AppealForm(forms.ModelForm):
+  class Meta:
+    model = History_of_appeals
+    fields = ['title', 'note', 'bookinstance', 'worker']

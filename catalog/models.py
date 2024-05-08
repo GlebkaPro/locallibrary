@@ -148,7 +148,7 @@ class BookInstance(models.Model):
 
   def __str__(self):
     """Строка для представления объекта модели."""
-    return '{0} ({1})'.format(self.id, self.book.title)
+    return '{2} ({1}) {0}'.format(self.book.title, self.current_date, self.borrower)
 
 
 class Author(models.Model):
@@ -355,3 +355,13 @@ class Request(models.Model):
 
   class Meta:
     ordering = ['title', 'author']
+
+
+class History_of_appeals(models.Model):
+  title = models.CharField(max_length=200)
+  note = models.CharField(max_length=200)
+  bookinstance = models.ForeignKey('BookInstance', on_delete=models.CASCADE, null=True)
+  worker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+                             related_name='worked_history', verbose_name='Сотрудник')
+  def __str__(self):
+    return self.title

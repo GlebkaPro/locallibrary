@@ -127,3 +127,8 @@ urlpatterns += [
   path('register_to_event_again/<int:registration_id>/', views.profile_register_to_event,
        name='profile_register_to_event'),
 ]
+
+urlpatterns += [
+    path('history-of-appeals/', views.history_of_appeals, name='history-of-appeals'),
+    path('add-appeal/<uuid:bookinst_id>/', views.add_appeal, name='add-appeal'),
+]

@@ -1,0 +1,42 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <div class="container">
+    <h1>Добавить новое обращение</h1>
+    {% if error_message %}
+      <div class="alert alert-danger" role="alert">
+        {{ error_message }}
+      </div>
+    {% endif %}
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="{{ form.title.id_for_label }}" class="form-label">Название</label>
+        <input type="text" class="form-control {% if form.title.errors %}is-invalid{% endif %}"
+               id="{{ form.title.id_for_label }}" name="{{ form.title.name }}"
+               value="{% if form.title.value %}{{ form.title.value }}{% endif %}" placeholder="Название">
+        {% if form.title.errors %}
+          <span class="invalid-feedback">{{ form.title.errors }}</span>
+        {% endif %}
+      </div>
+      <div class="mb-3">
+        <label for="{{ form.note.id_for_label }}" class="form-label">Примечание</label>
+        <input type="text" class="form-control {% if form.note.errors %}is-invalid{% endif %}"
+               id="{{ form.note.id_for_label }}" name="{{ form.note.name }}"
+               value="{% if form.note.value %}{{ form.note.value }}{% endif %}" placeholder="Примечание">
+        {% if form.note.errors %}
+          <span class="invalid-feedback">{{ form.note.errors }}</span>
+        {% endif %}
+      </div>
+      <div class="mb-3" style="display: none;">
+        <label for="id_bookinstance" class="form-label">Аренда</label>
+        {{ form.bookinstance }}
+      </div>
+        <div class="mb-3" style="display: none;">
+            <label for="id_worker" class="form-label">Сотрудник</label>
+            {{ form.worker }}
+        </div>
+      <button type="submit" class="btn btn-primary">Добавить</button>
+    </form>
+  </div>
+{% endblock %}
