@@ -17,9 +17,9 @@
           <div class="row no-gutters">
             <div class="col-md-4">
               {% if event.image %}
-                <img src="{{ event.image.url }}" class="card-img" alt="{{ event.event_name }}">
+                <img src="{{ event.image.url }}" class="card-img" alt="{{ event.event_name }}" style="max-height: 270px;">
               {% else %}
-                <div class="text-center" style="height: 200px; background-color: #f8f9fa;">
+                <div class="text-center" style="height: 270px; background-color: #f8f9fa;">
                   <p class="mt-5">Изображения нет</p>
                 </div>
               {% endif %}
@@ -29,7 +29,8 @@
                 <div class="mb-4">
                   <h4 class="card-title"><a href="{% url 'detail_event' event_id=event.id %}">{{ event.event_name }}</a></h4>
                 </div>
-                <p class="card-text"><strong>Дата начала:</strong> {{ event.date_start }} <strong>Дата окончания:</strong> {{ event.date_end }} <strong>Количество участников:</strong> {{ event.number_of_participants }} </p>
+                <p class="card-text"><strong>Дата и время проведения:</strong> {{ event.date_start|time:"H:i" }} - {{ event.date_end|time:"H:i" }} | {{ event.date_end|date:"d.m.Y" }} <strong>Количество мест:</strong> {{ event.number_of_participants }}</p>
+                <p class="card-text"></p>
                 <p class="card-text"><strong>Описание:</strong> {{ event.description }}</p>
                 <form action="{% url 'register_to_event' event_id=event.id %}" method="post" style="display: inline;">
                   {% csrf_token %}

@@ -22,10 +22,9 @@
                 </div>
                 <div class="col-md-6">
                   <label for="{{ form.date_start.id_for_label }}" class="form-label">Дата начала проведения</label>
-                  <input type="date" class="form-control {% if form.date_start.errors %}is-invalid{% endif %}"
-                         style="max-width: 250px;"
+                  <input type="datetime-local" class="form-control {% if form.date_start.errors %}is-invalid{% endif %}"
                          id="{{ form.date_start.id_for_label }}" name="{{ form.date_start.name }}"
-                         value="{{ form.date_start.value }}">
+                         value="{{ form.date_start.value|date:'Y-m-dTH:i' }}" style="max-width: 250px;">
                   {% if form.date_start.errors %}
                     <span class="invalid-feedback">{{ form.date_start.errors }}</span>
                   {% endif %}
@@ -51,9 +50,9 @@
                 </div>
                 <div class="col-md-6">
                   <label for="{{ form.date_end.id_for_label }}" class="form-label">Дата конца проведения</label>
-                  <input type="date" class="form-control {% if form.date_end.errors %}is-invalid{% endif %}"
+                  <input type="datetime-local" class="form-control {% if form.date_end.errors %}is-invalid{% endif %}"
                          id="{{ form.date_end.id_for_label }}" name="{{ form.date_end.name }}"
-                         value="{{ form.date_end.value }}" style="max-width: 250px;">
+                         value="{{ form.date_end.value|date:'Y-m-dTH:i' }}" style="max-width: 250px;">
                   {% if form.date_end.errors %}
                     <span class="invalid-feedback">{{ form.date_end.errors }}</span>
                   {% endif %}
@@ -90,7 +89,9 @@
                            class="form-control {% if form.number_of_participants.errors %}is-invalid{% endif %}"
                            id="{{ form.number_of_participants.id_for_label }}"
                            name="{{ form.number_of_participants.name }}"
-                           value="{% if form.number_of_participants.value %}{{ form.number_of_participants.value }}{% endif %}"
+                           value="
+                             
+                             {% if form.number_of_participants.value %}{{ form.number_of_participants.value }}{% endif %}"
                            style="max-width: 180px;">
                     {% if form.number_of_participants.errors %}
                       <span class="invalid-feedback">{{ form.number_of_participants.errors }}</span>

@@ -21,14 +21,11 @@
                   {% endif %}
                 </div>
                 <div class="col-md-6">
-                  <label for="{{ form.date_start.id_for_label }}" class="form-label">Дата начала проведения</label>
-                  <input type="date" class="form-control {% if form.date_start.errors %}is-invalid{% endif %}"
-                         style="max-width: 250px;" id="{{ form.date_start.id_for_label }}"
-                         name="{{ form.date_start.name }}"
-                         value="{% if form.initial.date_start %}{{ form.initial.date_start|date:"Y-m-d" }}{% endif %}">
-                  {% if form.date_start.errors %}
+                    <label for="{{ form.date_start.id_for_label }}" class="form-label">Дата и время начала проведения</label>
+                    <input type="datetime-local" class="form-control {% if form.date_start.errors %}is-invalid{% endif %}" id="{{ form.date_start.id_for_label }}" name="{{ form.date_start.name }}" value="{% if form.initial.date_start %}{{ form.initial.date_start|date:"Y-m-d" }}T{{ form.initial.date_start|date:"H:i" }}{% endif %}" style="max-width: 250px;">
+                    {% if form.date_start.errors %}
                     <span class="invalid-feedback">{{ form.date_start.errors }}</span>
-                  {% endif %}
+                    {% endif %}
                 </div>
               </div>
 
@@ -49,16 +46,13 @@
                     <span class="invalid-feedback">{{ form.typeroom.errors }}</span>
                   {% endif %}
                 </div>
-                <div class="col-md-6">
-                  <label for="{{ form.date_end.id_for_label }}" class="form-label">Дата конца проведения</label>
-                  <input type="date" class="form-control {% if form.date_end.errors %}is-invalid{% endif %}"
-                         id="{{ form.date_end.id_for_label }}" name="{{ form.date_end.name }}"
-                         value="{% if form.initial.date_end %}{{ form.initial.date_end|date:"Y-m-d" }}{% endif %}"
-                         style="max-width: 250px;">
-                  {% if form.date_end.errors %}
-                    <span class="invalid-feedback">{{ form.date_end.errors }}</span>
-                  {% endif %}
-                </div>
+                  <div class="col-md-6">
+                      <label for="{{ form.date_end.id_for_label }}" class="form-label">Дата и время конца проведения</label>
+                      <input type="datetime-local" class="form-control {% if form.date_end.errors %}is-invalid{% endif %}" id="{{ form.date_end.id_for_label }}" name="{{ form.date_end.name }}" value="{% if form.initial.date_end %}{{ form.initial.date_end|date:"Y-m-d" }}T{{ form.initial.date_end|date:"H:i" }}{% endif %}" style="max-width: 250px;">
+                      {% if form.date_end.errors %}
+                      <span class="invalid-feedback">{{ form.date_end.errors }}</span>
+                      {% endif %}
+                  </div>
               </div>
 
               <div class="row mb-3">
@@ -129,13 +123,12 @@
               </div>
 
               <div class="row mb-3">
-                <div class="col-md-6">
-                  <label for="{{ form.image.id_for_label }}" class="form-label">Изображение</label>
-                  <input type="file" class="form-control" id="{{ form.image.id_for_label }}"
-                         name="{{ form.image.name }}"
-                         style="max-width: 400px;">
-                </div>
+                  <div class="col-md-6">
+                      <label for="{{ form.image.id_for_label }}" class="form-label">Изображение {% if form.instance.image %}(загружено){% endif %}</label>
+                      <input type="file" class="form-control" id="{{ form.image.id_for_label }}" name="{{ form.image.name }}" style="max-width: 400px;">
+                  </div>
               </div>
+
 
               <div class="mb-3">
                 <label for="{{ form.description.id_for_label }}" class="form-label">Описание</label>

@@ -276,6 +276,10 @@ class EventForm(forms.ModelForm):
   class Meta:
     model = Event
     fields = '__all__'
+    widgets = {
+      'date_start': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+      'date_end': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+    }
 
   image = forms.ImageField(label='Изображение', required=False)
 

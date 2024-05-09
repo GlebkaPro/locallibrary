@@ -9,7 +9,7 @@
         <th>Наименование мероприятия</th>
         <th>Мест</th>
         <th>Дата начала</th>
-        <th>Дата конца</th>
+        <th>Дата окончания</th>
         <th>Дата фактического окончания</th>
         <th>Сотрудник</th>
         <th>Комната</th>
@@ -34,10 +34,6 @@
             <form action="{% url 'delete_event' event_id=event.id %}" method="post" style="display: inline;">
               {% csrf_token %}
               <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Удалить</button>
-            </form>
-            <form action="{% url 'register_to_event' event_id=event.id %}" method="post" style="display: inline;">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-success">Зарегистрироваться</button>
             </form>
           </td>
         </tr>

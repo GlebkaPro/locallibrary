@@ -291,8 +291,8 @@ class Event(models.Model):
   fio = models.CharField(verbose_name='ФИО организатора', max_length=100)
   event_name = models.CharField(verbose_name='Наименование мероприятия', max_length=100)
   number_of_participants = models.CharField(verbose_name='Количество участников', max_length=100)
-  date_start = models.DateField(null=True, blank=True, verbose_name='Дата начала проведения')
-  date_end = models.DateField(null=True, blank=True, verbose_name='Дата конца проведения')
+  date_start = models.DateTimeField(null=True, blank=True, verbose_name='Дата и время начала проведения')
+  date_end = models.DateTimeField(null=True, blank=True, verbose_name='Дата и время окончания проведения')
   date_end2 = models.DateField(null=True, blank=True, verbose_name='Дата фактического окончания')
   worker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
                              verbose_name='Сотрудник')
