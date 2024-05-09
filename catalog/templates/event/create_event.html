@@ -4,7 +4,7 @@
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-9">
-        <div class="card" style="width: 900px;">
+        <div class="card" style="width: 900px; padding: 30px;">
           <div class="card-body">
             <h1>Создать мероприятие</h1>
             <form method="post" class="mt-4">
@@ -90,8 +90,7 @@
                            class="form-control {% if form.number_of_participants.errors %}is-invalid{% endif %}"
                            id="{{ form.number_of_participants.id_for_label }}"
                            name="{{ form.number_of_participants.name }}"
-                           value="
-                             {% if form.number_of_participants.value %}{{ form.number_of_participants.value }}{% endif %}"
+                           value="{% if form.number_of_participants.value %}{{ form.number_of_participants.value }}{% endif %}"
                            style="max-width: 180px;">
                     {% if form.number_of_participants.errors %}
                       <span class="invalid-feedback">{{ form.number_of_participants.errors }}</span>
@@ -126,13 +125,20 @@
                   {% endif %}
                 </div>
               </div>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="{{ form.image.id_for_label }}" class="form-label">Изображение</label>
+                  <input type="file" class="form-control" id="{{ form.image.id_for_label }}"
+                         name="{{ form.image.name }}" style="max-width: 400px;">
+                </div>
+              </div>
 
 
               <div class="mb-3">
                 <label for="{{ form.description.id_for_label }}" class="form-label">Описание</label>
                 <textarea class="form-control {% if form.description.errors %}is-invalid{% endif %}"
                           id="{{ form.description.id_for_label }}" name="{{ form.description.name }}"
-                          style="max-width: 100%;" rows="5">{% if form.description.value %}
+                          style="max-width: 800px;" rows="5">{% if form.description.value %}
                   {{ form.description.value }}{% endif %}</textarea>
                 {% if form.description.errors %}
                   <span class="invalid-feedback">{{ form.description.errors }}</span>

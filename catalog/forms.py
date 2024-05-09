@@ -277,6 +277,7 @@ class EventForm(forms.ModelForm):
     model = Event
     fields = '__all__'
 
+  image = forms.ImageField(label='Изображение', required=False)
 
 from django import forms
 from .models import Room

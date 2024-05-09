@@ -1,7 +1,7 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <h1>Список мероприятий</h1>
+  <h1>Проводимые мероприятия</h1>
   {% if messages %}
     {% for message in messages %}
       <div class="alert alert-danger" role="alert">
@@ -9,34 +9,37 @@
       </div>
     {% endfor %}
   {% endif %}
-  <table class="table table-striped">
-    <thead>
-    <tr>
-      <th>Наименование</th>
-      <th>Мест</th>
-      <th>Дата начала</th>
-      <th>Дата конца</th>
-      <th>Описание</th>
-      <th>Действия</th>
-    </tr>
-    </thead>
-    <tbody>
+  
+  <div class="row">
     {% for event in events %}
-      <tr>
-        <td><a href="{% url 'detail_event' event_id=event.id %}">{{ event.event_name }}</a></td>
-        <td>{{ event.number_of_participants }}</td>
-        <td>{{ event.date_start }}</td>
-        <td>{{ event.date_end }}</td>
-        <td>{{ event.description | slice:":30" }}</td>
-        <td>
-          {#            <a href="{% url 'participants_list' event_id=event.id %}" class="btn btn-primary">Участники</a>#}
-          <form action="{% url 'register_to_event' event_id=event.id %}" method="post" style="display: inline;">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-success">Зарегистрироваться</button>
-          </form>
-        </td>
-      </tr>
+      <div class="mb-4">
+        <div class="card">
+          <div class="row no-gutters">
+            <div class="col-md-4">
+              {% if event.image %}
+                <img src="{{ event.image.url }}" class="card-img" alt="{{ event.event_name }}">
+              {% else %}
+                <div class="text-center" style="height: 200px; background-color: #f8f9fa;">
+                  <p class="mt-5">Изображения нет</p>
+                </div>
+              {% endif %}
+            </div>
+            <div class="col-md-8 ">
+              <div class="card-body">
+                <div class="mb-4">
+                  <h4 class="card-title"><a href="{% url 'detail_event' event_id=event.id %}">{{ event.event_name }}</a></h4>
+                </div>
+                <p class="card-text"><strong>Дата начала:</strong> {{ event.date_start }} <strong>Дата окончания:</strong> {{ event.date_end }} <strong>Количество участников:</strong> {{ event.number_of_participants }} </p>
+                <p class="card-text"><strong>Описание:</strong> {{ event.description }}</p>
+                <form action="{% url 'register_to_event' event_id=event.id %}" method="post" style="display: inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-success">Зарегистрироваться</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     {% endfor %}
-    </tbody>
-  </table>
+  </div>
 {% endblock %}

@@ -1252,13 +1252,12 @@ def edit_event(request, event_id):
   event = get_object_or_404(Event, id=event_id)
 
   if request.method == 'POST':
-    form = EventForm(request.POST, instance=event)
+    form = EventForm(request.POST, request.FILES, instance=event)
     if form.is_valid():
       form.save()
       return redirect('event_list')
   else:
-    form = EventForm(instance=event, initial={'date_start': event.date_start,
-                                              'date_end': event.date_end})
+    form = EventForm(instance=event, initial={'date_start': event.date_start, 'date_end': event.date_end})
 
   return render(request, 'event/edit_event.html', {'form': form, 'event': event})
 
@@ -1287,16 +1286,7 @@ def register_to_event(request, event_id):
 # @login_required
 def event_list_borrower(request):
   events = Event.objects.all()
-  # Получаем текущего пользователя из запроса
-  current_user = request.user
-
-  # Фильтруем мероприятия на основе участия пользователя
-  events = Event.objects.filter(positionevent__borrower=current_user)
-
   return render(request, 'event/event_list_borrower.html', {'events': events})
-
-
-from .models import PositionEvent
 
 
 def cancel_registration(request, registration_id):

@@ -299,6 +299,7 @@ class Event(models.Model):
   room = models.ForeignKey('Room', on_delete=models.SET_NULL, null=True)
   typeroom = models.ForeignKey('TypeRoom', on_delete=models.SET_NULL, null=True)
   description = models.CharField(verbose_name='Описание', max_length=1000)
+  image = models.ImageField(verbose_name='Изображение', upload_to='event_images/', blank=True, null=True)
 
 
 class PositionEvent(models.Model):
