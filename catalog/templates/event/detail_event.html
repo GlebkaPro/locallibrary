@@ -1,18 +1,33 @@
-<!-- detail_event.html -->
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <h1>Детальная информация о мероприятии:</h1>
-  <div>
-    <p>Наименование: {{ event.event_name }}</p>
-    <p>Мест: {{ event.number_of_participants }}</p>
-    <p>Дата начала: {{ event.date_start }}</p>
-    <p>Дата окончания: {{ event.date_end }}</p>
-    <p>Описание: {{ event.description }}</p>
-    <form action="{% url 'register_to_event' event_id=event.id %}" method="post" style="display: inline;">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-success">Зарегистрироваться</button>
-    </form>
-    <!-- Здесь можно добавить другие поля для детальной информации об ивенте -->
+<div class="d-flex justify-content-center">
+  <div class="card" style="width: 1200px;">
+    <div class="card-body">
+      <form method="post">
+
+        <div class="d-flex">
+          <div class="me-4">
+            {% if event.image %}
+            <img src="{{ event.image.url }}" alt="{{ event.event_name }}" style="max-width: 500px;">
+            {% else %}
+            <p>Изображение отсутствует</p>
+            {% endif %}
+          </div>
+          <div>
+            <h1>"{{ event.event_name }}"</h1>
+            <p><strong>Количество мест:</strong> {{ event.number_of_participants }}</p>
+            <p><strong>Время начала:</strong> {{ event.date_start }}</p>
+            <p><strong>Время окончания:</strong> {{ event.date_end }}</p>
+            <p><strong>Описание:</strong> {{ event.description }}</p>
+            <form action="{% url 'register_to_event' event_id=event.id %}" method="post" style="display: inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-success">Зарегистрироваться</button>
+            </form>
+          </div>
+        </div>
+      </form>
+    </div>
   </div>
+</div>
 {% endblock %}

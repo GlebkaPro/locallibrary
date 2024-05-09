@@ -46,10 +46,12 @@ def index(request):
   request.session['num_visits'] = num_visits + 1
 
   # Отображение HTML-шаблона index.html с данными в переменной контекста.
+  latest_events = Event.objects.order_by('-date_start')[:3]
+
   return render(
     request,
     'index.html',
-    context={'num_books': num_books, 'num_instances': num_instances,
+    context={'latest_events': latest_events, 'num_books': num_books, 'num_instances': num_instances,
              'num_instances_available': num_instances_available, 'num_authors': num_authors,
              'num_visits': num_visits},
   )

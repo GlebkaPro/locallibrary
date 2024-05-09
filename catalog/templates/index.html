@@ -1,205 +1,224 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-<div class="container">
-{% load static %}
-<main class="container" >
-  <div class="p-4 p-md-5 mb-4 rounded text-body-emphasis bg-body-secondary" style="background: url('{% static 'images/123.jpg' %}'); background-size: 100%">
-    <div class="col-lg-7 px-0 for-text" style="">
-      <div style="padding: 10px">
-        <h1 class="display-4 fst-italic">Библиотека: Книгосфера </h1>
-      <p class="lead my-3">Добро пожаловать на наш сайт, сейчас вы находитесь на главной странице</p>
+  <div class="container">
+    {% load static %}
+    <main class="container">
+      <div class="p-4 p-md-5 mb-4 rounded text-body-emphasis bg-body-secondary"
+           style="background: url('{% static 'images/123.jpg' %}'); background-size: 100%">
+        <div class="col-lg-7 px-0 for-text" style="">
+          <div style="padding: 10px">
+            <h1 class="display-4 fst-italic">Библиотека: Книгосфера </h1>
+            <p class="lead my-3">Добро пожаловать на наш сайт, сейчас вы находитесь на главной странице</p>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-    <div class="row mb-2">
-    <div class="col-md-6">
-        <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm position-relative">
+      <div class="row mb-2">
+        <div class="col-md-6">
+          <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm position-relative">
             <div class="col p-4 d-flex flex-column position-static">
-                <strong class="d-inline-block mb-2 text-primary-emphasis">Мир литературы</strong>
-                <h3 class="mb-0">Избранная публикация</h3>
-                <div class="mb-1 text-body-secondary">12 ноября</div>
-                <p class="card-text mb-auto">С гордостью представляем вам нашу новую книгу. Узнайте больше о ней и отправьтесь в захватывающее путешествие в мир слов.</p>
-                <a href="#" class="icon-link icon-link-hover stretched-link">
-                    Продолжить чтение
-                </a>
+              <strong class="d-inline-block mb-2 text-primary-emphasis">Мир литературы</strong>
+              <h3 class="mb-0">Избранная публикация</h3>
+              <div class="mb-1 text-body-secondary">12 ноября</div>
+              <p class="card-text mb-auto">С гордостью представляем вам нашу новую книгу. Узнайте больше о ней и
+                отправьтесь в захватывающее путешествие в мир слов.</p>
+              <a href="#" class="icon-link icon-link-hover stretched-link">
+                Продолжить чтение
+              </a>
             </div>
             <div class="col-auto d-none d-lg-block">
-                <img class="bd-placeholder-img" src="{% static 'images/1-original.png' %}"  width="200" height="100%"  role="img" aria-label="Заполнитель: Эскиз">
+              <img class="bd-placeholder-img" src="{% static 'images/1-original.png' %}" width="200" height="100%"
+                   role="img" aria-label="Заполнитель: Эскиз">
             </div>
+          </div>
         </div>
-    </div>
-    <div class="col-md-6">
-        <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm position-relative">
+        <div class="col-md-6">
+          <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm position-relative">
             <div class="col p-4 d-flex flex-column position-static">
-                <strong class="d-inline-block mb-2 text-success-emphasis">Литературный дизайн</strong>
-                <h3 class="mb-0">Заголовок публикации</h3>
-                <div class="mb-1 text-body-secondary">11 ноября</div>
-                <p class="mb-auto">Узнайте больше о творчестве наших авторов и их удивительных произведениях. Погрузитесь в мир искусства и вдохновения.</p>
-                <a href="#" class="icon-link icon-link-hover stretched-link">
-                    Продолжить чтение
-                </a>
-        </div>
-        <div class="col-auto d-none d-lg-block">
-          <img class="bd-placeholder-img" src="{% static 'images/IMG-20210609-WA0014.jpg' %}"  width="200" height="100%"  role="img" aria-label="Заполнитель: Эскиз">
+              <strong class="d-inline-block mb-2 text-success-emphasis">Литературный дизайн</strong>
+              <h3 class="mb-0">Заголовок публикации</h3>
+              <div class="mb-1 text-body-secondary">11 ноября</div>
+              <p class="mb-auto">Узнайте больше о творчестве наших авторов и их удивительных произведениях. Погрузитесь
+                в мир искусства и вдохновения.</p>
+              <a href="#" class="icon-link icon-link-hover stretched-link">
+                Продолжить чтение
+              </a>
+            </div>
+            <div class="col-auto d-none d-lg-block">
+              <img class="bd-placeholder-img" src="{% static 'images/IMG-20210609-WA0014.jpg' %}" width="200"
+                   height="100%" role="img" aria-label="Заполнитель: Эскиз">
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="row g-5">
-    <div class="col-md-8">
-{#      <h3 class="pb-4 mb-4 fst-italic border-bottom">#}
-{#        From the Firehose#}
-{#      </h3>#}
-    <article class="blog-post">
-        <h2 class="display-5 link-body-emphasis mb-1">Новые поступления</h2>
-        <p class="blog-post-meta">23 ноября 2023 года, автор: <a href="#">Библиотекарь</a></p>
+      <div class="row g-5">
+        <div class="col-md-8">
+          {#      <h3 class="pb-4 mb-4 fst-italic border-bottom">#}
+          {#        From the Firehose#}
+          {#      </h3>#}
+          <article class="blog-post">
+            <h2 class="display-5 link-body-emphasis mb-1">Новые поступления</h2>
+            <p class="blog-post-meta">23 ноября 2023 года, автор: <a href="#">Библиотекарь</a></p>
 
-        <p>Недавно в библиотеку прибыли новые книги. Много различных жанров и в большом количестве, проверяйте страницу Каталог! Так же в библиотеку были привезены энциклопедии по биологии и астрономии, их вы можете так же взять на временное пользование.</p>
-        <hr>
-        <p>Это дополнительный абзац с заполнителем текста. Он написан для заполнения доступного места и показа, как более длинный отрывок текста влияет на окружающий контент. Мы будем часто повторять его, чтобы продемонстрировать, как этот текст влияет на окружающий контент.</p>
-        <h2>Новые книги</h2>
-        <p>Вот пример цитаты в действии:</p>
-        <blockquote class="blockquote">
-            <p>Текст цитаты о новых книгах здесь.</p>
-        </blockquote>
-        <p>Это дополнительный абзац с заполнителем текста. Он написан для заполнения доступного места и показа, как более длинный отрывок текста влияет на окружающий контент. Мы будем часто повторять его, чтобы продемонстрировать, как этот текст влияет на окружающий контент.</p>
-        <h3>Новые издания</h3>
-        <p>Это дополнительный абзац с заполнителем текста. Это немного более короткая версия другого очень повторяющегося текста, используемого повсеместно. Вот пример неупорядоченного списка:</p>
-        <ul>
-            <li>Популярная новинка</li>
-            <li>Лучшие произведения</li>
-            <li>Увлекательные рассказы</li>
-        </ul>
-        <p>А это упорядоченный список:</p>
-        <ol>
-            <li>Современная проза</li>
-            <li>Классика литературы</li>
-            <li>Научная фантастика</li>
-        </ol>
-        <p>И это список определений:</p>
-        <dl>
-            <dt>Книжный жанр</dt>
-            <dd>Категория литературы, определяющая содержание книги</dd>
-            <dt>Автор</dt>
-            <dd>Человек, написавший книгу</dd>
-            <dt>Издательство</dt>
-            <dd>Компания, выпускающая книгу</dd>
-        </dl>
-        <h2>Полезные ресурсы</h2>
-        <p>HTML определяет длинный список доступных встроенных тегов, полный список которых можно найти на <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element">сайте Mozilla Developer Network</a>.</p>
-    </article>
+            <p>Недавно в библиотеку прибыли новые книги. Много различных жанров и в большом количестве, проверяйте
+              страницу Каталог! Так же в библиотеку были привезены энциклопедии по биологии и астрономии, их вы можете
+              так же взять на временное пользование.</p>
+            <hr>
+            <p>Это дополнительный абзац с заполнителем текста. Он написан для заполнения доступного места и показа, как
+              более длинный отрывок текста влияет на окружающий контент. Мы будем часто повторять его, чтобы
+              продемонстрировать, как этот текст влияет на окружающий контент.</p>
+            <h2>Новые книги</h2>
+            <p>Вот пример цитаты в действии:</p>
+            <blockquote class="blockquote">
+              <p>Текст цитаты о новых книгах здесь.</p>
+            </blockquote>
+            <p>Это дополнительный абзац с заполнителем текста. Он написан для заполнения доступного места и показа, как
+              более длинный отрывок текста влияет на окружающий контент. Мы будем часто повторять его, чтобы
+              продемонстрировать, как этот текст влияет на окружающий контент.</p>
+            <h3>Новые издания</h3>
+            <p>Это дополнительный абзац с заполнителем текста. Это немного более короткая версия другого очень
+              повторяющегося текста, используемого повсеместно. Вот пример неупорядоченного списка:</p>
+            <ul>
+              <li>Популярная новинка</li>
+              <li>Лучшие произведения</li>
+              <li>Увлекательные рассказы</li>
+            </ul>
+            <p>А это упорядоченный список:</p>
+            <ol>
+              <li>Современная проза</li>
+              <li>Классика литературы</li>
+              <li>Научная фантастика</li>
+            </ol>
+            <p>И это список определений:</p>
+            <dl>
+              <dt>Книжный жанр</dt>
+              <dd>Категория литературы, определяющая содержание книги</dd>
+              <dt>Автор</dt>
+              <dd>Человек, написавший книгу</dd>
+              <dt>Издательство</dt>
+              <dd>Компания, выпускающая книгу</dd>
+            </dl>
+            <h2>Полезные ресурсы</h2>
+            <p>HTML определяет длинный список доступных встроенных тегов, полный список которых можно найти на <a
+              href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element">сайте Mozilla Developer Network</a>.</p>
+          </article>
 
- <article class="blog-post">
-        <h2 class="display-5 link-body-emphasis mb-1">Подборка книг</h2>
-        <p class="blog-post-meta">14 ноября 2023 года, автор: <a href="#">Библиотекарь</a></p>
+          <article class="blog-post">
+            <h2 class="display-5 link-body-emphasis mb-1">Подборка книг</h2>
+            <p class="blog-post-meta">14 ноября 2023 года, автор: <a href="#">Библиотекарь</a></p>
 
-        <p>Это дополнительный абзац с заполнителем контента. Он написан для заполнения доступного места и показа, как более длинный отрывок текста влияет на окружающий контент. Мы будем часто повторять его, чтобы продемонстрировать, как этот текст влияет на окружающий контент.</p>
-        <blockquote>
-            <p>Длинная цитата и, возможно, с некоторым <strong>выделенным текстом</strong> посередине.</p>
-        </blockquote>
-        <p>Это дополнительный абзац с заполнителем контента. Он написан для заполнения доступного места и показа, как более длинный отрывок текста влияет на окружающий контент. Мы будем часто повторять его, чтобы продемонстрировать, как этот текст влияет на окружающий контент.</p>
-    <h3>Пример таблицы</h3>
-    <p>И не забывайте о таблицах в этих постах:</p>
-    <table class="table">
-        <thead>
-            <tr>
+            <p>Это дополнительный абзац с заполнителем контента. Он написан для заполнения доступного места и показа,
+              как более длинный отрывок текста влияет на окружающий контент. Мы будем часто повторять его, чтобы
+              продемонстрировать, как этот текст влияет на окружающий контент.</p>
+            <blockquote>
+              <p>Длинная цитата и, возможно, с некоторым <strong>выделенным текстом</strong> посередине.</p>
+            </blockquote>
+            <p>Это дополнительный абзац с заполнителем контента. Он написан для заполнения доступного места и показа,
+              как более длинный отрывок текста влияет на окружающий контент. Мы будем часто повторять его, чтобы
+              продемонстрировать, как этот текст влияет на окружающий контент.</p>
+            <h3>Пример таблицы</h3>
+            <p>И не забывайте о таблицах в этих постах:</p>
+            <table class="table">
+              <thead>
+              <tr>
                 <th>Имя</th>
                 <th>Положительные голоса</th>
                 <th>Отрицательные голоса</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
                 <td>Алиса</td>
                 <td>10</td>
                 <td>11</td>
-            </tr>
-            <tr>
+              </tr>
+              <tr>
                 <td>Боб</td>
                 <td>4</td>
                 <td>3</td>
-            </tr>
-            <tr>
+              </tr>
+              <tr>
                 <td>Чарли</td>
                 <td>7</td>
                 <td>9</td>
-            </tr>
-        </tbody>
-        <tfoot>
-            <tr>
+              </tr>
+              </tbody>
+              <tfoot>
+              <tr>
                 <td>Итого</td>
                 <td>21</td>
                 <td>23</td>
-            </tr>
-        </tfoot>
-    </table>
+              </tr>
+              </tfoot>
+            </table>
 
-    <p>Это дополнительный абзац заполнителя контента. Это немного более короткая версия другого очень повторяющегося текста, используемого повсеместно.</p>
-</article>
+            <p>Это дополнительный абзац заполнителя контента. Это немного более короткая версия другого очень
+              повторяющегося текста, используемого повсеместно.</p>
+          </article>
 
-<article class="blog-post">
-    <h2 class="display-5 link-body-emphasis mb-1">Новая функция</h2>
-    <p class="blog-post-meta">14 декабря 2020 года, автор: <a href="#">Крис</a></p>
+          <article class="blog-post">
+            <h2 class="display-5 link-body-emphasis mb-1">Новая функция</h2>
+            <p class="blog-post-meta">14 декабря 2020 года, автор: <a href="#">Крис</a></p>
 
-    <p>Это дополнительный абзац заполнителя контента. Он написан для заполнения доступного места и показа, как более длинный отрывок текста влияет на окружающий контент. Мы будем часто повторять его, чтобы продемонстрировать, как этот текст влияет на окружающий контент.</p>
-    <ul>
-        <li>Первый пункт списка</li>
-        <li>Второй пункт списка с более длинным описанием</li>
-        <li>Третий пункт списка для его завершения</li>
-    </ul>
-        <p>Это дополнительный абзац заполнителя контента. Это немного более короткая версия другого очень повторяющегося текста, используемого повсеместно.</p>
-      </article>
-
-      <nav class="blog-pagination" aria-label="Навигация">
-    <a class="btn btn-outline-primary rounded-pill" href="#">Старые записи</a>
-    <a class="btn btn-outline-secondary rounded-pill disabled">Новые записи</a>
-</nav>
-</div>
-
-<div class="col-md-4">
-    <div class="position-sticky" style="top: 2rem;">
-        <div class="p-4 mb-3 bg-body-tertiary rounded">
-            <h4 class="fst-italic">О нас</h4>
-            <p class="mb-0">Библиотека, основана в 1801 году, с широким ассортиментом книг, периодических изданий и электронных ресурсов. Мы предлагаем услуги по выдаче и возврату книг, а также доступ к коллекции редких и антикварных изданий. Наша миссия - обеспечение равного доступа к знаниям и информации для всех граждан.</p>
-        </div>
-
-        <div>
-            <h4 class="fst-italic">Недавние записи</h4>
-            <ul class="list-unstyled">
-                <li>
-                    <a class="d-flex flex-column flex-lg-row gap-3 align-items-start align-items-lg-center py-3 link-body-emphasis text-decoration-none border-top" href="#">
-                        <svg class="bd-placeholder-img" width="100%" height="96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#777"></rect></svg>
-                        <div class="col-lg-8">
-                            <h6 class="mb-0">Пример заголовка блога</h6>
-                            <small class="text-body-secondary">15 января 2023 года</small>
-                        </div>
-                    </a>
-                </li>
-                <li>
-                    <a class="d-flex flex-column flex-lg-row gap-3 align-items-start align-items-lg-center py-3 link-body-emphasis text-decoration-none border-top" href="#">
-                        <svg class="bd-placeholder-img" width="100%" height="96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#777"></rect></svg>
-                        <div class="col-lg-8">
-                            <h6 class="mb-0">Это еще один заголовок блога</h6>
-                            <small class="text-body-secondary">14 января 2023 года</small>
-                        </div>
-                    </a>
-                </li>
-                <li>
-                    <a class="d-flex flex-column flex-lg-row gap-3 align-items-start align-items-lg-center py-3 link-body-emphasis text-decoration-none border-top" href="#">
-                        <svg class="bd-placeholder-img" width="100%" height="96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#777"></rect></svg>
-                        <div class="col-lg-8">
-                            <h6 class="mb-0">Длинный заголовок блога: этот имеет несколько строк!</h6>
-                            <small class="text-body-secondary">13 января 2023 года</small>
-                        </div>
-                    </a>
-                </li>
+            <p>Это дополнительный абзац заполнителя контента. Он написан для заполнения доступного места и показа, как
+              более длинный отрывок текста влияет на окружающий контент. Мы будем часто повторять его, чтобы
+              продемонстрировать, как этот текст влияет на окружающий контент.</p>
+            <ul>
+              <li>Первый пункт списка</li>
+              <li>Второй пункт списка с более длинным описанием</li>
+              <li>Третий пункт списка для его завершения</li>
             </ul>
+            <p>Это дополнительный абзац заполнителя контента. Это немного более короткая версия другого очень
+              повторяющегося текста, используемого повсеместно.</p>
+          </article>
+
+          <nav class="blog-pagination" aria-label="Навигация">
+            <a class="btn btn-outline-primary rounded-pill" href="#">Старые записи</a>
+            <a class="btn btn-outline-secondary rounded-pill disabled">Новые записи</a>
+          </nav>
         </div>
 
-        <div class="p-4">
-            <h4 class="fst-italic">Архив новостей</h4>
-            <ol class="list-unstyled mb-0">
+        <div class="col-md-4">
+          <div class="position-sticky" style="top: 2rem;">
+            <div class="p-4 mb-3 bg-body-tertiary rounded">
+              <h4 class="fst-italic">О нас</h4>
+              <p class="mb-0">Библиотека, основана в 1801 году, с широким ассортиментом книг, периодических изданий и
+                электронных ресурсов. Мы предлагаем услуги по выдаче и возврату книг, а также доступ к коллекции редких
+                и антикварных изданий. Наша миссия - обеспечение равного доступа к знаниям и информации для всех
+                граждан.</p>
+            </div>
+
+            <div>
+              <h4 class="fst-italic"><a href="{% url 'event_list_borrower' %}" class="nav-link" aria-current="page"><u>Проводимые мероприятия</u></a></h4>
+              <ul class="list-unstyled">
+                {% for event in latest_events %}
+                  <li>
+                    <a
+                      class="d-flex flex-column flex-lg-row gap-3 align-items-start align-items-lg-center py-3 link-body-emphasis text-decoration-none border-top"
+                      href="{% url 'detail_event' event_id=event.id %}">
+                      {% if event.image %}
+                        <img src="{{ event.image.url }}" width="115" height="96" alt="{{ event.event_name }}">
+                      {% else %}
+                        <svg class="bd-placeholder-img" width="115" height="96" xmlns="http://www.w3.org/2000/svg"
+                             aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false">
+                          <rect width="100%" height="100%" fill="#777"></rect>
+                        </svg>
+                      {% endif %}
+                      <div class="col-lg-8">
+                        <h6 class="mb-0">{{ event.event_name }}</h6>
+                        <small class="text-body-secondary">Время начала
+                          проведения: {{ event.date_start|date:"d.m.Y H:i" }}</small>
+                      </div>
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+
+
+            <div class="p-4">
+              <h4 class="fst-italic">Архив новостей</h4>
+              <ol class="list-unstyled mb-0">
                 <li><a href="#">Октябрь 2023</a></li>
                 <li><a href="#">Сентябрь 2023</a></li>
                 <li><a href="#">Августь 2023</a></li>
@@ -211,45 +230,34 @@
                 <li><a href="#">Февраль 2023</a></li>
                 <li><a href="#">Январь 2023</a></li>
 
-            </ol>
+              </ol>
+            </div>
+            {#        <div class="p-4">#}
+            {#            <h4 class="fst-italic">В других местах</h4>#}
+            {#            <ol class="list-unstyled">#}
+            {#                <li><a href="#">GitHub</a></li>#}
+            {#                <li><a href="#">Twitter</a></li>#}
+            {#                <li><a href="#">Facebook</a></li>#}
+            {#          </ol>#}
+            {#        </div>#}
+          </div>
         </div>
-{#        <div class="p-4">#}
-{#            <h4 class="fst-italic">В других местах</h4>#}
-{#            <ol class="list-unstyled">#}
-{#                <li><a href="#">GitHub</a></li>#}
-{#                <li><a href="#">Twitter</a></li>#}
-{#                <li><a href="#">Facebook</a></li>#}
-{#          </ol>#}
-{#        </div>#}
       </div>
-    </div>
+    </main>
+
+
+    {##}
+    {#    <h1>Главная страница</h1>#}
+    {#<p>Добро пожаловать в  <em> нашу библиотеку</em>.</p>#}
+    {##}
+    {#<p>В библиотеке имеется следующее количество записей:</p>#}
+    {#<ul>#}
+    {#    <li><strong>Книги:</strong> {{ num_books }}</li>#}
+    {#    <li><strong>Копии:</strong> {{ num_instances }}</li>#}
+    {#    <li><strong>Доступные копии:</strong> {{ num_instances_available }}</li>#}
+    {#    <li><strong>Авторы:</strong> {{ num_authors }}</li>#}
+    {#</ul>#}
   </div>
-</main>
-
-
-
-
-
-
-
-
-
-
-
-
-
-{##}
-{#    <h1>Главная страница</h1>#}
-{#<p>Добро пожаловать в  <em> нашу библиотеку</em>.</p>#}
-{##}
-{#<p>В библиотеке имеется следующее количество записей:</p>#}
-{#<ul>#}
-{#    <li><strong>Книги:</strong> {{ num_books }}</li>#}
-{#    <li><strong>Копии:</strong> {{ num_instances }}</li>#}
-{#    <li><strong>Доступные копии:</strong> {{ num_instances_available }}</li>#}
-{#    <li><strong>Авторы:</strong> {{ num_authors }}</li>#}
-{#</ul>#}
-</div>
 
 
 {% endblock %}
