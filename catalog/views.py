@@ -42,6 +42,7 @@ def index(request):
   num_authors = Author.objects.count()  # 'all()'
 
   # Количество посещений этого представления, как подсчитывается в переменной сессии.
+  # Количество посещений этого представления, как подсчитывается в переменноувшей сессии.
   num_visits = request.session.get('num_visits', 1)
   request.session['num_visits'] = num_visits + 1
 
@@ -642,26 +643,44 @@ class EditPositionAcceptActView(View):
                   {'position_accept_act': position_accept_act, 'form': form})
 
 
-class EditAcceptActView(View):
-  def get(self, request, pk):
-    accept_act = get_object_or_404(AcceptAct, pk=pk)
-    form = AcceptActForm(instance=accept_act)
-    position_accept_acts = PositionAcceptAct.objects.filter(accept_act=accept_act)
-    return render(
-      request,
-      'accept_acts/edit_accept_act.html',
-      {'accept_act': accept_act, 'position_accept_acts': position_accept_acts, 'form': form}
-    )
+from django.shortcuts import redirect
 
-  def post(self, request, pk):
-    accept_act = AcceptAct.objects.get(pk=pk)
-    form = AcceptActForm(request.POST, instance=accept_act)
-    if form.is_valid():
-      form.save()
+class EditAcceptActView(View):
+    def get(self, request, pk):
+        accept_act = get_object_or_404(AcceptAct, pk=pk)
+        form = AcceptActForm(instance=accept_act)
+        position_accept_acts = PositionAcceptAct.objects.filter(accept_act=accept_act)
+        return render(
+            request,
+            'accept_acts/edit_accept_act.html',
+            {'accept_act': accept_act, 'position_accept_acts': position_accept_acts, 'form': form}
+        )
+
+    def post(self, request, pk):
+      accept_act = AcceptAct.objects.get(pk=pk)
+
+      # Просто меняем статус акта на 'у'
+      accept_act.status_record = 'у'
+      accept_act.save(update_fields=['status_record'])
+
       return redirect('accept_act_list')
-    position_accept_acts = PositionAcceptAct.objects.filter(accept_act=accept_act)
-    return render(request, 'accept_acts/edit_accept_act.html',
-                  {'accept_act': accept_act, 'position_accept_acts': position_accept_acts, 'form': form})
+
+    # def post(self, request, pk):
+    #     accept_act = AcceptAct.objects.get(pk=pk)
+    #     form = AcceptActForm(request.POST, instance=accept_act)
+    #     if form.is_valid():
+    #         form.save()
+    #         accept_act.status_record = 'у'
+    #         accept_act.save()
+    #         # Сохраняем данные позиций акта
+    #         position_accept_acts = PositionAcceptAct.objects.filter(accept_act=accept_act)
+    #         for position_accept_act in position_accept_acts:
+    #             position_accept_act.save()
+    #         return redirect('accept_act_list')
+    #     position_accept_acts = PositionAcceptAct.objects.filter(accept_act=accept_act)
+    #     return render(request, 'accept_acts/edit_accept_act.html',
+    #                   {'accept_act': accept_act, 'position_accept_acts': position_accept_acts, 'form': form})
+
 
 
 def create_book_exemplar(request):
@@ -711,7 +730,7 @@ class DeletePositionAcceptActView(View):
 
 
 class CreateAccountingView(View):
-  template_name = 'accouting/create_accounting.html'
+  template_name = 'accept_acts/create_accounting.html'
 
   def get(self, request, pk):
     position_accept_act = get_object_or_404(PositionAcceptAct, pk=pk)
@@ -766,7 +785,8 @@ class CreateAccountingView(View):
           book_copy = form.save(commit=False)
           book_copy.accountingBookCopy = accounting_book_copy
           book_copy.save()
-
+        position_accept_act.status_record = 'у'
+        position_accept_act.save()
         # Your existing code for redirection
         redirect_url = request.GET.get('next', reverse('edit_accept_act', kwargs={'pk': pk}))
         return redirect(redirect_url)

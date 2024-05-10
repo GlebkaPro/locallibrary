@@ -210,6 +210,13 @@ class AcceptAct(models.Model):
   Tip = models.CharField(
     max_length=1, choices=ACCEPT_TIP, blank=True, default='р', verbose_name='Тип поступления')
 
+  ACCEPT_status = (
+    ('у', 'учтено'),
+    ('н', 'не учтено'),
+  )
+
+  status_record = models.CharField(
+    max_length=1, choices=ACCEPT_status, blank=True, default='н', verbose_name='Статус записи')
   def __str__(self):
     return f"{self.current_date} - {self.worker}"
 
@@ -221,7 +228,13 @@ class PositionAcceptAct(models.Model):
                                verbose_name='Экземпляр')
   accept_act = models.ForeignKey('AcceptAct', on_delete=models.CASCADE, related_name='position_accept_acts',
                                  verbose_name='Акт о приёме')
+  ACCEPT_status = (
+    ('у', 'учтено'),
+    ('н', 'не учтено'),
+  )
 
+  status_record = models.CharField(
+    max_length=1, choices=ACCEPT_status, blank=True, default='н', verbose_name='Статус записи')
   def __str__(self):
     return f"{self.price} - {self.exemplar}"
 

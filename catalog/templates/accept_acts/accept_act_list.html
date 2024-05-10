@@ -3,38 +3,56 @@
 {% block content %}
   <div class="container">
     <h1>Список актов о приёме</h1>
-    <a href="{% url 'create_accept_act' %}" class="btn btn-primary">Создать акт о приёме</a>
+    <a href="{% url 'create_accept_act' %}" style="margin-bottom: 10px" class="btn btn-primary">Создать акт о приёме</a>
 
     {% if accept_acts %}
-      <table class="table">
-        <thead>
-        <tr>
-          <th>Номер</th>
-          <th>Дата</th>
-          <th>Сумма</th>
-          <th>Тип поступления</th>
-          <th>Сотрудник</th>
-          <th>Источник</th>
-          <th>Действия</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for accept_act in accept_acts %}
-          <tr>
-            <td>{{ accept_act.number }}</td>
-            <td>{{ accept_act.current_date }}</td>
-            <td>{{ accept_act.summa }}</td>
-            <td>{{ accept_act.get_Tip_display }}</td>
-            <td>{{ accept_act.worker }}</td>
-            <td>{{ accept_act.source }}</td>
-            <td>
-              <a href="{% url 'edit_accept_act' pk=accept_act.pk %}" class="btn btn-warning">Изменить</a>
-              <a href="{% url 'print_accept_act' pk=accept_act.pk %}" class="btn btn-secondary">Печать акта</a>
-            </td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered table-fixed">
+              <colgroup>
+                <col style="width: 5%">
+                <col style="width: 5%">
+                <col style="width: 10%">
+                <col style="width: 10%">
+                <col style="width: 12%">
+                <col style="width: 25%">
+                <col style="width: 8%">
+                <col style="width: 25%">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>Номер</th>
+                  <th>Дата</th>
+                  <th>Сумма</th>
+                  <th>Тип поступления</th>
+                  <th>Сотрудник</th>
+                  <th>Источник</th>
+                  <th>Статус</th>
+                  <th>Действия</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for accept_act in accept_acts %}
+                  <tr class="{% if accept_act.status_record == 'у' %}table-success{% elif accept_act.status_record == 'н' %}table-danger{% endif %}">
+                    <td>{{ accept_act.number }}</td>
+                    <td>{{ accept_act.current_date |date:"d.m.Y" }}</td>
+                    <td>{{ accept_act.summa }}</td>
+                    <td>{{ accept_act.get_Tip_display }}</td>
+                    <td>{{ accept_act.worker.last_name }} {{ accept_act.worker.first_name|slice:":1" }}. {{ accept_act.worker.middle_name|slice:":1" }}.</td>
+                    <td>{{ accept_act.source }}</td>
+                    <td>{{ accept_act.get_status_record_display }}</td>
+                    <td>
+                      <a href="{% url 'edit_accept_act' pk=accept_act.pk %}" class="btn btn-warning">Провести учёт</a>
+                      <a href="{% url 'print_accept_act' pk=accept_act.pk %}" class="btn btn-secondary">Печать акта</a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     {% else %}
       <p>Нет данных о AcceptAct</p>
     {% endif %}

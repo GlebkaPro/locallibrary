@@ -3,41 +3,47 @@
 {% block content %}
   <h1>Список мероприятий</h1>
   <a href="{% url 'create_event' %}" class="btn btn-primary mb-3">Создать мероприятие</a>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Наименование мероприятия</th>
-        <th>Мест</th>
-        <th>Дата начала</th>
-        <th>Дата окончания</th>
-        <th>Дата фактического окончания</th>
-        <th>Сотрудник</th>
-        <th>Комната</th>
-        <th>Тип мероприятия</th>
-        <th>Действия</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for event in events %}
-        <tr>
-          <td>{{ event.event_name }}</td>
-          <td>{{ event.number_of_participants }}</td>
-          <td>{{ event.date_start }}</td>
-          <td>{{ event.date_end }}</td>
-          <td>{{ event.date_end2 }}</td>
-          <td>{{ event.worker }}</td>
-          <td>{{ event.room }}</td>
-          <td>{{ event.typeroom }}</td>
-          <td>
-            <a href="{% url 'participants_list' event_id=event.id %}" class="btn btn-primary">Участники</a>
-            <a href="{% url 'edit_event' event_id=event.id %}" class="btn btn-warning">Редактировать</a>
-            <form action="{% url 'delete_event' event_id=event.id %}" method="post" style="display: inline;">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Удалить</button>
-            </form>
-          </td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="card">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead>
+          <tr>
+            <th>Наименование мероприятия</th>
+            <th>Мест</th>
+            <th>Дата начала</th>
+            <th>Дата окончания</th>
+            <th>Дата фактического окончания</th>
+            <th>Сотрудник</th>
+            <th>Комната</th>
+            <th>Тип мероприятия</th>
+            <th>Действия</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for event in events %}
+            <tr>
+              <td>{{ event.event_name }}</td>
+              <td>{{ event.number_of_participants }}</td>
+              <td>{{ event.date_start }}</td>
+              <td>{{ event.date_end }}</td>
+              <td>{{ event.date_end2 }}</td>
+              <td>{{ event.worker }}</td>
+              <td>{{ event.room }}</td>
+              <td>{{ event.typeroom }}</td>
+              <td>
+                <a href="{% url 'participants_list' event_id=event.id %}" class="btn btn-primary">Участники</a>
+                <a href="{% url 'edit_event' event_id=event.id %}" class="btn btn-warning">Редактировать</a>
+                <form action="{% url 'delete_event' event_id=event.id %}" method="post" style="display: inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Удалить</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 {% endblock %}
