@@ -430,7 +430,7 @@ def return_book(request, book_instance_id):
   book_instance = get_object_or_404(BookInstance, id=book_instance_id)
 
   if book_instance.status == 'р':
-    # Если статус аренды равен 'р', устанавливаем его в 'п'
+    # Если статус аренды равен 'р', 'Выдано', устанавливаем его в 'п', 'Погашено'
     book_instance.status = 'п'
     book_instance.save()
 
@@ -440,9 +440,34 @@ def return_book(request, book_instance_id):
       book_copy.status = 'д'
       book_copy.save()
 
+
+  if book_instance.status == 'о':
+    # Если статус аренды равен 'о', 'Просрочено', устанавливаем его в 'п', 'Погашено'
+    book_instance.return_date = timezone.now()
+    book_instance.status = 'п'
+    book_instance.save()
+
+    book_copy = BookCopy.objects.filter(book=book_instance.book, status='р').first()
+    if book_copy:
+      book_copy.status = 'д'
+      book_copy.save()
+
+
+  if book_instance.status == 'д':
+    # Если статус аренды равен 'д', 'Продлено', устанавливаем его в 'п', 'Погашено'
+    book_instance.return_date = timezone.now()
+    book_instance.status = 'п'
+    book_instance.save()
+
+    book_copy = BookCopy.objects.filter(book=book_instance.book, status='р').first()
+    if book_copy:
+      book_copy.status = 'д'
+      book_copy.save()
+
+
   elif book_instance.status == 'з':
-    # Если статус аренды равен 'з', устанавливаем его в 'д'
-    book_instance.status = 'д'
+    # Если статус аренды равен 'з', 'Зарезервировано', устанавливаем его в 'п', 'Погашено'
+    book_instance.status = 'п'
     book_instance.save()
 
     # Находим соответствующий экземпляр в BookCopy и устанавливаем его статус также как 'д'

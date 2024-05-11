@@ -122,6 +122,7 @@ class BookInstance(models.Model):
                                verbose_name='Абонент')
   renewal_date = models.DateField(null=True, blank=True, verbose_name='Дата продления')
   current_date = models.DateField(default=timezone.now, verbose_name='Дата начала')
+  return_date = models.DateField(null=True, blank=True, verbose_name='Дата возврата')
   loan = models.ForeignKey('BookCopy', on_delete=models.SET_NULL, null=True, blank=True)
   worker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
                              related_name='worked_books', verbose_name='Сотрудник')

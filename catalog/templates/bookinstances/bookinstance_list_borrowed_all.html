@@ -79,7 +79,7 @@
                   <td>{{ bookinst.current_date|date:"d.m.Y" }}</td>
                   <td>{{ bookinst.due_back|date:"d.m.Y" }}</td>
                   <td>{{ bookinst.renewal_date|date:"d.m.Y" }}</td>
-                  <td>{{ bookinst.get_status_display }}</td>
+                  <td>{{ bookinst.get_status_display }} {{ bookinst.return_date|date:"d.m.y" }}</td>
                   <td>
                     {% if bookinst.status == 'р' %}
                       <a class="btn btn-success btn-sm" href="{% url 'renew-book-librarian' bookinst.id %}">Продлить</a>
