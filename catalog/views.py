@@ -58,20 +58,56 @@ def index(request):
   )
 
 
+from django.db.models import Q
+
+from django.db.models import Q
+
+from django.db.models import Q
+
+from django.db.models import Q
+
+from django.db.models import Q
+
+from django.db.models import Q
+
 class BookListView(generic.ListView):
-  """Общий класс-представление для списка книг."""
-  model = Book
-  paginate_by = 12
-  template_name = 'books/book_list.html'
+    """Общий класс-представление для списка книг."""
+    model = Book
+    paginate_by = 12
+    template_name = 'books/book_list.html'
 
-  def get_queryset(self):
-    query = self.request.GET.get('search', '')
-    return Book.objects.filter(title__icontains=query)
+    def get_queryset(self):
+        query = self.request.GET.get('search', '')
+        author_query = self.request.GET.get('author', '')
+        genre_query = self.request.GET.get('genre', '')
 
-  def get_context_data(self, **kwargs):
-    context = super().get_context_data(**kwargs)
-    context['search_query'] = self.request.GET.get('search', '')
-    return context
+        # Используем Q-объекты для объединения условий поиска
+        queryset = Book.objects.all()
+
+        if query:
+            queryset = queryset.filter(title__icontains=query)
+
+        if author_query:
+            queryset = queryset.filter(author__last_name__icontains=author_query)
+
+        if genre_query:
+            queryset = queryset.filter(genre__name__icontains=genre_query)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search_query'] = self.request.GET.get('search', '')
+        context['author_query'] = self.request.GET.get('author', '')
+        context['genre_query'] = self.request.GET.get('genre', '')
+        context['genres'] = Genre.objects.all()  # Передаем все жанры в контекст
+        return context
+
+
+
+
+
+
 
 
 class BookDetailView(generic.DetailView):

@@ -161,7 +161,7 @@ class Author(models.Model):
   date_of_death = models.DateField('Дата смерти', null=True, blank=True)
   def __str__(self):
     """Строка для представления объекта модели."""
-    return '{0}, {1}, {2}'.format(self.last_name, self.first_name, self.middle_name)
+    return '{0} {1} {2}'.format(self.last_name, self.first_name, self.middle_name)
   class Meta:
     ordering = ['last_name', 'first_name', 'middle_name']
 
