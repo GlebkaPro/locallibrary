@@ -3,7 +3,7 @@
 {% block content %}
   <div class="container">
     <h1>Список актов о списании</h1>
-    <a href="{% url 'create_debiting_act' %}" class="btn btn-primary">Создать акт о списании</a>
+    <a href="{% url 'create_debiting_act' %}" style="margin-bottom: 10px" class="btn btn-primary">Создать акт о списании</a>
 
     {% if debiting_acts %}
       <div class="card">

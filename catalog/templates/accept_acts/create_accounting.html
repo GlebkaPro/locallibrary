@@ -1,45 +1,72 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <h1>Провести учёт</h1>
+  <div class="card" style="padding: 10px;">
+  <div class="card-body">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Создать акт о приёме</h1>
+    <div class="form-group d-flex align-items-center">
+      <label for="{{ form.worker.id_for_label }}" class="mr-2">Сотрудник:</label>
+      <p class="form-control-static mb-0">
+        {{ request.user.last_name }} {{ request.user.first_name|slice:":1" }}. {{ request.user.middle_name|slice:":1" }}.
+      </p>
+    </div>
+
+    <label for="{{ form.current_date.id_for_label }}" class="form-label ml-2">
+      Дата: {{ form.current_date.value|date:'d.m.Y' }}
+    </label>
+    <input type="{{ accounting_form.date_of_creation.field.widget.input_type }}"
+           name="{{ accounting_form.date_of_creation.name }}" value="{% now 'd.m.Y' %}" class="form-control" readonly
+           style="max-width: 200px;">
+  </div>
+    </div>
 
   <form method="post" action="">
     {% csrf_token %}
 
-    <div class="form-group d-flex align-items-center">
-      <label for="{{ accounting_form.worker.id_for_label }}" class="mr-2">Сотрудник:</label>
-      <p class="form-control-static mb-0">{{ request.user.username }}</p>
-    </div>
 
-    <div class="form-group">
-      {{ accounting_form.date_of_creation.label_tag }}
-      <input type="{{ accounting_form.date_of_creation.field.widget.input_type }}"
-             name="{{ accounting_form.date_of_creation.name }}"
-             value="{% now 'Y-m-d' %}"
-             class="form-control"
-             readonly
-             style="max-width: 200px;">
-    </div>
-
-    <table class="table">
+    <table class="table table-bordered">
       <thead>
       <tr>
         <th>Книга</th>
         <th>Штамп</th>
         <th>Позиция акта</th>
+        <th>Издатель</th>
+        <th>Действия</th>
       </tr>
       </thead>
       <tbody>
-      {{ book_copy_formset.management_form }}
       {% for form in book_copy_formset %}
-        <tr>
-          <td>{{ form.book }}</td>
-          <td>{{ form.imprint }}</td>
-          <td>{{ form.positionAcceptAct }}</td>
+        <tr class="formset_row">
+          <td>{{ forloop.counter }}</td>
+          <td>
+            <select name="{{ form.prefix }}-{{ forloop.counter0 }}-book" class="form-control">
+              {% for book_choice in form.fields.book.queryset %}
+                <option value="{{ book_choice.pk }}">{{ book_choice }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td>
+            <input type="text" name="{{ form.prefix }}-{{ forloop.counter0 }}-imprint" class="form-control">
+          </td>
+          <td>
+            <select name="{{ form.prefix }}-{{ forloop.counter0 }}-positionAcceptAct" class="form-control">
+              {% for positionAcceptAct_choice in form.fields.positionAcceptAct.queryset %}
+                <option value="{{ positionAcceptAct_choice.pk }}">{{ positionAcceptAct_choice }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td>
+            <button type="button" onclick="removeRow(this)" class="btn btn-danger">Удалить</button>
+          </td>
         </tr>
       {% endfor %}
       </tbody>
+
+
     </table>
     <button type="submit" class="btn btn-primary">Провести учёт</button>
   </form>
+  </div>
+  </div>
 {% endblock %}

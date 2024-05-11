@@ -90,7 +90,7 @@
                            id="{{ form.number_of_participants.id_for_label }}"
                            name="{{ form.number_of_participants.name }}"
                            value="
-                             
+
                              {% if form.number_of_participants.value %}{{ form.number_of_participants.value }}{% endif %}"
                            style="max-width: 180px;">
                     {% if form.number_of_participants.errors %}
@@ -101,7 +101,7 @@
                     <label for="{{ form.room.id_for_label }}" class="form-label">Помещение</label>
                     <select class="form-select {% if form.room.errors %}is-invalid{% endif %}"
                             id="{{ form.room.id_for_label }}"
-                            name="{{ form.room.name }}" style="max-width: 180px;">
+                            name="{{ form.room.name }}" style="max-width: 190px;">
                       <option value="" {% if not form.room.value %}selected{% endif %}>Выберите</option>
                       {% for room in form.room.field.queryset %}
                         <option value="{{ room.id }}">{{ room }}</option>
