@@ -9,3 +9,9 @@ class User(AbstractUser):
 
   def __str__(self):
     return '{0} {1} {2}'.format( self.last_name, self.first_name, self.middle_name)
+
+  def get_full_name(self):
+    full_name = f"{self.last_name} {self.first_name}"
+    if self.middle_name:
+      full_name += f" {self.middle_name}"
+    return full_name

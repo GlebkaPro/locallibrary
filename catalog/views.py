@@ -145,20 +145,38 @@ class LoanedBooksAllListView(PermissionRequiredMixin, generic.ListView):
   template_name = 'bookinstances/bookinstance_list_borrowed_all.html'
   paginate_by = 20
 
+  from django.utils import timezone
+
   def get_queryset(self):
     status = self.request.GET.get('status', None)
-    borrower_lastname = self.request.GET.get('lastname', None)
+    search_type = self.request.GET.get('search_type', None)
+    search_query = self.request.GET.get('search_query', None)
+    date_type = self.request.GET.get('date_type', None)
+    start_date = self.request.GET.get('start_date', None)
+    end_date = self.request.GET.get('end_date', None)
 
-    queryset = BookInstance.objects.all().order_by('due_back')
+    queryset = BookInstance.objects.all().order_by('current_date')
 
     if status:
-      queryset = queryset.filter(status=status)
+        queryset = queryset.filter(status=status)
 
-    if borrower_lastname:
-      queryset = queryset.filter(borrower__last_name__icontains=borrower_lastname)
+    if search_type == 'lastname' and search_query:
+        queryset = queryset.filter(borrower__last_name__icontains=search_query)
+    elif search_type == 'username' and search_query:
+        queryset = queryset.filter(borrower__username__icontains=search_query)
+
+    if start_date and end_date:
+        start_date = timezone.datetime.strptime(start_date, "%Y-%m-%d").date()
+        end_date = timezone.datetime.strptime(end_date, "%Y-%m-%d").date()
+
+        if date_type == 'current_date':
+            queryset = queryset.filter(current_date__range=[start_date, end_date])
+        elif date_type == 'due_back':
+            queryset = queryset.filter(due_back__range=[start_date, end_date])
+        elif date_type == 'renewal_date':
+            queryset = queryset.filter(renewal_date__range=[start_date, end_date])
 
     return queryset
-
 
 # @login_required
 # @permission_required('catalog.can_mark_returned', raise_exception=True)
@@ -967,22 +985,14 @@ from .models import BookInstance
 
 class UserLoansListView(ListView):
   model = BookInstance
-  # template_name = 'catalog/user_loans_list.html'
-  template_name = 'catalog/templates/bookinstances/bookinstance_list_borrowed_all.html'
-
+  template_name = 'bookinstances/bookinstance_list_borrowed_all.html'
   paginate_by = 10
 
   def get_queryset(self):
     user_id = self.kwargs['pk']
     return BookInstance.objects.filter(borrower__id=user_id, status__in=['р', 'з', 'п']).order_by('due_back')
 
-
-from django.shortcuts import render, redirect
 from .forms import SourceForm, FizPersonSourceForm
-
-from django.shortcuts import render, redirect
-from .forms import SourceForm, FizPersonSourceForm
-
 
 def create_source(request):
   if request.method == 'POST':

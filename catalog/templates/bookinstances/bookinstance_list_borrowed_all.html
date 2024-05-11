@@ -10,16 +10,16 @@
       </form>
       <a class="btn btn-success my-3" href="{% url 'add-bookinstance' %}">Выдать книгу</a>
     </div>
-  <form method="GET" action="{% url 'all-borrowed' %}">
-    <div class="input-group mb-3">
-        <label class="input-group-text" for="lastname">Поиск по фамилии:</label>
-        <input type="text" name="lastname" id="lastname" class="form-control" placeholder="Введите фамилию">
-        <button type="submit" class="btn btn-primary">Поиск</button>
-    </div>
-</form>
     <form method="GET" action="{% url 'all-borrowed' %}">
       <div class="input-group mb-3">
-        <label class="input-group-text" for="status">Выберите статус:</label>
+        <label class="input-group-text" for="search_type">Поиск по:</label>
+        <select name="search_type" id="search_type" class="form-select">
+          <option value="lastname">Фамилии</option>
+          <option value="username">Логину</option>
+        </select>
+        <input type="text" name="search_query" id="search_query" class="form-control" placeholder="Введите значение"
+               value="{{ request.GET.search_query }}">
+        <label class="input-group-text" for="status">Статус:</label>
         <select name="status" id="status" class="form-select">
           <option value="">Все статусы</option>
           <option value="р" {% if request.GET.status == 'р' %}selected{% endif %}>Выдано</option>
@@ -27,63 +27,83 @@
           <option value="з" {% if request.GET.status == 'з' %}selected{% endif %}>Зарезервировано</option>
           <option value="о" {% if request.GET.status == 'о' %}selected{% endif %}>Просрочено</option>
         </select>
-        <button type="submit" class="btn btn-primary">Применить фильтр</button>
+        <select name="date_type" id="date_type" class="form-select">
+          <option value="current_date" {% if request.GET.date_type == 'current_date' %}selected{% endif %}>Дата начала
+          </option>
+          <option value="due_back" {% if request.GET.date_type == 'due_back' %}selected{% endif %}>Дата окончания</option>
+          <option value="renewal_date" {% if request.GET.date_type == 'renewal_date' %}selected{% endif %}>Дата
+            продления
+          </option>
+        </select>
+
+        <input type="date" name="start_date" id="start_date" class="form-control" placeholder="Начальная дата"
+               value="{{ request.GET.start_date|default_if_none:"" }}">
+        <input type="date" name="end_date" id="end_date" class="form-control" placeholder="Конечная дата"
+               value="{{ request.GET.end_date|default_if_none:"" }}">
+
+        <button type="submit" class="btn btn-primary">Поиск</button>
       </div>
     </form>
+
     {% if bookinstance_list %}
       <div class="card">
         <div class="card-body">
           <div class="table-responsive">
             <table class="table table-bordered">
               <thead>
-                <tr>
-                  <th>Фамилия И.О.</th>
-                  <th>Логин</th>
-                  <th>Название книги</th>
-                  <th>Штамп</th>
-                  <th>Начала</th>
-                  <th>Конца</th>
-                  <th>Продления</th>
-                  <th>Статус</th>
-                  <th>Действия</th>
-                </tr>
+              <tr>
+                <th>Фамилия И.О.</th>
+                <th>Логин</th>
+                <th>Название книги</th>
+                <th>Штамп</th>
+                <th>Начала</th>
+                <th>Окончания</th>
+                <th>Продления</th>
+                <th>Статус</th>
+                <th>Действия</th>
+              </tr>
               </thead>
               <tbody>
-                {% for bookinst in bookinstance_list %}
-                  <tr class="{% if bookinst.is_overdue %}text-danger{% endif %}
+              {% for bookinst in bookinstance_list %}
+                <tr class="{% if bookinst.is_overdue %}text-danger{% endif %}
                     {% if bookinst.status == 'р' %}table-success{% elif bookinst.status == 'з' %}table-warning{% elif bookinst.status == 'д' %}table-info{% elif bookinst.status == 'о' %}table-danger{% endif %}">
-                    <td>{{ bookinst.borrower.last_name }} {{ bookinst.borrower.first_name|slice:":1" }}. {{ bookinst.borrower.middle_name|slice:":1" }}.</td>
-                    <td>{{ bookinst.borrower.username }}</td>
-                    <td>
-                      <a href="{% url 'book-detail' bookinst.book.pk %}">{{ bookinst.book.title }}</a>
-                    </td>
-                    <td>{{ bookinst.loan.imprint }}</td>
-                    <td>{{ bookinst.current_date|date:"d.m.Y" }}</td>
-                    <td>{{ bookinst.due_back|date:"d.m.Y" }}</td>
-                    <td>{{ bookinst.renewal_date|date:"d.m.Y" }}</td>
-                    <td>{{ bookinst.get_status_display }}</td>
-                    <td>
-                      {% if bookinst.status == 'р' %}
-                        <a class="btn btn-success btn-sm" href="{% url 'renew-book-librarian' bookinst.id %}">Продлить</a>
-                        <a class="btn btn-warning btn-sm" href="{% url 'return-book' bookinst.id %}" onclick="return confirm('Вы уверены?')">Возврат</a>
-                      {% elif bookinst.status == 'з' %}
-                        <a class="btn btn-info btn-sm" href="{% url 'edit-bookinstance' bookinst.id %}">Оформить
-                          выдачу</a>
-                      {% elif bookinst.status == 'о' %}
-                        <a class="btn btn-warning btn-sm" href="{% url 'return-book' bookinst.id %}" onclick="return confirm('Вы уверены?')">Возврат</a>
-                        <a class="btn btn-success btn-sm" href="{% url 'renew-book-librarian' bookinst.id %}">Продлить</a>
-                        <a class="btn btn-danger btn-sm history-btn" href="{% url 'history-of-appeals' bookinst.id %}">История</a>
-                      {% else %}
-                        {% if bookinst.status == 'д' %}
-                          <a class="btn btn-warning btn-sm" href="{% url 'return-book' bookinst.id %}">Возврат</a>
-                        {% endif %}
+                  <td
+                    title="{{ bookinst.borrower.get_full_name }}">{{ bookinst.borrower.last_name }} {{ bookinst.borrower.first_name|slice:":1" }}. {{ bookinst.borrower.middle_name|slice:":1" }}.
+                  </td>
+
+                  <td>{{ bookinst.borrower.username }}</td>
+                  <td>
+                    <a href="{% url 'book-detail' bookinst.book.pk %}">{{ bookinst.book.title }}</a>
+                  </td>
+                  <td>{{ bookinst.loan.imprint }}</td>
+                  <td>{{ bookinst.current_date|date:"d.m.Y" }}</td>
+                  <td>{{ bookinst.due_back|date:"d.m.Y" }}</td>
+                  <td>{{ bookinst.renewal_date|date:"d.m.Y" }}</td>
+                  <td>{{ bookinst.get_status_display }}</td>
+                  <td>
+                    {% if bookinst.status == 'р' %}
+                      <a class="btn btn-success btn-sm" href="{% url 'renew-book-librarian' bookinst.id %}">Продлить</a>
+                      <a class="btn btn-warning btn-sm" href="{% url 'return-book' bookinst.id %}"
+                         onclick="return confirm('Вы уверены?')">Возврат</a>
+                    {% elif bookinst.status == 'з' %}
+                      <a class="btn btn-info btn-sm" href="{% url 'edit-bookinstance' bookinst.id %}">Оформить
+                        выдачу</a>
+                    {% elif bookinst.status == 'о' %}
+                      <a class="btn btn-warning btn-sm" href="{% url 'return-book' bookinst.id %}"
+                         onclick="return confirm('Вы уверены?')">Возврат</a>
+                      <a class="btn btn-success btn-sm" href="{% url 'renew-book-librarian' bookinst.id %}">Продлить</a>
+                      <a class="btn btn-danger btn-sm history-btn" href="{% url 'history-of-appeals' bookinst.id %}">История</a>
+                    {% else %}
+                      {% if bookinst.status == 'д' %}
+                        <a class="btn btn-warning btn-sm" href="{% url 'return-book' bookinst.id %}">Возврат</a>
                       {% endif %}
-                      {% if bookinst.status == 'п' %}
-                        <span class="text-muted">Нет доступных действий</span>
-                      {% endif %}
-                    </td>
-                  </tr>
-                {% endfor %}
+                    {% endif %}
+                    {% if bookinst.status == 'п' %}
+                      <span class="text-muted">Нет доступных действий</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
               </tbody>
             </table>
           </div>
