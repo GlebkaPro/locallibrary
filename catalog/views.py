@@ -1632,3 +1632,32 @@ def add_appeal(request, bookinst_id):
         error_message = None
 
     return render(request, 'bookinstances/add_appeal.html', {'form': form, 'book_instance': book_instance, 'error_message': error_message})
+
+
+class UserProfileView(DetailView):
+  model = User
+  template_name = 'users/user_profile.html'  # Создайте этот шаблон в папке templates/users/
+  context_object_name = 'user_profile'
+
+  def get_object(self):
+    username = self.kwargs.get('username')
+    return get_object_or_404(User, username=username)
+
+  def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    user = self.get_object()  # Получаем объект пользователя
+
+    # Добавляем данные пользователя в контекст
+    context['user'] = user
+    context['date_birth'] = user.date_birth
+    # Получаем все арендованные книги текущего пользователя
+    bookinstance_list = BookInstance.objects.filter(borrower=user)
+    context['bookinstance_list'] = bookinstance_list
+
+    user_requests = Request.objects.filter(borrower=user)
+    context['user_requests'] = user_requests
+
+    registered_events = PositionEvent.objects.filter(borrower=user)
+    context['registered_events'] = registered_events
+
+    return context

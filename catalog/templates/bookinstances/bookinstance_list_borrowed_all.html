@@ -30,7 +30,8 @@
         <select name="date_type" id="date_type" class="form-select">
           <option value="current_date" {% if request.GET.date_type == 'current_date' %}selected{% endif %}>Дата начала
           </option>
-          <option value="due_back" {% if request.GET.date_type == 'due_back' %}selected{% endif %}>Дата окончания</option>
+          <option value="due_back" {% if request.GET.date_type == 'due_back' %}selected{% endif %}>Дата окончания
+          </option>
           <option value="renewal_date" {% if request.GET.date_type == 'renewal_date' %}selected{% endif %}>Дата
             продления
           </option>
@@ -67,10 +68,11 @@
               {% for bookinst in bookinstance_list %}
                 <tr class="{% if bookinst.is_overdue %}text-danger{% endif %}
                     {% if bookinst.status == 'р' %}table-success{% elif bookinst.status == 'з' %}table-warning{% elif bookinst.status == 'д' %}table-info{% elif bookinst.status == 'о' %}table-danger{% endif %}">
-                  <td
-                    title="{{ bookinst.borrower.get_full_name }}">{{ bookinst.borrower.last_name }} {{ bookinst.borrower.first_name|slice:":1" }}. {{ bookinst.borrower.middle_name|slice:":1" }}.
+                  <td title="{{ bookinst.borrower.get_full_name }}">
+                    <a href="{% url 'user-profile' bookinst.borrower.username %}">
+                      {{ bookinst.borrower.last_name }} {{ bookinst.borrower.first_name|slice:":1" }}. {{ bookinst.borrower.middle_name|slice:":1" }}.
+                    </a>
                   </td>
-
                   <td>{{ bookinst.borrower.username }}</td>
                   <td>
                     <a href="{% url 'book-detail' bookinst.book.pk %}">{{ bookinst.book.title }}</a>

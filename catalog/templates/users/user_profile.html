@@ -15,7 +15,7 @@
     <li class="nav-item" role="presentation">
       <button class="nav-link {% if request.GET.tab == 'books' %}active{% endif %}" id="books-tab"
               data-bs-toggle="tab" data-bs-target="#books" type="button" role="tab" aria-controls="books"
-              aria-selected="{% if request.GET.tab == 'books' %}true{% else %}false{% endif %}">Мои книги
+              aria-selected="{% if request.GET.tab == 'books' %}true{% else %}false{% endif %}">Книги
       </button>
     </li>
     <li class="nav-item" role="presentation">
@@ -27,80 +27,77 @@
     <li class="nav-item" role="presentation">
       <button class="nav-link {% if request.GET.tab == 'my_requests' %}active{% endif %}" id="my_requests-tab"
               data-bs-toggle="tab" data-bs-target="#my_requests" type="button" role="tab" aria-controls="my_requests"
-              aria-selected="{% if request.GET.tab == 'my_requests' %}true{% else %}false{% endif %}">Мои заявки
+              aria-selected="{% if request.GET.tab == 'my_requests' %}true{% else %}false{% endif %}">Заявки
       </button>
     </li>
   </ul>
 
 
-<div class="tab-pane fade {% if not request.GET.tab or request.GET.tab == 'profile' %}show active{% endif %}"
-     id="profile" role="tabpanel" aria-labelledby="profile-tab">
-  <form method="post" enctype="multipart/form-data" class="card profile-container">
-    {% csrf_token %}
-    <div class="row">
-      <div class="col-md-4 text-center">
-        <div class="image-container">
-          {% if user.avatar %}
-            <img src="{{ user.avatar.url }}" class="img-fluid avatar-img" alt="Аватар">
-          {% else %}
-            <img src="/images/users/default.png" class="img-fluid avatar-img" alt="Заполнитель: Эскиз">
-          {% endif %}
-        </div>
-        <div class="mb-3">
-          <input type="file" class="form-control custom-file-input" id="{{ form.avatar.id_for_label }}"
-                 name="{{ form.avatar.name }}">
-          <div class="form-error">{{ form.avatar.errors }}</div>
-        </div>
-        <div class="mb-3">
-          <label for="{{ form.username.id_for_label }}" class="form-label">Имя пользователя</label>
-          <input type="text" class="form-control" id="{{ form.username.id_for_label }}"
-                 name="{{ form.username.name }}" value="{{ user.username }}" readonly>
-          <div class="form-error">{{ form.username.errors }}</div>
-        </div>
-        <div class="mb-3">
-          <label for="{{ form.email.id_for_label }}">Email</label>
-          <input type="text" class="form-control" id="{{ form.email.id_for_label }}" name="{{ form.email.name }}"
-                 value="{{ user.email }}">
-          <div class="form-error">{{ form.email.errors }}</div>
-        </div>
-      </div>
-      <div class="col-md-8">
-        <div class="text-container card-body">
-          <div class="mb-3">
-            <label for="{{ form.last_name.id_for_label }}" class="form-label">Фамилия</label>
-            <input type="text" class="form-control" id="{{ form.last_name.id_for_label }}"
-                   name="{{ form.last_name.name }}" value="{{ user.last_name }}">
-            <div class="form-error">{{ form.last_name.errors }}</div>
-          </div>
-          <div class="mb-3">
-            <label for="{{ form.first_name.id_for_label }}" class="form-label">Имя</label>
-            <input type="text" class="form-control" id="{{ form.first_name.id_for_label }}"
-                   name="{{ form.first_name.name }}" value="{{ user.first_name }}">
-            <div class="form-error">{{ form.first_name.errors }}</div>
-          </div>
-          <div class="mb-3">
-            <label for="{{ form.middle_name.id_for_label }}" class="form-label">Отчество</label>
-            <input type="text" class="form-control" id="{{ form.middle_name.id_for_label }}"
-                   name="{{ form.middle_name.name }}" value="{{ user.middle_name }}">
-            <div class="form-error">{{ form.middle_name.errors }}</div>
-          </div>
-          <div class="mb-3">
-            <label for="{{ form.date_birth.id_for_label }}" class="form-label">Дата рождения</label>
-            <input type="text" class="form-control" id="{{ form.date_birth.id_for_label }}"
-                   name="{{ form.date_birth.name }}" value="{{ user.date_birth }}">
-            <div class="form-error">{{ form.date_birth.errors }}</div>
-          </div>
-          <div class="mb-3">
-            <button type="submit" class="btn btn-primary">Сохранить</button>
-          </div>
-          <div class="form-error">{{ form.non_field_errors }}</div>
-          <div class="form-error">{{ form.date_birth.errors }}</div>
-        </div>
-      </div>
-    </div>
-  </form>
-</div>
+  <!-- Content for Tabs -->
+  <div class="tab-content" id="myTabContent">
+    <!-- Profile Tab Content -->
+    <div class="tab-pane fade {% if not request.GET.tab or request.GET.tab == 'profile' %}show active{% endif %}"
+         id="profile" role="tabpanel" aria-labelledby="profile-tab">
+      <form method="post" enctype="multipart/form-data" class="card profile-container">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-md-4 text-center">
+            <div class="image-container">
+              {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" class="img-fluid avatar-img" alt="Аватар">
+              {% else %}
+                <img src="/images/users/default.png" class="img-fluid avatar-img" alt="Заполнитель: Эскиз">
+              {% endif %}
+            </div>
+{#            <div class="mb-3">#}
+{#              <input type="file" class="form-control custom-file-input" id="{{ form.avatar.id_for_label }}"#}
+{#                     name="{{ form.avatar.name }}">#}
+{#              <div class="form-error">{{ form.avatar.errors }}</div>#}
+{#            </div>#}
 
+            <div class="mb-3">
+              <label for="id_username" class="form-label">Имя пользователя</label>
+              <input type="text" class="form-control" id="id_username" value="{{ user.username }}" readonly>
+            </div>
+            <div class="mb-3">
+              <label for="id_email">Email</label>
+              <input type="text" class="form-control" id="id_email" value="{{ user.email }}" readonly>
+            </div>
+          </div>
+          <div class="col-md-8">
+
+            <div class="text-container card-body">
+              <div class="mb-3">
+                <label for="id_last_name" class="form-label">Фамилия</label>
+                <input type="text" class="form-control" id="id_last_name" value="{{ user.last_name }}">
+              </div>
+              <div class="mb-3">
+                <label for="id_first_name" class="form-label">Имя</label>
+                <input type="text" class="form-control" id="id_first_name" value="{{ user.first_name }}">
+              </div>
+              <div class="mb-3">
+                <label for="id_middle_name" class="form-label">Отчество</label>
+                <input type="text" class="form-control" id="id_middle_name" value="{{ user.middle_name }}">
+              </div>
+
+              <div class="mb-3">
+                <label for="id_date_birth" class="form-label">Дата рождения</label>
+                <input type="date" class="form-control" id="id_date_birth" name="date_birth"
+                       value="{% if date_birth %}{{ date_birth|date:"Y-m-d" }}{% endif %}">
+              </div>
+
+
+              <div class="form-error">{{ form.non_field_errors }}</div>
+
+              <div class="form-error">{{ form.date_birth.errors }}</div>
+            </div>
+{#            <div class="mb-3">#}
+{#              <button type="submit" class="btn btn-primary">Сохранить</button>#}
+{#            </div>#}
+          </div>
+        </div>
+      </form>
+    </div>
 
 
     <!-- Books Tab Content -->
@@ -118,7 +115,6 @@
               <th style="cursor:pointer;" data-sort="date-end" data-order="desc">Дата окончания &#9660;</th>
               <th style="cursor:pointer;" data-sort="renewal-date" data-order="desc">Дата продления &#9660;</th>
               <th>Статус</th>
-              <th>Действие</th>
             </tr>
             </thead>
             <tbody>
@@ -134,20 +130,20 @@
                 <td>{{ bookinst.due_back }}</td>
                 <td>{{ bookinst.renewal_date }}</td>
                 <td>{{ bookinst.get_status_display }}</td>
-                <td>
-                  {% if bookinst.status == 'р' %}
-                    <a href="{% url 'renew-book-librarian' bookinst.id %}" class="btn btn-warning">Продлить</a>
-                  {% elif bookinst.status == 'з' %}
-                    <form action="{% url 'cancel_reservation' bookinst.id %}" method="post" style="display: inline;">
-                      {% csrf_token %}
-                      <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Отменить
-                        резерв
-                      </button>
-                    </form>
-                  {% else %}
-                    <span class="text-danger">Невозможно выполнить действие</span>
-                  {% endif %}
-                </td>
+{#                <td>#}
+{#                  {% if bookinst.status == 'р' %}#}
+{#                    <a href="{% url 'renew-book-librarian' bookinst.id %}" class="btn btn-warning">Продлить</a>#}
+{#                  {% elif bookinst.status == 'з' %}#}
+{#                    <form action="{% url 'cancel_reservation' bookinst.id %}" method="post" style="display: inline;">#}
+{#                      {% csrf_token %}#}
+{#                      <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Отменить#}
+{#                        резерв#}
+{#                      </button>#}
+{#                    </form>#}
+{#                  {% else %}#}
+{#                    <span class="text-danger">Невозможно выполнить действие</span>#}
+{#                  {% endif %}#}
+{#                </td>#}
               </tr>
             {% endfor %}
             </tbody>
@@ -170,7 +166,7 @@
           <th style="cursor:pointer;" data-sort="date" data-order="desc">Дата начала &#9660;</th>
           <th style="cursor:pointer;" data-sort="date-end" data-order="desc">Дата окончания &#9660;</th>
           <th>Статус</th>
-          <th>Действия</th>
+
         </tr>
         </thead>
         <tbody>
@@ -188,24 +184,24 @@
                 Не записан
               {% endif %}
             </td>
-            <td>
-              {% if event.status_record == 'з' %}
-                <form action="{% url 'cancel_registration' registration_id=event.id %}" method="post"
-                      style="display: inline;">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-danger"
-                          onclick="return confirm('Вы уверены?')">Отменить регистрацию
-                  </button>
-                </form>
-              {% elif event.status_record == 'н' %}
-                <form action="{% url 'profile_register_to_event' registration_id=event.id %}" method="post"
-                      style="display: inline;">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-success">Зарегистрироваться вновь</button>
-                </form>
-
-              {% endif %}
-            </td>
+{#            <td>#}
+{#              {% if event.status_record == 'з' %}#}
+{#                <form action="{% url 'cancel_registration' registration_id=event.id %}" method="post"#}
+{#                      style="display: inline;">#}
+{#                  {% csrf_token %}#}
+{#                  <button type="submit" class="btn btn-danger"#}
+{#                          onclick="return confirm('Вы уверены?')">Отменить регистрацию#}
+{#                  </button>#}
+{#                </form>#}
+{#              {% elif event.status_record == 'н' %}#}
+{#                <form action="{% url 'profile_register_to_event' registration_id=event.id %}" method="post"#}
+{#                      style="display: inline;">#}
+{#                  {% csrf_token %}#}
+{#                  <button type="submit" class="btn btn-success">Зарегистрироваться вновь</button>#}
+{#                </form>#}
+{##}
+{#              {% endif %}#}
+{#            </td>#}
           </tr>
         {% empty %}
           <tr>
@@ -231,7 +227,6 @@
           <th style="cursor:pointer;" data-sort="date" data-order="desc">Дата создания &#9660;</th>
           <th>Статус</th>
           <th>Причина</th>
-          <th>Действия</th>
         </tr>
         </thead>
         <tbody>
@@ -245,20 +240,20 @@
             <td>{{ request.date_creation }}</td>
             <td>{{ request.get_status_record_display }}</td>
             <td>{{ request.reason|slice:":30" }}</td>
-            <td>
-              {% if request.status_record == 'в' %}
-                <a href="{% url 'edit_request' request_id=request.id %}" class="btn btn-warning">Редактировать</a>
-                <form action="{% url 'profile_delete_request' request_id=request.id %}" method="post"
-                      style="display: inline;">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-danger"
-                          onclick="return confirm('Вы уверены?')">Удалить
-                  </button>
-                </form>
-              {% else %}
-                <span class="text-danger">Невозможно редактировать или удалять</span>
-              {% endif %}
-            </td>
+{#            <td>#}
+{#              {% if request.status_record == 'в' %}#}
+{#                <a href="{% url 'edit_request' request_id=request.id %}" class="btn btn-warning">Редактировать</a>#}
+{#                <form action="{% url 'profile_delete_request' request_id=request.id %}" method="post"#}
+{#                      style="display: inline;">#}
+{#                  {% csrf_token %}#}
+{#                  <button type="submit" class="btn btn-danger"#}
+{#                          onclick="return confirm('Вы уверены?')">Удалить#}
+{#                  </button>#}
+{#                </form>#}
+{#              {% else %}#}
+{#                <span class="text-danger">Невозможно редактировать или удалять</span>#}
+{#              {% endif %}#}
+{#            </td>#}
           </tr>
         {% empty %}
           <tr>
@@ -267,9 +262,9 @@
         {% endfor %}
         </tbody>
       </table>
-      <div>
-        <a href="{% url 'create_request' %}" class="btn btn-primary mb-3">Создать заявку</a>
-      </div>
+{#      <div>#}
+{#        <a href="{% url 'create_request' %}" class="btn btn-primary mb-3">Создать заявку</a>#}
+{#      </div>#}
     </div>
 
 
@@ -361,6 +356,3 @@
 
   </style>
 {% endblock %}
-
-
-

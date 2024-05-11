@@ -30,6 +30,7 @@ urlpatterns += [
   path('create_user/', views.create_user, name='create_user'),
   path('user_list/', views.user_list, name='user_list'),
   path('user_loans/<int:pk>/', views.UserLoansListView.as_view(), name='user_loans'),
+  path('user/<str:username>/', views.UserProfileView.as_view(), name='user-profile'),
 ]
 
 urlpatterns += [

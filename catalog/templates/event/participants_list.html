@@ -1,33 +1,42 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
+  <div class="card">
+  <div class="card-body">
   <h1>Список участников мероприятия "{{ event.event_name }}"</h1>
-  <table class="table">
+
+  <div class="table-responsive">
+  <table class="table table-bordered">
     <thead>
-      <tr>
-        <th>Участник</th>
-        <th>Дата регистрации</th>
-        <th>Статус записи</th>
-        <th>Действия</th>
-      </tr>
+    <tr>
+      <th>Участник</th>
+      <th>Дата регистрации</th>
+      <th>Статус записи</th>
+      <th>Действия</th>
+    </tr>
     </thead>
     <tbody>
-      {% for participant in participants %}
-        <tr>
-          <td>{{ participant.borrower.last_name }} {{ participant.borrower.first_name }} {{ participant.borrower.middle_name }}</td>
-          <td>{{ participant.date_record }}</td>
-          <td>{{ participant.get_status_record_display }}</td>
-          <td>
-            <a href="{% url 'edit_participant' event_id=event.id participant_id=participant.id %}" class="btn btn-sm btn-warning">Изменить</a>
-            <form action="{% url 'delete_participant' event_id=event.id participant_id=participant.id %}" method="post" style="display: inline;">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Удалить</button>
-            </form>
-          </td>
-        </tr>
-      {% endfor %}
+    {% for participant in participants %}
+      <tr>
+        <td>{{ participant.borrower.last_name }} {{ participant.borrower.first_name }} {{ participant.borrower.middle_name }}</td>
+        <td>{{ participant.date_record }}</td>
+        <td>{{ participant.get_status_record_display }}</td>
+        <td>
+          <a href="{% url 'edit_participant' event_id=event.id participant_id=participant.id %}"
+             class="btn btn-sm btn-warning">Изменить</a>
+          <form action="{% url 'delete_participant' event_id=event.id participant_id=participant.id %}" method="post"
+                style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Вы уверены?')">Удалить</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
     </tbody>
   </table>
 
   <a href="{% url 'add_participant' event_id=event.id %}" class="btn btn-primary">Добавить участника</a>
+  </div>
+  </div>
+  </div>
 {% endblock %}
