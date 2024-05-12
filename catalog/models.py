@@ -324,7 +324,6 @@ class PositionEvent(models.Model):
   ACCEPT_status = (
     ('з', 'записан'),
     ('н', 'не записан'),
-    ('о', 'окончено'),
   )
 
   status_record = models.CharField(

@@ -13,8 +13,8 @@
             <th>Мест</th>
             <th>Дата начала</th>
             <th>Дата окончания</th>
-            <th>Дата фактического окончания</th>
-            <th>Сотрудник</th>
+{#            <th>Дата фактического окончания</th>#}
+            <th>Ответственный сотрудник</th>
             <th>Комната</th>
             <th>Тип мероприятия</th>
             <th>Действия</th>
@@ -25,18 +25,18 @@
             <tr>
               <td>{{ event.event_name }}</td>
               <td>{{ event.number_of_participants }}</td>
-              <td>{{ event.date_start }}</td>
-              <td>{{ event.date_end }}</td>
-              <td>{{ event.date_end2 }}</td>
+              <td>{{ event.date_start |date:"d.m.Y" }}</td>
+              <td>{{ event.date_end |date:"d.m.Y" }}</td>
+{#              <td>{{ event.date_end2 }}</td>#}
               <td>{{ event.worker }}</td>
               <td>{{ event.room }}</td>
               <td>{{ event.typeroom }}</td>
               <td>
-                <a href="{% url 'participants_list' event_id=event.id %}" class="btn btn-primary">Участники</a>
-                <a href="{% url 'edit_event' event_id=event.id %}" class="btn btn-warning">Редактировать</a>
+                <a href="{% url 'participants_list' event_id=event.id %}" class="btn btn-sm btn-primary">Участники</a>
+                <a href="{% url 'edit_event' event_id=event.id %}" class="btn btn-sm btn-warning">Редактировать</a>
                 <form action="{% url 'delete_event' event_id=event.id %}" method="post" style="display: inline;">
                   {% csrf_token %}
-                  <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Удалить</button>
+                  <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Вы уверены?')">Удалить</button>
                 </form>
               </td>
             </tr>
