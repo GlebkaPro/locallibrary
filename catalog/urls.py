@@ -133,3 +133,11 @@ urlpatterns += [
   path('history-of-appeals/<uuid:bookinst_id>/', views.history_of_appeals, name='history-of-appeals'),
   path('add-appeal/<uuid:bookinst_id>/', views.add_appeal, name='add-appeal'),
 ]
+
+urlpatterns += [
+  path('create_news/<int:event_id>/', views.create_news, name='create_news'),
+  path('news/', views.news_list, name='news_list'),
+  path('news/<int:news_id>/', views.news_detail, name='news_detail'),
+]
+
+

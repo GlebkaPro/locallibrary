@@ -1,0 +1,59 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <div class="container">
+    {% if error_message %}
+      <div class="alert alert-danger" role="alert">
+        {{ error_message }}
+      </div>
+    {% endif %}
+    <div class="d-flex justify-content-center">
+      <div class="card" style="width: 500px;">
+        <div class="card-body">
+          <form method="post" enctype="multipart/form-data">
+            <h1 class="text-center mb-4">Добавить новость</h1>
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="id_title" class="form-label">Название:</label>
+              <input type="text" class="form-control {% if form.title.errors %}is-invalid{% endif %}"
+                     id="id_title" name="title"
+                     value="{% if form.title.value %}{{ form.title.value }}{% endif %}" placeholder="Введите название"
+                     style="max-width: 450px;" autocomplete="off">
+              {% if form.title.errors %}
+                <span class="invalid-feedback">{{ form.title.errors }}</span>
+              {% endif %}
+            </div>
+            <div class="mb-3">
+              <label for="id_description" class="form-label">Описание:</label>
+              <textarea class="form-control {% if form.description.errors %}is-invalid{% endif %}"
+                        id="id_description" name="description"
+                        placeholder="Введите описание" style="max-width: 450px;"
+                        autocomplete="off" rows="5">{% if form.description.value %}
+                {{ form.description.value }}{% endif %}</textarea>
+              {% if form.description.errors %}
+                <span class="invalid-feedback">{{ form.description.errors }}</span>
+              {% endif %}
+            </div>
+            <div class="mb-3">
+              <label for="id_title_image" class="form-label">Титульное изображение:</label>
+              <input type="file" class="form-control {% if form.title_image.errors %}is-invalid{% endif %}"
+                     id="id_title_image" name="title_image">
+              {% if form.title_image.errors %}
+                <span class="invalid-feedback">{{ form.title_image.errors }}</span>
+              {% endif %}
+            </div>
+            <div class="mb-3">
+              <label for="id_images" class="form-label">Изображения:</label>
+              <input type="file" class="form-control {% if form.images.errors %}is-invalid{% endif %}"
+                     id="id_images" name="images" multiple>
+              {% if form.images.errors %}
+                <span class="invalid-feedback">{{ form.images.errors }}</span>
+              {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primary">Создать новость</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

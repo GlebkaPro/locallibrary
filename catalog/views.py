@@ -25,7 +25,7 @@ from .forms import BookExemplarForm
 from .forms import PositionAcceptActFormSet
 from .forms import UserRegistrationForm, BookInstanceForm, AddBookForm, EditBookForm, AuthorForm, \
   ProfileUserForm
-from .models import AcceptAct, FizPersonSource
+from .models import AcceptAct, FizPersonSource, NewsImage
 from .models import Book, BookInstance, Author, Genre, Language
 from .models import BookCopy
 from .models import BookExemplar
@@ -48,25 +48,14 @@ def index(request):
 
   # Отображение HTML-шаблона index.html с данными в переменной контекста.
   latest_events = Event.objects.order_by('-date_start')[:3]
-
+  latest_news = News.objects.order_by('-date_creation')[:3]
   return render(
     request,
     'index.html',
-    context={'latest_events': latest_events, 'num_books': num_books, 'num_instances': num_instances,
+    context={'latest_events': latest_events, 'latest_news': latest_news, 'num_books': num_books, 'num_instances': num_instances,
              'num_instances_available': num_instances_available, 'num_authors': num_authors,
              'num_visits': num_visits},
   )
-
-
-from django.db.models import Q
-
-from django.db.models import Q
-
-from django.db.models import Q
-
-from django.db.models import Q
-
-from django.db.models import Q
 
 from django.db.models import Q
 
@@ -1713,3 +1702,40 @@ class UserProfileView(DetailView):
     context['registered_events'] = registered_events
 
     return context
+
+from django.shortcuts import render, redirect
+from .forms import NewsForm
+from .models import Event, News
+
+
+from django.core.files.uploadedfile import UploadedFile
+
+def create_news(request, event_id):
+    event = Event.objects.get(id=event_id)
+    if request.method == 'POST':
+        form = NewsForm(request.POST, request.FILES)
+        if form.is_valid():
+            news = form.save(commit=False)
+            news.event = event
+            news.worker = request.user  # Текущий авторизированный пользователь
+            news.date_creation = timezone.now().date()  # Текущая дата
+            news.save()
+
+            # Создаем записи NewsImage для каждого загруженного изображения
+            for image_file in request.FILES.getlist('images'):
+                news_image = NewsImage.objects.create(image=image_file)
+                news.images.add(news_image)
+
+            return redirect('news_list')
+    else:
+        form = NewsForm()
+    return render(request, 'news/create_news.html', {'form': form})
+
+
+def news_list(request):
+  news_list = News.objects.all()
+  return render(request, 'news/news_list.html', {'news_list': news_list})
+
+def news_detail(request, news_id):
+  news = get_object_or_404(News, pk=news_id)
+  return render(request, 'news/news_detail.html', {'news': news})

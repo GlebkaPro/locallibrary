@@ -380,3 +380,19 @@ class History_of_appeals(models.Model):
                              related_name='worked_history', verbose_name='Сотрудник')
   def __str__(self):
     return self.title
+
+class News(models.Model):
+    event = models.ForeignKey('Event', on_delete=models.CASCADE, related_name='news', verbose_name='Мероприятие')
+    title = models.CharField(verbose_name='Название новости', max_length=100)
+    description = models.TextField(verbose_name='Описание')
+    images = models.ManyToManyField('NewsImage', verbose_name='Изображения', blank=True)
+    worker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+                               related_name='worked_news', verbose_name='Сотрудник')
+    date_creation = models.DateField(null=True, blank=True, verbose_name='Дата создания')
+    title_image = models.ImageField(verbose_name='Титульное изображение', upload_to='news_title_images/', blank=True,
+                                    null=True)
+class NewsImage(models.Model):
+    image = models.ImageField(verbose_name='Изображение', upload_to='news_images/')
+
+    def __str__(self):
+        return self.image.name

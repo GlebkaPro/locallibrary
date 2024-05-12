@@ -327,3 +327,27 @@ class AppealForm(forms.ModelForm):
   class Meta:
     model = History_of_appeals
     fields = ['title', 'note', 'bookinstance', 'worker']
+
+from django import forms
+from .models import News
+
+
+class NewsForm(forms.ModelForm):
+  class Meta:
+    model = News
+    fields = ['title', 'description', 'title_image', 'images']
+
+  def __init__(self, *args, **kwargs):
+    super(NewsForm, self).__init__(*args, **kwargs)
+    self.fields['title'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Введите название'})
+    self.fields['description'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Введите описание'})
+    self.fields['images'].widget.attrs.update({'class': 'form-control-file', 'multiple': True})
+    self.fields['title_image'].widget.attrs.update({'class': 'form-control-file'})
+
+  def save(self, commit=True):
+    instance = super(NewsForm, self).save(commit=False)
+    if commit:
+      instance.save()
+      self.save_m2m()  # Сохраняем множественные связи (изображения)
+    return instance
+

@@ -1,0 +1,74 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <form action="{% url 'news_list' %}" style="display: inline; padding: 30px">
+    {% csrf_token %}
+    <button type="submit" style="margin-bottom: 10px" class="btn btn-primary">Ещё новости</button>
+  </form>
+  <div class="d-flex justify-content-center">
+    <div class="card" style="width: 1200px;">
+      <div class="card-body">
+        <form method="post">
+          <div class="d-flex">
+            <div class="me-4">
+              {% if news.title_image %}
+                <!-- Добавление ссылки, открывающей модальное окно с изображением при нажатии -->
+                <a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  <img src="{{ news.title_image.url }}" alt="{{ news.title }}" style="max-width: 500px;">
+                </a>
+              {% else %}
+                <p>Изображение отсутствует</p>
+              {% endif %}
+              <!-- Модальное окно для увеличенного изображения -->
+              <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                   aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
+                    <div class="modal-body">
+                      {% if news.title_image %}
+                        <img src="{{ news.title_image.url }}" alt="{{ news.title }}" class="img-fluid">
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Добавление изображений из связанной модели NewsImage -->
+            </div>
+            <div>
+              <h1>{{ news.title }}</h1>
+              <p class="card-text">{{ news.description }}</p>
+              <p class="card-text">Дата создания: {{ news.date_creation }}</p>
+              <p class="card-text">Автор: {{ news.worker }}</p>
+            </div>
+          </div>
+          {% if news.images.all %}
+            <div class="mt-4">
+              <h5>Дополнительные изображения:</h5>
+              <div class="row">
+                {% for image in news.images.all %}
+                  <div class="col-md-3" style="max-height: 300px; max-width: 300px">
+                    <!-- Добавление ссылки для открытия модального окна с увеличенной версией изображения -->
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageModal{{ forloop.counter }}">
+                      <img src="{{ image.image.url }}" alt="Изображение" class="img-fluid additional-image">
+                    </a>
+                    <!-- Модальное окно для дополнительных изображений -->
+                    <div class="modal fade" id="imageModal{{ forloop.counter }}" tabindex="-1"
+                         aria-labelledby="imageModalLabel{{ forloop.counter }}" aria-hidden="true">
+                      <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                          <div class="modal-body">
+                            <img src="{{ image.image.url }}" alt="Изображение" class="img-fluid">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

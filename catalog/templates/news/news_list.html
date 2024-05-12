@@ -1,0 +1,35 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <div class="container">
+    <h1>Список новостей</h1>
+    <div class="row">
+      {% for news in news_list %}
+        <div class="mb-4">
+          <div class="card">
+            <div class="row no-gutters">
+              <div class="col-md-4">
+                <!-- Вывод титульного изображения новости -->
+                {% if news.title_image %}
+                  <img src="{{ news.title_image.url }}" class="card-img" alt="Титульное изображение новости">
+                {% else %}
+                  <div class="text-center" style="height: 200px; background-color: #f8f9fa; display: flex; justify-content: center; align-items: center;">
+                    <p>Изображения нет</p>
+                  </div>
+                {% endif %}
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <h5 class="card-title">{{ news.title }}</h5>
+                  <p class="card-text">{{ news.description }}</p>
+                  <p class="card-text"><small class="text-muted">Автор:{{ news.worker }}</small></p>
+                  <p class="card-text"><small class="text-muted">Дата создания: {{ news.date_creation }}</small></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}

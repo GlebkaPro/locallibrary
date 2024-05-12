@@ -38,6 +38,9 @@
                   {% csrf_token %}
                   <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Вы уверены?')">Удалить</button>
                 </form>
+{#                {% if event.date_end > now %}#}
+                  <a href="{% url 'create_news' event_id=event.id %}" class="btn btn-sm btn-success">Создать новость</a>
+{#                {% endif %}#}
               </td>
             </tr>
           {% endfor %}

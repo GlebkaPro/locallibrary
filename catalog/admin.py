@@ -4,7 +4,7 @@ from django.contrib import admin
 
 from .models import Author, Book, BookInstance, Language, BookCopy, AcceptAct, PositionAcceptAct, Source, \
   FizPersonSource, BookExemplar, Publisher, Genre, DebitingAct, PositionDebitingAct, Event, PositionEvent, Request, \
-  History_of_appeals, AccountingBookCopy
+  History_of_appeals, AccountingBookCopy, News
 from users.models import User
 # Minimal registration of Models.
 admin.site.register(Book)
@@ -27,61 +27,4 @@ admin.site.register(PositionEvent)
 admin.site.register(Request)
 admin.site.register(History_of_appeals)
 admin.site.register(AccountingBookCopy)
-
-# admin.site.register(AuthorAdmin)
-#
-# class BooksInline(admin.TabularInline):
-#     """Определяет формат вставки онлайн-книги (используется в Author Admin)"""
-#     model = Book
-#
-#
-# class AuthorAdmin(admin.ModelAdmin):
-#     """Объект администрирования для авторских моделей.
-#         Определяет:
-#         - поля, которые будут отображаться в виде списка (list_display)
-#         - поля заказов в подробном представлении (fields),
-#           группирующие поля данных по горизонтали
-#       - - добавляет встроенное добавление книг в режиме просмотра автора (встроенные строки)
-#     """
-#     list_display = ('last_name',
-#                     'first_name', 'date_of_birth', 'date_of_death')
-#     fields = ['first_name', 'last_name', ('date_of_birth', 'date_of_death')]
-#     inlines = [BooksInline]
-#
-#
-# class BooksInstanceInline(admin.TabularInline):
-#     """Определяет формат вставки экземпляра онлайн-книги (используется в Book Admin)"""
-#     model = BookInstance
-#
-#
-# class BookAdmin(admin.ModelAdmin):
-#     """Объект администрирования для книжных моделей.
-#     Определяет:
-#     - поля, которые будут отображаться в виде списка (list_display)
-#     - - добавляет встроенное добавление экземпляров книги в режиме просмотра книги (встроенные строки)
-#     """
-#     list_display = ('title', 'author', 'display_genre')
-#     inlines = [BooksInstanceInline]
-#
-#
-# admin.site.register(Book, BookAdmin)
-#
-#
-# class BookInstanceAdmin(admin.ModelAdmin):
-#     """Объект администрирования для моделей BookInstance.
-#       Определяет:
-#       - поля, которые будут отображаться в виде списка (list_display)
-#       - фильтры, которые будут отображаться на боковой панели (list_filter)
-#       - группировка полей по разделам (fieldsets)
-#     """
-#     list_display = ('book', 'status', 'borrower', 'due_back', 'id')
-#     list_filter = ('status', 'due_back')
-#
-#     fieldsets = (
-#         (None, {
-#             'fields': ('book', 'imprint', 'id')
-#         }),
-#         ('Availability', {
-#             'fields': ('status', 'due_back', 'borrower')
-#         }),
-#     )
+admin.site.register(News)
