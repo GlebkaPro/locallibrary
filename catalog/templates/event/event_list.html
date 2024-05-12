@@ -9,6 +9,7 @@
         <table class="table table-bordered">
           <thead>
           <tr>
+            <th>№</th>
             <th>Наименование мероприятия</th>
             <th>Мест</th>
             <th>Дата начала</th>
@@ -23,6 +24,7 @@
           <tbody>
           {% for event in events %}
             <tr>
+              <td>{{ forloop.counter }}</td>
               <td>{{ event.event_name }}</td>
               <td>{{ event.number_of_participants }}</td>
               <td>{{ event.date_start |date:"d.m.Y" }}</td>

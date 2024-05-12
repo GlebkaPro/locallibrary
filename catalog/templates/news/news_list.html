@@ -9,21 +9,22 @@
           <div class="card">
             <div class="row no-gutters">
               <div class="col-md-4">
-                <!-- Вывод титульного изображения новости -->
-                {% if news.title_image %}
-                  <img src="{{ news.title_image.url }}" class="card-img" alt="Титульное изображение новости">
-                {% else %}
-                  <div class="text-center" style="height: 200px; background-color: #f8f9fa; display: flex; justify-content: center; align-items: center;">
-                    <p>Изображения нет</p>
-                  </div>
-                {% endif %}
+                  <a href="{% url 'news_detail' news_id=news.id %}">
+                    {% if news.title_image %}
+                      <img src="{{ news.title_image.url }}" class="img-fluid" alt="Титульное изображение">
+                    {% else %}
+                      <div class="text-center"
+                           style="height: 200px; background-color: #f8f9fa; display: flex; justify-content: center; align-items: center;">
+                        <p>Изображения нет</p>
+                      </div>
+                    {% endif %}
+                  </a>
               </div>
               <div class="col-md-8">
                 <div class="card-body">
                   <h5 class="card-title">{{ news.title }}</h5>
                   <p class="card-text">{{ news.description }}</p>
-                  <p class="card-text"><small class="text-muted">Автор:{{ news.worker }}</small></p>
-                  <p class="card-text"><small class="text-muted">Дата создания: {{ news.date_creation }}</small></p>
+                  <p class="card-text"><small class="text-muted">{{ news.date_creation }}, автор: {{ news.worker.last_name }} {{ news.worker.first_name|slice:":1" }}.{{ news.worker.middle_name|slice:":1" }}.</small></p>
                 </div>
               </div>
             </div>

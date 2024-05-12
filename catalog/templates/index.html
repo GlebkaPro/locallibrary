@@ -53,7 +53,8 @@
       </div>
       <div class="row g-5">
         <div class="col-md-8">
-          <h3 class="pb-4 mb-4 fst-italic border-bottom"><a href="{% url 'news_list' %}" class="nav-link" aria-current="page">Новости</a></h3>
+          <h3 class="pb-4 mb-4 fst-italic border-bottom"><a href="{% url 'news_list' %}" class="nav-link"
+                                                            aria-current="page">Новости</a></h3>
           <article class="blog-post">
             {% for news in latest_news %}
               <div class="row">
@@ -71,64 +72,56 @@
                 </div>
                 <div class="col-md-8">
                   <h2>{{ news.title }}</h2>
-                  <p>{{ news.description }}</p>
-                  <p class="blog-post-meta">{{ news.date_creation|date:"d F Y года" }}, автор: {{ news.worker }}</p>
+                  <p>{{ news.description|truncatewords_html:30 }}</p>
+                  <p class="blog-post-meta">{{ news.date_creation|date:"d F Y года" }},
+                    автор: {{ news.worker.last_name }} {{ news.worker.first_name|slice:":1" }}.{{ news.worker.middle_name|slice:":1" }}.</p>
+
                 </div>
               </div>
               <hr>
             {% endfor %}
-            <!-- Другой контент страницы -->
           </article>
-
-
           <article class="blog-post">
-            {#            <h2 class="display-5 link-body-emphasis mb-1">Подборка книг</h2>#}
-            {#            <p class="blog-post-meta">14 ноября 2023 года, автор: <a href="#">Библиотекарь</a></p>#}
+            {#                        <h2 class="display-5 link-body-emphasis mb-1">Подборка книг</h2>#}
+            {#                        <p class="blog-post-meta">14 ноября 2023 года, автор: <a href="#">Библиотекарь</a></p>#}
             {##}
-            {#            <p>Это дополнительный абзац с заполнителем контента. Он написан для заполнения доступного места и показа,#}
-            {#              как более длинный отрывок текста влияет на окружающий контент. Мы будем часто повторять его, чтобы#}
-            {#              продемонстрировать, как этот текст влияет на окружающий контент.</p>#}
-            {#            <blockquote>#}
-            {#              <p>Длинная цитата и, возможно, с некоторым <strong>выделенным текстом</strong> посередине.</p>#}
-            {#            </blockquote>#}
-            {#            <p>Это дополнительный абзац с заполнителем контента. Он написан для заполнения доступного места и показа,#}
-            {#              как более длинный отрывок текста влияет на окружающий контент. Мы будем часто повторять его, чтобы#}
-            {#              продемонстрировать, как этот текст влияет на окружающий контент.</p>#}
-            {#            <h3>Пример таблицы</h3>#}
-            {#            <p>И не забывайте о таблицах в этих постах:</p>#}
-            {#            <table class="table">#}
-            {#              <thead>#}
-            {#              <tr>#}
-            {#                <th>Имя</th>#}
-            {#                <th>Положительные голоса</th>#}
-            {#                <th>Отрицательные голоса</th>#}
-            {#              </tr>#}
-            {#              </thead>#}
-            {#              <tbody>#}
-            {#              <tr>#}
-            {#                <td>Алиса</td>#}
-            {#                <td>10</td>#}
-            {#                <td>11</td>#}
-            {#              </tr>#}
-            {#              <tr>#}
-            {#                <td>Боб</td>#}
-            {#                <td>4</td>#}
-            {#                <td>3</td>#}
-            {#              </tr>#}
-            {#              <tr>#}
-            {#                <td>Чарли</td>#}
-            {#                <td>7</td>#}
-            {#                <td>9</td>#}
-            {#              </tr>#}
-            {#              </tbody>#}
-            {#              <tfoot>#}
-            {#              <tr>#}
-            {#                <td>Итого</td>#}
-            {#                <td>21</td>#}
-            {#                <td>23</td>#}
-            {#              </tr>#}
-            {#              </tfoot>#}
-            {#            </table>#}
+            {#                        <p>Это дополнительный абзац с заполнителем контента. Он написан для заполнения доступного места и показа,#}
+            {#                          как более длинный отрывок текста влияет на окружающий контент. Мы будем часто повторять его, чтобы#}
+            {#                          продемонстрировать, как этот текст влияет на окружающий контент.</p>#}
+            {#                        <blockquote>#}
+            {#                          <p>Длинная цитата и, возможно, с некоторым <strong>выделенным текстом</strong> посередине.</p>#}
+            {#                        </blockquote>#}
+            {#                        <p>Это дополнительный абзац с заполнителем контента. Он написан для заполнения доступного места и показа,#}
+            {#                          как более длинный отрывок текста влияет на окружающий контент. Мы будем часто повторять его, чтобы#}
+            {#                          продемонстрировать, как этот текст влияет на окружающий контент.</p>#}
+            <h3>Пополнения в библиотеке</h3>
+            {#                        <p>И не забывайте о таблицах в этих постах:</p>#}
+
+            <table class="table">
+              <thead>
+              <tr>
+                <th>Название</th>
+                <th>Автор</th>
+                <th>Жанр</th>
+              </tr>
+              </thead>
+              <tbody>
+              {% for book_copy in latest_book_copies %}
+                <tr>
+                  <td><a href="{% url 'book-detail' pk=book_copy.book.pk %}">{{ book_copy.book.title }}</a></td>
+                  <td><a href="{% url 'author-detail' pk=book_copy.book.author.pk %}">{{ book_copy.book.author }}</a>
+                  </td>
+                  <td>
+                    {% for genre in book_copy.book.genre.all %}
+                      {{ genre.name }}
+                      {% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+
 
             {#            <p>Это дополнительный абзац заполнителя контента. Это немного более короткая версия другого очень#}
             {#              повторяющегося текста, используемого повсеместно.</p>#}

@@ -53,6 +53,7 @@
             <table class="table table-bordered">
               <thead>
               <tr>
+                <th>№</th>
                 <th>Фамилия И.О.</th>
                 <th>Логин</th>
                 <th>Название книги</th>
@@ -68,6 +69,7 @@
               {% for bookinst in bookinstance_list %}
                 <tr class="{% if bookinst.is_overdue %}text-danger{% endif %}
                     {% if bookinst.status == 'р' %}table-success{% elif bookinst.status == 'з' %}table-warning{% elif bookinst.status == 'д' %}table-info{% elif bookinst.status == 'о' %}table-danger{% endif %}">
+                              <td>{{ forloop.counter }}</td>
                   <td title="{{ bookinst.borrower.get_full_name }}">
                     <a href="{% url 'user-profile' bookinst.borrower.username %}">
                       {{ bookinst.borrower.last_name }} {{ bookinst.borrower.first_name|slice:":1" }}. {{ bookinst.borrower.middle_name|slice:":1" }}.

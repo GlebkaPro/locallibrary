@@ -13,6 +13,7 @@ urlpatterns = [
   path('add/language/', views.add_language, name='add-language'),
   path('create_book_exemplar/', views.create_book_exemplar, name='create_book_exemplar'),
   path('list_book_exemplar/', views.list_book_exemplar, name='list_book_exemplar'),
+  path('edit_book_exemplar/<int:pk>/', views.edit_book_exemplar, name='edit_book_exemplar'),
   path('list_publishers/', views.list_publishers, name='list_publishers'),
   path('create_publisher/', views.create_publisher, name='create_publisher'),
 ]

@@ -19,105 +19,108 @@
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 
 </head>
-{# тёмная тема ##}
-{#<body class="dark-theme">#}
 <body>
 <header class="d-flex flex-wrap justify-content-center py-3 sticky nav-bar">
-    <a href="/"
-       class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none link-color">
-      <svg class="bi me-2" width="40" height="32">
-        <use xlink:href="#bootstrap"></use>
-      </svg>
-      <span class="fs-4 link-color">Главная</span>
-    </a>
+  <a href="/"
+     class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none link-color">
+    <img src="{% static 'images/bookosphere.png' %}" alt="Bookosphere" width="40" height="32" class="me-2" style="margin-left: 28px">
+    <span class="fs-4 link-color">Главная</span>
+  </a>
 
-    <ul class="nav nav-pills">
-      {% if user.is_staff and perms.catalog.can_mark_returned %}
-        <div class="dropdown">
-          <button class="nav-link link-color border border-primary btn btn-secondary dropdown-toggle"
-                  style="margin-right: 10px" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown"
-                  aria-haspopup="true" aria-expanded="false">
-            Акты
-          </button>
-          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" href="{% url 'accept_act_list' %}">Акты приёма</a>
-            <a class="dropdown-item" href="{% url 'debiting_act_list' %}">Акты списания</a>
-          </div>
+
+  <ul class="nav nav-pills">
+
+    {#      <li class="nav-item" style="margin-right: 10px"><a href="{% url 'accept_act_list' %}" class="nav-link link-color border ">Акты приёма</a></li>#}
+    {#      <li class="nav-item" style="margin-right: 10px"><a href="{% url 'debiting_act_list' %}" class="nav-link link-color border ">Акты списания</a></li>#}
+    <li class="nav-item" style="margin-right: 10px"><a href="{% url 'books' %}" class="nav-link button-color"
+                                                       aria-current="page">Каталог</a></li>
+    <li class="nav-item" style="margin-right: 10px"><a href="{% url 'authors' %}" class="nav-link button-color"
+                                                       aria-current="page">Авторы</a></li>
+    <li class="nav-item" style="margin-right: 10px"><a href="{% url 'news_list' %}"
+                                                       class="nav-link button-color"
+                                                       aria-current="page">Новости</a>
+    <li class="nav-item" style="margin-right: 10px"><a href="{% url 'event_list_borrower' %}"
+                                                       class="nav-link button-color"
+                                                       aria-current="page">Мероприятия</a>
+    <li class="nav-item" style="margin-right: 10px"><a href="{% url 'request_list' %}"
+                                                       class="nav-link link-color border border-primary"
+                                                       aria-current="page">Заявки</a>
+    </li>
+    {% if user.is_staff and perms.catalog.can_mark_returned %}
+      <div class="dropdown">
+        <button class="nav-link link-color border border-primary btn btn-secondary dropdown-toggle"
+                style="margin-right: 10px" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+          Акты
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item" href="{% url 'accept_act_list' %}">Акты приёма</a>
+          <a class="dropdown-item" href="{% url 'debiting_act_list' %}">Акты списания</a>
         </div>
-      {% endif %}
-      {#      <li class="nav-item" style="margin-right: 10px"><a href="{% url 'accept_act_list' %}" class="nav-link link-color border ">Акты приёма</a></li>#}
-      {#      <li class="nav-item" style="margin-right: 10px"><a href="{% url 'debiting_act_list' %}" class="nav-link link-color border ">Акты списания</a></li>#}
-{#      <li class="nav-item" style="margin-right: 10px"><a href="{% url 'books' %}" class="nav-link button-color"#}
-{#                                                         aria-current="page">Каталог</a></li>#}
-{#      <li class="nav-item" style="margin-right: 10px"><a href="{% url 'authors' %}" class="nav-link button-color"#}
-{#                                                         aria-current="page">Авторы</a></li>#}
-      <li class="nav-item" style="margin-right: 10px"><a href="{% url 'event_list_borrower' %}"
-                                                         class="nav-link button-color"
-                                                         aria-current="page">Проводимые мероприятия</a>
-      <li class="nav-item" style="margin-right: 10px"><a href="{% url 'request_list' %}"
-                                                         class="nav-link button-color"
-                                                         aria-current="page">Заявки</a>      
-      <li class="nav-item" style="margin-right: 10px"><a href="{% url 'news_list' %}"
-                                                         class="nav-link button-color"
-                                                         aria-current="page">Новости</a>
-      </li>
-      {% if user.is_authenticated %}
-        {#        <li class="nav-item" style="margin-right: 10px"><a href="{% url 'my-borrowed' %}" class="nav-link link-color border ">Мои книги</a></li>#}
-        {#        <li class="nav-item" style="margin-right: 10px"><a href="{% url 'request_list' %}" class="nav-link link-color border ">Список заявок</a></li>#}
-      {% endif %}
-      {% if user.is_staff and perms.catalog.can_mark_returned %}
-        <li class="nav-item" style="margin-right: 10px"><a href="{% url 'all-borrowed' %}"
-                                                           class="nav-link link-color border border-primary">Все
-          выдачи</a></li>
-        <li class="nav-item" style="margin-right: 10px"><a href="{% url 'event_list' %}"
-                                                           class="nav-link link-color border border-primary">Все
-          мероприятия</a></li>
-        </li>
-        {#        <li class="nav-item" style="margin-right: 10px"><a href="{% url 'user_list' %}" class="nav-link link-color border border-primary">Все пользователи</a></li>#}
+      </div>
+    {% endif %}
+    {% if user.is_authenticated %}
+      {#        <li class="nav-item" style="margin-right: 10px"><a href="{% url 'my-borrowed' %}" class="nav-link link-color border ">Мои книги</a></li>#}
+      {#        <li class="nav-item" style="margin-right: 10px"><a href="{% url 'request_list' %}" class="nav-link link-color border ">Список заявок</a></li>#}
+    {% endif %}
+    {% if user.is_staff and perms.catalog.can_mark_returned %}
+      <li class="nav-item" style="margin-right: 10px"><a href="{% url 'all-borrowed' %}"
+                                                         class="nav-link link-color border border-primary">Все
+        выдачи</a></li>
+      <li class="nav-item" style="margin-right: 10px"><a href="{% url 'event_list' %}"
+                                                         class="nav-link link-color border border-primary">Все
+        мероприятия</a></li>
+      {#        <li class="nav-item" style="margin-right: 10px"><a href="{% url 'user_list' %}" class="nav-link link-color border border-primary">Все пользователи</a></li>#}
 
-        <div class="dropdown">
-          <button class="nav-link link-color border border-primary btn btn-secondary dropdown-toggle"
-                  style="margin-right: 10px" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown"
-                  aria-haspopup="true" aria-expanded="false">
-            Справочники
-          </button>
-          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" href="{% url 'books' %}">Каталог</a>
-            <a class="dropdown-item" href="{% url 'authors' %}">Авторы</a>
-            <a class="dropdown-item" href="{% url 'user_list' %}">Пользователи</a>
-            <a class="dropdown-item" href="{% url 'add-genre' %}">Жанры</a>
-            <a class="dropdown-item" href="{% url 'add-language' %}">Языки</a>
-            <a class="dropdown-item" href="{% url 'list_book_exemplar' %}">Экземпляры изданий</a>
-            <a class="dropdown-item" href="{% url 'list_publishers' %}">Издательства</a>
-            <a class="dropdown-item" href="{% url 'source_list' %}">Организации источники</a>
-            <a class="dropdown-item" href="{% url 'fiz_person_source_list' %}">Сотрудники организаций источников</a>
-            <a class="dropdown-item" href="{% url 'room_list' %}">Помещения</a>
-            <a class="dropdown-item" href="{% url 'type_room_list' %}">Типы мероприятия</a>
-
-          </div>
+      <div class="dropdown">
+        <button class="nav-link link-color border border-primary btn btn-secondary dropdown-toggle"
+                style="margin-right: 10px" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+          Справочники
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item" href="{% url 'books' %}">Каталог</a>
+          <a class="dropdown-item" href="{% url 'authors' %}">Авторы</a>
+          <a class="dropdown-item" href="{% url 'user_list' %}">Пользователи</a>
+          <a class="dropdown-item" href="{% url 'add-genre' %}">Жанры</a>
+          <a class="dropdown-item" href="{% url 'add-language' %}">Языки</a>
+          <a class="dropdown-item" href="{% url 'list_book_exemplar' %}">Экземпляры изданий</a>
+          <a class="dropdown-item" href="{% url 'list_publishers' %}">Издательства</a>
+          <a class="dropdown-item" href="{% url 'source_list' %}">Организации источники</a>
+          <a class="dropdown-item" href="{% url 'fiz_person_source_list' %}">Сотрудники организаций источников</a>
+          <a class="dropdown-item" href="{% url 'room_list' %}">Помещения</a>
+          <a class="dropdown-item" href="{% url 'type_room_list' %}">Типы мероприятия</a>
         </div>
+      </div>
 
-      {% endif %}
-      {#      <li class="nav-item"><a href="#" class="nav-link link-color">FAQs</a></li>#}
-      {#      <li class="nav-item"><a href="#" class="nav-link link-color">About</a></li>#}
-      {% if user.is_authenticated %}
-        {#        <li class="last"> <a href="{% url 'profile' %}">{{user.username}}</a>#}
-        <li class="nav-item" style="margin-right: 10px"><a href="{% url 'profile' %}" class="nav-link button-color"
-                                                           aria-current="page">Профиль</a></li>
-        {#        {{user.username}}#}
-        <form action="{% url 'logout' %}" method="post">
-          {% csrf_token %}
-          <button type="submit" class="nav-link button-color" style="margin-right: 28px" aria-current="page">Выход</button>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+      <li class="last">
+        <form action="{% url 'profile' %}" method="get">
+          <button type="submit" class="nav-link button-color" aria-current="page" style="margin-right: 10px">
+            <img src="{% static 'images/user_icon.png' %}" alt="User icon"
+                 style="height: 20px; vertical-align: middle;">
+            {{ user.last_name }} {{ user.first_name|slice:":1" }}.{% if user.middle_name %}
+            {{ user.middle_name|slice:":1" }}.{% endif %}
+          </button>
         </form>
-      {% else %}
-        <li class="nav-item" style="margin-right: 10px"><a href="{% url 'login' %}" class="nav-link button-color"
-                                                           aria-current="page">Вход</a></li>
-        <li class="nav-item" style="margin-right: 28px"><a href="{% url 'create_user' %}" class="nav-link button-color"
-                                                           aria-current="page">Регистрация</a>
-        </li>
-      {% endif %}
-    </ul>
-  </header>
+      </li>
+
+      <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="nav-link button-color" style="margin-right: 28px" aria-current="page">Выход
+        </button>
+      </form>
+    {% else %}
+      <li class="nav-item" style="margin-right: 10px"><a href="{% url 'login' %}" class="nav-link button-color"
+                                                         aria-current="page">Вход</a></li>
+      <li class="nav-item" style="margin-right: 28px"><a href="{% url 'create_user' %}" class="nav-link button-color"
+                                                         aria-current="page">Регистрация</a>
+      </li>
+    {% endif %}
+  </ul>
+</header>
 <div class="container base-container">
 
   <div class="row" style="margin: 0px 16px 16px;">

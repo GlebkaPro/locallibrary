@@ -55,6 +55,8 @@ class Book(models.Model):
   language = models.ForeignKey('Language', on_delete=models.SET_NULL, null=True)
   image = models.ImageField(upload_to='books/', blank=True, null=True)
 
+  def available_copies_count(self):
+    return self.bookcopy_set.filter(status='д').count()
   class Meta:
     ordering = ['title', 'author']
 
@@ -170,8 +172,6 @@ class Author(models.Model):
     return reverse('author-detail', args=[int(self.id)])
 
 
-
-
 class Source(models.Model):
   name = models.CharField(verbose_name='Наименование', max_length=100)
   address = models.CharField(verbose_name='Адрес', max_length=100)
@@ -188,7 +188,7 @@ class FizPersonSource(models.Model):
   source = models.ForeignKey('Source', on_delete=models.RESTRICT, null=True, verbose_name='Источник')
 
   def __str__(self):
-    return f"{self.last_name} - {self.source}"
+    return f"{self.source}"
 
 
 class AcceptAct(models.Model):
@@ -246,14 +246,17 @@ class BookExemplar(models.Model):
   book = models.ForeignKey('Book', on_delete=models.RESTRICT, null=True, verbose_name='Книга')
   publisher = models.ForeignKey('Publisher', on_delete=models.CASCADE, related_name='publisher',
                                 verbose_name='Издательство')
+  isbn = models.CharField('ISBN', max_length=20, blank=True, default='')
+  udc = models.CharField('УДК', max_length=20, blank=True, default='')
+  bbk = models.CharField('ББК', max_length=20, blank=True, default='')
 
   ACCEPT_publication_type = (
-    ('к', 'Книги'),
-    ('ж', 'Журналы'),
-    ('г', 'Газеты'),
-    ('э', 'Электронные ресурсы'),
-    ('м', 'Мультимедийные материалы'),
-    ('р', 'Реферативные издания'),
+    ('к', 'Книга'),
+    ('ж', 'Журнал'),
+    ('г', 'Газета'),
+    ('э', 'Электронный ресурс'),
+    ('м', 'Мультимедийный материал'),
+    ('р', 'Реферативное издание'),
     ('у', 'Учебники и учебные пособия'),
   )
 
@@ -261,7 +264,8 @@ class BookExemplar(models.Model):
     max_length=1, choices=ACCEPT_publication_type, blank=True, default='к', verbose_name='Тип издания')
 
   def __str__(self):
-    return f"{self.publisher} - {self.book} - {self.date_of_manufacture} "
+    formatted_date = self.date_of_manufacture.strftime("%d.%m.%y") if self.date_of_manufacture else ""
+    return f"{self.isbn} {self.udc} {self.bbk} | {self.book} | {formatted_date} "
 
 
 class Publisher(models.Model):
@@ -369,7 +373,8 @@ class Request(models.Model):
 
   class Meta:
     ordering = ['title', 'author']
-
+  def __str__(self):
+    return self.title
 
 class History_of_appeals(models.Model):
   title = models.CharField(max_length=200)

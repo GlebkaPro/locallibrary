@@ -6,28 +6,47 @@
     <a href="{% url 'create_book_exemplar' %}" class="btn btn-primary mb-3">Создать экземпляр</a>
 
     {% if book_exemplars %}
-      <table class="table">
+      <div class="card">
+      <div class="card-body">
+      <div class="table-responsive">
+      <table id="request-table" class="table table-bordered">
         <thead>
-          <tr>
-            <th>Книга</th>
-            <th>Издательство</th>
-            <th>Дата изготовления</th>
-            <th>Город издания</th>
-          </tr>
+        <tr>
+          <th>№</th>
+          <th>Книга</th>
+          <th>ISBN</th>
+          <th>ББК</th>
+          <th>УДК</th>
+          <th>Издательство</th>
+          <th>Дата изготовления</th>
+          <th>Город издания</th>
+          <th>Действия</th>
+
+        </tr>
         </thead>
         <tbody>
-          {% for book_exemplar in book_exemplars %}
-            <tr>
-              <td>{{ book_exemplar.book.title }}</td>
-              <td>{{ book_exemplar.publisher.name }}</td>
-              <td>{{ book_exemplar.date_of_manufacture }}</td>
-              <td>{{ book_exemplar.city_of_publication }}</td>
-            </tr>
-          {% endfor %}
+        {% for book_exemplar in book_exemplars %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ book_exemplar.book.title }}</td>
+            <td>{{ book_exemplar.isbn }}</td>
+            <td>{{ book_exemplar.udc }}</td>
+            <td>{{ book_exemplar.bbk }}</td>
+            <td>{{ book_exemplar.publisher.name }}</td>
+            <td>{{ book_exemplar.date_of_manufacture }}</td>
+            <td>{{ book_exemplar.city_of_publication }}</td>
+            <td>
+              <a href="{% url 'edit_book_exemplar' pk=book_exemplar.pk %}" class="btn btn-primary btn-sm">Редактировать</a>
+            </td>
+          </tr>
+        {% endfor %}
         </tbody>
       </table>
     {% else %}
       <p>Нет данных об экземплярах книг</p>
     {% endif %}
+    </div>
+    </div>
+    </div>
   </div>
 {% endblock %}

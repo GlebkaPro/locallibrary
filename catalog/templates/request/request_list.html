@@ -28,6 +28,7 @@
         <table id="request-table" class="table table-bordered">
           <thead>
           <tr>
+            <th>№</th>
             <th>Название</th>
             <th>Автор</th>
             <th>Описание</th>
@@ -41,6 +42,7 @@
           <tbody>
           {% for request in requests %}
             <tr>
+              <td>{{ forloop.counter }}</td>
               <td>{{ request.title }}</td>
               <td>{{ request.author }}</td>
               <td>{{ request.description|slice:":30" }}</td>
@@ -63,10 +65,10 @@
                   <form action="{% url 'accept_request' request_id=request.id %}" method="post"
                         style="display: inline;">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-success" onclick="return confirm('Вы уверены?')">Принять
+                    <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Вы уверены?')">Принять
                     </button>
                   </form>
-                  <a href="{% url 'reject_request' request_id=request.id %}" class="btn btn-danger">Отклонить</a>
+                  <a href="{% url 'reject_request' request_id=request.id %}" class="btn btn-sm btn-danger">Отклонить</a>
                 {% else %}
                   <span>Действия невозможны</span>
                 {% endif %}

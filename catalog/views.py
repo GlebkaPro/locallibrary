@@ -30,7 +30,7 @@ from .models import Book, BookInstance, Author, Genre, Language
 from .models import BookCopy
 from .models import BookExemplar
 from django.views import View
-
+from django.db.models import Max
 def index(request):
   """Функция представления для домашней страницы сайта."""
   # Генерация количества некоторых основных объектов
@@ -49,12 +49,15 @@ def index(request):
   # Отображение HTML-шаблона index.html с данными в переменной контекста.
   latest_events = Event.objects.order_by('-date_start')[:3]
   latest_news = News.objects.order_by('-date_creation')[:3]
+  latest_book_copies_ids = BookCopy.objects.values('book_id').annotate(max_id=Max('id')).order_by('-max_id')[:3]
+  latest_book_copies = BookCopy.objects.filter(id__in=[item['max_id'] for item in latest_book_copies_ids])
   return render(
     request,
     'index.html',
-    context={'latest_events': latest_events, 'latest_news': latest_news, 'num_books': num_books, 'num_instances': num_instances,
+    context={'latest_events': latest_events, 'latest_news': latest_news, 'num_books': num_books,
+             'num_instances': num_instances,
              'num_instances_available': num_instances_available, 'num_authors': num_authors,
-             'num_visits': num_visits},
+             'num_visits': num_visits, 'latest_book_copies': latest_book_copies},
   )
 
 from django.db.models import Q
@@ -93,24 +96,10 @@ class BookListView(generic.ListView):
         return context
 
 
-
-
-
-
-
-
 class BookDetailView(generic.DetailView):
   """Общий класс-представление для детальной информации о книге."""
   model = Book
   template_name = 'books/book_detail.html'
-  # def book_detail(request, book_id):
-  #   book = Book.objects.get(pk=book_id)
-  #
-  #   # Получаем количество копий с статусом 'д' для данной книги
-  #   available_copies = BookCopy.objects.filter(book=book, status='д').count()
-  #
-  #   return render(request, 'books/book_detail.html', {'book': book, 'available_copies': available_copies})
-
 
 class AuthorListView(generic.ListView):
   """Общий класс-представление для списка авторов."""
@@ -152,16 +141,6 @@ class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
     context = super().get_context_data(**kwargs)
     context['search_query'] = self.request.GET.get('search', '')
     return context
-
-
-  # def get_queryset(self):
-  #   status = self.request.GET.get('status', None)
-  #
-  #   if status is None:
-  #     status = ['р', 'з']  # Установите стандартное значение 'р, з'
-  #
-  #   return BookInstance.objects.filter(borrower=self.request.user, status__in=status).order_by('due_back')
-
 
 class LoanedBooksAllListView(PermissionRequiredMixin, generic.ListView):
   """Общий класс-представление для списка всех книг, взятых на аренду. Доступно только пользователям с разрешением can_mark_returned."""
@@ -1739,3 +1718,16 @@ def news_list(request):
 def news_detail(request, news_id):
   news = get_object_or_404(News, pk=news_id)
   return render(request, 'news/news_detail.html', {'news': news})
+
+
+def edit_book_exemplar(request, pk):
+  book_exemplar = BookExemplar.objects.get(pk=pk)
+  if request.method == 'POST':
+    form = BookExemplarForm(request.POST, instance=book_exemplar)
+    if form.is_valid():
+      form.save()
+      return redirect('list_book_exemplar')
+  else:
+    form = BookExemplarForm(instance=book_exemplar, initial={'date_of_manufacture': book_exemplar.date_of_manufacture})
+
+  return render(request, 'books/edit_book_exemplar.html', {'form': form})

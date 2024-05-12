@@ -4,7 +4,7 @@
   <div class="d-flex justify-content-center">
     <div class="card" style="padding: 20px; width: 800px;">
       <div class="card-body">
-        <h1>Создать экземпляр книги</h1>
+        <h1>Редактировать экземпляр книги</h1>
         <form method="post" action="">
           {% csrf_token %}
           <div class="row">
@@ -22,43 +22,44 @@
                   <span class="invalid-feedback">{{ form.book.errors }}</span>
                 {% endif %}
               </div>
-            <div class="mb-3">
-            <label for="{{ form.date_of_manufacture.id_for_label }}">Дата изготовления:</label>
-            <div class="input-group date">
-              <input type="date"
-                     class="form-control form-control {% if form.date_of_manufacture.errors %}is-invalid{% endif %}"
-                     id="{{ form.date_of_manufacture.id_for_label }}" name="{{ form.date_of_manufacture.name }}"
-                     value="{{ form.date_of_manufacture.value }}" style="max-width: 300px;">
-              <span class="input-group-addon">
-              <i class="glyphicon glyphicon-calendar"></i>
-            </span>
-            </div>
-            {% if form.date_of_manufacture.errors %}
-              <span class="invalid-feedback">{{ form.date_of_manufacture.errors }}</span>
-            {% endif %}
-          </div>
-          <div class="mb-3">
-            <label for="{{ form.city_of_publication.id_for_label }}">Город издания:</label>
-            <input type="text" class="form-control {% if form.city_of_publication.errors %}is-invalid{% endif %}"
-                   id="{{ form.city_of_publication.id_for_label }}" name="{{ form.city_of_publication.name }}"
-                   style="max-width: 300px;">
-            {% if form.city_of_publication.errors %}
-              <span class="invalid-feedback">{{ form.city_of_publication.errors }}</span>
-            {% endif %}
-          </div>
-          <div class="mb-3">
-            <label for="{{ form.publisher.id_for_label }}">Издательство:</label>
-            <select class="form-control {% if form.publisher.errors %}is-invalid{% endif %}"
-                    id="{{ form.publisher.id_for_label }}" name="{{ form.publisher.name }}" style="max-width: 300px;">
-              {% for publisher in form.publisher.field.queryset %}
-                <option value="{{ publisher.id }}"
-                        {% if form.publisher.value == publisher.id %}selected{% endif %}>{{ publisher.name }}</option>
-              {% endfor %}
-            </select>
-            {% if form.publisher.errors %}
-              <span class="invalid-feedback">{{ form.publisher.errors }}</span>
-            {% endif %}
-          </div>
+              <div class="mb-3">
+                <label for="{{ form.date_of_manufacture.id_for_label }}">Дата изготовления:</label>
+                <div class="input-group date">
+                  <input type="date"
+                         class="form-control form-control {% if form.date_of_manufacture.errors %}is-invalid{% endif %}"
+                         id="{{ form.date_of_manufacture.id_for_label }}" name="{{ form.date_of_manufacture.name }}"
+                         value="{{ form.instance.date_of_manufacture|date:'Y-m-d' }}" style="max-width: 300px;">
+                  <span class="input-group-addon">
+            <i class="glyphicon glyphicon-calendar"></i>
+        </span>
+                </div>
+                {% if form.date_of_manufacture.errors %}
+                  <span class="invalid-feedback">{{ form.date_of_manufacture.errors }}</span>
+                {% endif %}
+              </div>
+              <div class="mb-3">
+                <label for="{{ form.city_of_publication.id_for_label }}">Город издания:</label>
+                <input type="text" class="form-control {% if form.city_of_publication.errors %}is-invalid{% endif %}"
+                       id="{{ form.city_of_publication.id_for_label }}" name="{{ form.city_of_publication.name }}"
+                       style="max-width: 300px;" value="{{ form.city_of_publication.value }}">
+                {% if form.city_of_publication.errors %}
+                  <span class="invalid-feedback">{{ form.city_of_publication.errors }}</span>
+                {% endif %}
+              </div>
+              <div class="mb-3">
+                <label for="{{ form.publisher.id_for_label }}">Издательство:</label>
+                <select class="form-control {% if form.publisher.errors %}is-invalid{% endif %}"
+                        id="{{ form.publisher.id_for_label }}" name="{{ form.publisher.name }}"
+                        style="max-width: 300px;">
+                  {% for publisher in form.publisher.field.queryset %}
+                    <option value="{{ publisher.id }}"
+                            {% if form.publisher.value == publisher.id %}selected{% endif %}>{{ publisher.name }}</option>
+                  {% endfor %}
+                </select>
+                {% if form.publisher.errors %}
+                  <span class="invalid-feedback">{{ form.publisher.errors }}</span>
+                {% endif %}
+              </div>
             </div>
             <div class="col-md-6">
               <div class="mb-3">
@@ -78,7 +79,8 @@
               <div class="mb-3">
                 <label for="{{ form.isbn.id_for_label }}">ISBN:</label>
                 <input type="text" class="form-control {% if form.isbn.errors %}is-invalid{% endif %}"
-                       id="{{ form.isbn.id_for_label }}" name="{{ form.isbn.name }}" style="max-width: 300px;">
+                       id="{{ form.isbn.id_for_label }}" name="{{ form.isbn.name }}" style="max-width: 300px;"
+                       value="{{ form.isbn.value }}">
                 {% if form.isbn.errors %}
                   <span class="invalid-feedback">{{ form.isbn.errors }}</span>
                 {% endif %}
@@ -86,7 +88,8 @@
               <div class="mb-3">
                 <label for="{{ form.udc.id_for_label }}">УДК:</label>
                 <input type="text" class="form-control {% if form.udc.errors %}is-invalid{% endif %}"
-                       id="{{ form.udc.id_for_label }}" name="{{ form.udc.name }}" style="max-width: 300px;">
+                       id="{{ form.udc.id_for_label }}" name="{{ form.udc.name }}" style="max-width: 300px;"
+                       value="{{ form.udc.value }}">
                 {% if form.udc.errors %}
                   <span class="invalid-feedback">{{ form.udc.errors }}</span>
                 {% endif %}
@@ -94,16 +97,17 @@
               <div class="mb-3">
                 <label for="{{ form.bbk.id_for_label }}">ББК:</label>
                 <input type="text" class="form-control {% if form.bbk.errors %}is-invalid{% endif %}"
-                       id="{{ form.bbk.id_for_label }}" name="{{ form.bbk.name }}" style="max-width: 300px;">
+                       id="{{ form.bbk.id_for_label }}" name="{{ form.bbk.name }}" style="max-width: 300px;"
+                       value="{{ form.bbk.value }}">
                 {% if form.bbk.errors %}
                   <span class="invalid-feedback">{{ form.bbk.errors }}</span>
                 {% endif %}
               </div>
             </div>
           </div>
-          
+
           <div class="d-flex justify-content-between align-items-center mb-3 mt-3">
-            <button type="submit" class="btn btn-primary">Создать</button>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
           </div>
         </form>
       </div>

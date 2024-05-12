@@ -37,8 +37,7 @@
             <div>
               <h1>{{ news.title }}</h1>
               <p class="card-text">{{ news.description }}</p>
-              <p class="card-text">Дата создания: {{ news.date_creation }}</p>
-              <p class="card-text">Автор: {{ news.worker }}</p>
+                  <p class="card-text"><small class="text-muted">{{ news.date_creation }}, автор: {{ news.worker.last_name }} {{ news.worker.first_name|slice:":1" }}.{{ news.worker.middle_name|slice:":1" }}.</small></p>
             </div>
           </div>
           {% if news.images.all %}

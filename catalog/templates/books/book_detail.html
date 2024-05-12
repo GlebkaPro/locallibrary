@@ -13,9 +13,6 @@
               <form method="get" action="{% url 'delete-book' book_id=book.id %}">
                 <button type="submit" class="btn btn-danger">Удалить</button>
               </form>
-              {#      <form method="get" action="{% url 'create-book-copy' book_id=book.id %}">#}
-              {#        <button type="submit" class="btn btn-success">Создать экземпляр</button>#}
-              {#      </form>#}
             </div>
           {% endif %}
           <h0 class="card-title">Название: {{ book.title }}</h0>
@@ -32,19 +29,15 @@
               </div>
               <div class="text-container card-body order-last">
                 <p class="card-text"><strong>Описание: </strong>{{ book.summary }}</p>
-{#                <p class="card-text"><strong>ISBN: </strong>{{ book.isbn }}</p>#}
                 <p class="card-text"><strong>Язык: </strong>{{ book.language }}</p>
                 <p class="card-text"><strong>Жанр: </strong>{{ book.genre.all|join:", " }}</p>
-
               </div>
               <div class="text-container card-body order-last">
-                <h4>Доступно экземпляров (шт.): {{ book.bookcopy_set.all.count }}</h4>
-                <p class="card-text">Всего копий: {{ book.bookcopy_set.all.count }}</p>
-                {#                <p class="card-text">Копий доступно: {{ available_copies }}</p>#}
+                <p class="card-text">Всего копий (шт.): {{ book.bookcopy_set.all.count }}</p>
+                <p class="card-text">Доступно экземпляров (шт.): {{ book.available_copies_count }}</p>
                 <form method="get" action="{% url 'reserve-book' book_id=book.id %}">
-
                   {% if user.is_authenticated %}
-                    <button type="submit" class="btn btn-primary" style="margin: 8px">Зарезервировать книгу</button>
+                    <button type="submit" class="btn btn-primary" style="margin-top: 10px">Зарезервировать книгу</button>
                   {% endif %}
                   {% if messages %}
                     <ul class="messages">
@@ -75,10 +68,6 @@
                 <p
                   class="{% if copy.status == 'д' %}text-success{% elif copy.status == 'р' %}text-danger{% else %}text-warning{% endif %}">
                   <strong>Статус: </strong>{{ copy.get_status_display }}</p>
-                {#    <p>Штамп:{{ copy.imprint }}</p>#}
-                {#    {% if copy.status != 'д' %}#}
-                {#            <p><strong>Подлежит возврату:</strong> {{ copy.loan.due_back }}</p>#}
-                {#    {% endif %}#}
                 {% if user.is_staff %}
                   <p class="text-muted"><strong>Штамп:</strong> {{ copy.imprint }}</p>
                 {% endif %}
@@ -124,18 +113,3 @@
     }
   </style>
 {% endblock %}
-
-
-
-
-
-
-{#          {% if user.is_authenticated %}#}
-{##}
-{#          {% endif %}#}
-
-
-
-
-
-
