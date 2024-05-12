@@ -284,17 +284,33 @@ class AuthorDelete(PermissionRequiredMixin, DeleteView):
   template_name = 'authors/author_confirm_delete.html'  # Создайте шаблон подтверждения удаления автора
 
 
-class BookCreate(PermissionRequiredMixin, CreateView):
-  model = Book
-  fields = ['title', 'author', 'summary', 'isbn', 'genre', 'language']
-  permission_required = 'catalog.can_mark_returned'
+from django.views.generic.edit import CreateView
 
+class BookCreate(PermissionRequiredMixin, CreateView):
+    model = Book
+    fields = ['title', 'author', 'summary', 'isbn', 'genre', 'language']
+    permission_required = 'catalog.can_mark_returned'
+
+    def form_valid(self, form):
+        # Добавляем обработку множественного выбора жанров
+        self.object = form.save(commit=False)
+        form.instance.author = self.request.user
+        form.instance.save()
+        form.save_m2m()  # Сохраняем множественный выбор жанров
+        return super().form_valid(form)
 
 class BookUpdate(PermissionRequiredMixin, UpdateView):
   model = Book
   fields = ['title', 'author', 'summary', 'isbn', 'genre', 'language']
   permission_required = 'catalog.can_mark_returned'
 
+  def form_valid(self, form):
+    # Добавляем обработку множественного выбора жанров
+    self.object = form.save(commit=False)
+    form.instance.author = self.request.user
+    form.instance.save()
+    form.save_m2m()  # Сохраняем множественный выбор жанров
+    return super().form_valid(form)
 
 class BookDelete(PermissionRequiredMixin, DeleteView):
   model = Book

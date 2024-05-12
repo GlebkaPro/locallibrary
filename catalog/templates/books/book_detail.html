@@ -1,91 +1,95 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <div class="container">
-    {% if user.is_staff %}
-      <div style="display: flex; gap: 8px; margin-top: 8px; margin-bottom: 8px;">
-        <form method="get" action="{% url 'edit-book' book_id=book.id %}">
-          <button type="submit" class="btn btn-primary">Редактировать</button>
-        </form>
-        <form method="get" action="{% url 'delete-book' book_id=book.id %}">
-          <button type="submit" class="btn btn-danger">Удалить</button>
-        </form>
-        {#      <form method="get" action="{% url 'create-book-copy' book_id=book.id %}">#}
-        {#        <button type="submit" class="btn btn-success">Создать экземпляр</button>#}
-        {#      </form>#}
-      </div>
-    {% endif %}
-      <h0 class="card-title">Название: {{ book.title }}</h0>
-    <h5><a href="{{ book.author.get_absolute_url }}">{{ book.author.last_name }} {{ book.author.first_name }} {{ book.author.middle_name }}</a></h5>
-  
-  
-    <div class="book-info card">
-    <div class="d-flex flex-row">
-        <div class="image-container order-first">
-          {% if book.image %}
-            <img src="{{ book.image.url }}" class="card-img-top img-fluid" alt="Book Image"
-                 style="width: 300px; height: 100%;">
+  <div class="d-flex justify-content-center">
+    <div class="card">
+      <div class="card-body">
+        <div class="container">
+          {% if user.is_staff %}
+            <div style="display: flex; gap: 8px; margin-top: 8px; margin-bottom: 8px;">
+              <form method="get" action="{% url 'edit-book' book_id=book.id %}">
+                <button type="submit" class="btn btn-primary">Редактировать</button>
+              </form>
+              <form method="get" action="{% url 'delete-book' book_id=book.id %}">
+                <button type="submit" class="btn btn-danger">Удалить</button>
+              </form>
+              {#      <form method="get" action="{% url 'create-book-copy' book_id=book.id %}">#}
+              {#        <button type="submit" class="btn btn-success">Создать экземпляр</button>#}
+              {#      </form>#}
+            </div>
           {% endif %}
-        </div>
-        <div class="text-container card-body order-last">
-          <p class="card-text">Описание: {{ book.summary }}</p>
-          <p class="card-text">ISBN: {{ book.isbn }}</p>
-          <p class="card-text">Язык: {{ book.language }}</p>
-          <p class="card-text">Жанр: {{ book.genre.all|join:", " }}</p>
-          
-        </div>
-      <div class="text-container card-body order-last">
-        <div class="card" style="height: 100%">
-          <h4>Доступно экземпляров (шт.): {{ book.bookcopy_set.all.count }}</h4>
-          <p class="card-text">Всего копий: {{ book.bookcopy_set.all.count }}</p>
-          {#                <p class="card-text">Копий доступно: {{ available_copies }}</p>#}
-          <form method="get" action="{% url 'reserve-book' book_id=book.id %}">
+          <h0 class="card-title">Название: {{ book.title }}</h0>
+          <h5><a
+            href="{{ book.author.get_absolute_url }}">{{ book.author.last_name }} {{ book.author.first_name }} {{ book.author.middle_name }}</a>
+          </h5>
+          <div class="book-info card">
+            <div class="d-flex flex-row">
+              <div class="image-container order-first">
+                {% if book.image %}
+                  <img src="{{ book.image.url }}" class="card-img-top img-fluid" alt="Book Image"
+                       style="width: 300px; height: 100%;">
+                {% endif %}
+              </div>
+              <div class="text-container card-body order-last">
+                <p class="card-text"><strong>Описание: </strong>{{ book.summary }}</p>
+{#                <p class="card-text"><strong>ISBN: </strong>{{ book.isbn }}</p>#}
+                <p class="card-text"><strong>Язык: </strong>{{ book.language }}</p>
+                <p class="card-text"><strong>Жанр: </strong>{{ book.genre.all|join:", " }}</p>
 
-            {% if user.is_authenticated %}
-              <button type="submit" class="btn btn-primary" style="margin: 8px">Зарезервировать книгу</button>
+              </div>
+              <div class="text-container card-body order-last">
+                <h4>Доступно экземпляров (шт.): {{ book.bookcopy_set.all.count }}</h4>
+                <p class="card-text">Всего копий: {{ book.bookcopy_set.all.count }}</p>
+                {#                <p class="card-text">Копий доступно: {{ available_copies }}</p>#}
+                <form method="get" action="{% url 'reserve-book' book_id=book.id %}">
+
+                  {% if user.is_authenticated %}
+                    <button type="submit" class="btn btn-primary" style="margin: 8px">Зарезервировать книгу</button>
+                  {% endif %}
+                  {% if messages %}
+                    <ul class="messages">
+                      {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                          {% if message.tags == 'success' %}
+                            <div class="alert alert-success" role="alert">{{ message }}</div>
+                          {% elif message.tags == 'error' %}
+                            <div class="alert alert-danger" role="alert">{{ message }}</div>
+                          {% else %}
+                            {{ message }}
+                          {% endif %}
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </form>
+              </div>
+
+            </div>
+          </div>
+          <div class="card" style="margin-top: 16px">
+            {% if user.is_staff %}
+              <h4>Статусы экземпляров:</h4>
+              {% for copy in book.bookcopy_set.all %}
+                <hr>
+                <h5>№ {{ forloop.counter }}</h5>
+                <p
+                  class="{% if copy.status == 'д' %}text-success{% elif copy.status == 'р' %}text-danger{% else %}text-warning{% endif %}">
+                  <strong>Статус: </strong>{{ copy.get_status_display }}</p>
+                {#    <p>Штамп:{{ copy.imprint }}</p>#}
+                {#    {% if copy.status != 'д' %}#}
+                {#            <p><strong>Подлежит возврату:</strong> {{ copy.loan.due_back }}</p>#}
+                {#    {% endif %}#}
+                {% if user.is_staff %}
+                  <p class="text-muted"><strong>Штамп:</strong> {{ copy.imprint }}</p>
+                {% endif %}
+              {% endfor %}
+              </div>
+              </div>
+              </div>
+              </div>
+              </div>
             {% endif %}
-            {% if messages %}
-              <ul class="messages">
-                {% for message in messages %}
-                  <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
-                    {% if message.tags == 'success' %}
-                      <div class="alert alert-success" role="alert">{{ message }}</div>
-                    {% elif message.tags == 'error' %}
-                      <div class="alert alert-danger" role="alert">{{ message }}</div>
-                    {% else %}
-                      {{ message }}
-                    {% endif %}
-                  </li>
-                {% endfor %}
-              </ul>
-            {% endif %}
-          </form>
-        </div>
-        
-      </div>
-      </div>
-      <div class="card" style="margin-top: 16px">
-      {% if user.is_staff %}
-      <h4>Статусы экземпляров:</h4>
-      {% for copy in book.bookcopy_set.all %}
-        <hr>
-        <h5>№ {{ forloop.counter }}</h5>
-        <p
-          class="{% if copy.status == 'д' %}text-success{% elif copy.status == 'р' %}text-danger{% else %}text-warning{% endif %}">
-          <strong>Статус: </strong>{{ copy.get_status_display }}</p>
-        {#    <p>Штамп:{{ copy.imprint }}</p>#}
-        {#    {% if copy.status != 'д' %}#}
-        {#            <p><strong>Подлежит возврату:</strong> {{ copy.loan.due_back }}</p>#}
-        {#    {% endif %}#}
-        {% if user.is_staff %}
-          <p class="text-muted"><strong>Штамп:</strong> {{ copy.imprint }}</p>
-        {% endif %}
-      {% endfor %}
-    </div>
-  </div>
-{% endif %}
-      </div>
-    
+
   <style>
     .book-info {
       display: flex;

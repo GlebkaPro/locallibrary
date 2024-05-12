@@ -1,27 +1,32 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-<div class="container">
-<h1>Писатель: {{ author.last_name }} {{ author.first_name }}
-{% if author.middle_name %}{{ author.middle_name }}{% endif %} </h1>
-<p>{{author.date_of_birth}} - {% if author.date_of_death %}{{author.date_of_death}}{% endif %}</p>
-      {% if user.is_staff and perms.catalog.can_mark_returned %}
-        <a class="btn btn-primary" href="{% url 'author-update' author.pk %}">Редактировать</a>
-        <form method="post" action="{% url 'author-delete' author.pk %}" style="display: inline;">
-      {% csrf_token %}
-        <button type="submit" class="btn btn-danger">Удалить</button>
-      </form>
-      {% endif %}
-<div style="margin-left:20px;margin-top:20px">
-<h4>Книги автора:</h4>
-<dl>
-{% for book in author.book_set.all %}
-  <dt><a href="{% url 'book-detail' book.pk %}">{{book}}</a> ({{book.bookcopy_set.all.count}})</dt>
-  <dd>{{book.summary}}</dd>
-{% endfor %}
-</dl>
-
-</div>
-</div>
+  <div class="card">
+    <div class="card-body">
+      <div class="container">
+        <div class="container">
+          <h1>Писатель: {{ author.last_name }} {{ author.first_name }}
+            {% if author.middle_name %}{{ author.middle_name }}{% endif %} </h1>
+          <p>{{ author.date_of_birth }} - {% if author.date_of_death %}{{ author.date_of_death }}{% endif %}</p>
+          {% if user.is_staff and perms.catalog.can_mark_returned %}
+            <a class="btn btn-primary" href="{% url 'author-update' author.pk %}">Редактировать</a>
+            <form method="post" action="{% url 'author-delete' author.pk %}" style="display: inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Удалить</button>
+            </form>
+          {% endif %}
+          <div style="margin-left:20px;margin-top:20px">
+            <h4>Книги автора:</h4>
+            <dl>
+              {% for book in author.book_set.all %}
+                <dt><a href="{% url 'book-detail' book.pk %}">{{ book }}</a> ({{ book.bookcopy_set.all.count }})</dt>
+                <dd>{{ book.summary }}</dd>
+              {% endfor %}
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}
 

@@ -36,14 +36,15 @@
       </div>
       <div class="form-group">
         <label for="{{ form.genre.id_for_label }}">Жанр</label>
-        <select class="form-select" id="{{ form.genre.id_for_label }}" name="{{ form.genre.name }}"
+        <select class="form-select" id="{{ form.genre.id_for_label }}" name="{{ form.genre.name }}" multiple
                 style="max-width: 200px;">
-          <option value="">Выберите жанр</option>
+          <option value="">Выберите жанры</option>
           {% for genre in form.genre.field.queryset %}
-            <option value="{{ genre.id }}" {% if genre.id == form.genre.value %}selected{% endif %}>{{ genre }}</option>
+            <option value="{{ genre.id }}" {% if genre in form.genre.value %}selected{% endif %}>{{ genre }}</option>
           {% endfor %}
         </select>
       </div>
+
       <div class="form-group">
         <label for="{{ form.language.id_for_label }}">Язык</label>
         <select class="form-select" id="{{ form.language.id_for_label }}" name="{{ form.language.name }}"
