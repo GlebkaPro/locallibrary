@@ -235,22 +235,29 @@ class AuthorCreate(PermissionRequiredMixin, CreateView):
   permission_required = 'catalog.can_mark_returned'
 
 
-class AuthorUpdate(PermissionRequiredMixin, UpdateView):
-  model = Author
-  fields = '__all__'  # Не рекомендуется (потенциальная проблема безопасности, если добавляются новые поля)
-  permission_required = 'catalog.can_mark_returned'
-  template_name = 'authors/author_edit.html'
-  success_url = reverse_lazy('authors')  # URL для перенаправления после успешного редактирования автора
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.views.generic.edit import UpdateView
+from .models import Author
+from .forms import AuthorForm
 
-  def get_initial(self):
-    initial = super(AuthorUpdate, self).get_initial()
-    author = self.get_object()
-    initial['first_name'] = author.first_name
-    initial['last_name'] = author.last_name
-    initial['middle_name'] = author.middle_name  # Установите начальное значение для "Отчество"
-    initial['date_of_birth'] = author.date_of_birth
-    initial['date_of_death'] = author.date_of_death
-    return initial
+class AuthorUpdate(PermissionRequiredMixin, UpdateView):
+    model = Author
+    form_class = AuthorForm  # Используем кастомную форму
+    permission_required = 'catalog.can_mark_returned'
+    template_name = 'authors/author_edit.html'
+    success_url = reverse_lazy('authors')
+
+    def get_initial(self):
+        initial = super(AuthorUpdate, self).get_initial()
+        author = self.get_object()
+        initial['first_name'] = author.first_name
+        initial['last_name'] = author.last_name
+        initial['middle_name'] = author.middle_name
+        initial['date_of_birth'] = author.date_of_birth
+        initial['date_of_death'] = author.date_of_death
+        return initial
+
 
 
 class AuthorDelete(PermissionRequiredMixin, DeleteView):

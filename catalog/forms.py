@@ -1,12 +1,13 @@
+import datetime
+
+from django import forms
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm
+from django.core.exceptions import ValidationError
 from django.forms import DateInput
 from django.utils.translation import gettext_lazy as _
-import datetime
-from .models import Book, Author, BookCopy, BookInstance, Genre, Language, BookExemplar, AccountingBookCopy, Source, \
-  History_of_appeals
-from django.core.exceptions import ValidationError
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
+
+from .models import Book, BookCopy, BookInstance, Genre, Language, BookExemplar, AccountingBookCopy, History_of_appeals
 
 
 class RenewBookForm(forms.ModelForm):
@@ -128,10 +129,14 @@ class EditBookForm(forms.ModelForm):
     fields = ['title', 'author', 'summary', 'isbn', 'genre', 'language', 'image']
 
 
+from django import forms
+from .models import Author
+
 class AuthorForm(forms.ModelForm):
-  class Meta:
-    model = Author
-    fields = ['first_name', 'last_name', 'middle_name', 'date_of_birth', 'date_of_death']
+    class Meta:
+        model = Author
+        fields = ['first_name', 'last_name', 'middle_name', 'date_of_birth', 'date_of_death', 'image']
+
 
 
 class ProfileUserForm(forms.ModelForm):
@@ -307,8 +312,6 @@ class ParticipantForm(forms.ModelForm):
         fields = ['borrower', 'status_record']  # Перечислите поля для добавления участника
 
 # forms.py
-from django import forms
-from .models import Request
 
 from django import forms
 from .models import Request

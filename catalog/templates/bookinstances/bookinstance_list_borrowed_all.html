@@ -4,10 +4,10 @@
   <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h1>Все выдачи</h1>
-      <form action="{% url 'change-status-to-overdue' %}" method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger my-3">Проверить просроченные</button>
-      </form>
+{#      <form action="{% url 'change-status-to-overdue' %}" method="post">#}
+{#        {% csrf_token %}#}
+{#        <button type="submit" class="btn btn-danger my-3">Проверить просроченные</button>#}
+{#      </form>#}
       <a class="btn btn-success my-3" href="{% url 'add-bookinstance' %}">Выдать книгу</a>
     </div>
     <form method="GET" action="{% url 'all-borrowed' %}">

@@ -161,6 +161,8 @@ class Author(models.Model):
   middle_name = models.CharField(verbose_name='Отчество', null=True, max_length=100)
   date_of_birth = models.DateField('Дата рождения', null=True, blank=True)
   date_of_death = models.DateField('Дата смерти', null=True, blank=True)
+  image = models.ImageField(upload_to='authors/', null=True, blank=True, verbose_name='Изображение')
+
   def __str__(self):
     """Строка для представления объекта модели."""
     return '{0} {1} {2}'.format(self.last_name, self.first_name, self.middle_name)
