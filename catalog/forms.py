@@ -129,10 +129,6 @@ class EditBookForm(forms.ModelForm):
 
 
 class AuthorForm(forms.ModelForm):
-  # this_year = datetime.date.today().year
-  # date_of_birth = forms.DateField(widget=forms.SelectDateWidget(years=tuple(range(this_year - 1000, this_year - 5))), required=False)
-  # date_of_death = forms.DateField(widget=forms.SelectDateWidget(years=tuple(range(this_year - 1000, this_year - 5))),
-  #                                 required=False)
   class Meta:
     model = Author
     fields = ['first_name', 'last_name', 'middle_name', 'date_of_birth', 'date_of_death']

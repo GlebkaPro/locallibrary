@@ -6,55 +6,56 @@
     <main class="container">
       <div class="p-4 p-md-5 mb-4 rounded text-body-emphasis bg-body-secondary"
            style="background: url('{% static 'images/123.jpg' %}'); background-size: 100%">
-        <div class="col-lg-7 px-0 for-text" style="">
+        <div class="col-lg-8 px-0 for-text" style="">
           <div style="padding: 10px">
-            <h1 class="display-4 fst-italic">Библиотека: Книгосфера </h1>
-            <p class="lead my-3">Добро пожаловать на наш сайт, сейчас вы находитесь на главной странице</p>
+            <h1 class="display-4 fst-italic"><strong>Библиотека: Книгосфера</strong></h1>
+            <p class="lead my-3"><strong>Добро пожаловать на наш сайт, сейчас вы находитесь на главной странице</strong>
+            </p>
           </div>
         </div>
       </div>
-      <div class="row mb-2">
-        <div class="col-md-6">
-          <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm position-relative">
-            <div class="col p-4 d-flex flex-column position-static">
-              <strong class="d-inline-block mb-2 text-primary-emphasis">Мир литературы</strong>
-              <h3 class="mb-0">Избранная публикация</h3>
-              <div class="mb-1 text-body-secondary">12 ноября</div>
-              <p class="card-text mb-auto">С гордостью представляем вам нашу новую книгу. Узнайте больше о ней и
-                отправьтесь в захватывающее путешествие в мир слов.</p>
-              <a href="#" class="icon-link icon-link-hover stretched-link">
-                Продолжить чтение
-              </a>
-            </div>
-            <div class="col-auto d-none d-lg-block">
-              <img class="bd-placeholder-img" src="{% static 'images/1-original.png' %}" width="200" height="100%"
-                   role="img" aria-label="Заполнитель: Эскиз">
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm position-relative">
-            <div class="col p-4 d-flex flex-column position-static">
-              <strong class="d-inline-block mb-2 text-success-emphasis">Литературный дизайн</strong>
-              <h3 class="mb-0">Заголовок публикации</h3>
-              <div class="mb-1 text-body-secondary">11 ноября</div>
-              <p class="mb-auto">Узнайте больше о творчестве наших авторов и их удивительных произведениях. Погрузитесь
-                в мир искусства и вдохновения.</p>
-              <a href="#" class="icon-link icon-link-hover stretched-link">
-                Продолжить чтение
-              </a>
-            </div>
-            <div class="col-auto d-none d-lg-block">
-              <img class="bd-placeholder-img" src="{% static 'images/IMG-20210609-WA0014.jpg' %}" width="200"
-                   height="100%" role="img" aria-label="Заполнитель: Эскиз">
-            </div>
-          </div>
-        </div>
-      </div>
+      {#      <div class="row mb-2">#}
+      {#        <div class="col-md-6">#}
+      {#          <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm position-relative">#}
+      {#            <div class="col p-4 d-flex flex-column position-static">#}
+      {#              <strong class="d-inline-block mb-2 text-primary-emphasis">Мир литературы</strong>#}
+      {#              <h3 class="mb-0">Избранная публикация</h3>#}
+      {#              <div class="mb-1 text-body-secondary">12 ноября</div>#}
+      {#              <p class="card-text mb-auto">С гордостью представляем вам нашу новую книгу. Узнайте больше о ней и#}
+      {#                отправьтесь в захватывающее путешествие в мир слов.</p>#}
+      {#              <a href="#" class="icon-link icon-link-hover stretched-link">#}
+      {#                Продолжить чтение#}
+      {#              </a>#}
+      {#            </div>#}
+      {#            <div class="col-auto d-none d-lg-block">#}
+      {#              <img class="bd-placeholder-img" src="{% static 'images/1-original.png' %}" width="200" height="100%"#}
+      {#                   role="img" aria-label="Заполнитель: Эскиз">#}
+      {#            </div>#}
+      {#          </div>#}
+      {#        </div>#}
+      {#        <div class="col-md-6">#}
+      {#          <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm position-relative">#}
+      {#            <div class="col p-4 d-flex flex-column position-static">#}
+      {#              <strong class="d-inline-block mb-2 text-success-emphasis">Литературный дизайн</strong>#}
+      {#              <h3 class="mb-0">Заголовок публикации</h3>#}
+      {#              <div class="mb-1 text-body-secondary">11 ноября</div>#}
+      {#              <p class="mb-auto">Узнайте больше о творчестве наших авторов и их удивительных произведениях. Погрузитесь#}
+      {#                в мир искусства и вдохновения.</p>#}
+      {#              <a href="#" class="icon-link icon-link-hover stretched-link">#}
+      {#                Продолжить чтение#}
+      {#              </a>#}
+      {#            </div>#}
+      {#            <div class="col-auto d-none d-lg-block">#}
+      {#              <img class="bd-placeholder-img" src="{% static 'images/IMG-20210609-WA0014.jpg' %}" width="200"#}
+      {#                   height="100%" role="img" aria-label="Заполнитель: Эскиз">#}
+      {#            </div>#}
+      {#          </div>#}
+      {#        </div>#}
+      {#      </div>#}
       <div class="row g-5">
         <div class="col-md-8">
-          <h3 class="pb-4 mb-4 fst-italic border-bottom"><a href="{% url 'news_list' %}" class="nav-link"
-                                                            aria-current="page">Новости</a></h3>
+          <h2 class="pb-4 mb-4 fst-italic border-bottom"><a href="{% url 'news_list' %}" class="nav-link"
+                                                            aria-current="page">Новости</a></h2>
           <article class="blog-post">
             {% for news in latest_news %}
               <div class="row">
@@ -75,7 +76,6 @@
                   <p>{{ news.description|truncatewords_html:30 }}</p>
                   <p class="blog-post-meta">{{ news.date_creation|date:"d F Y года" }},
                     автор: {{ news.worker.last_name }} {{ news.worker.first_name|slice:":1" }}.{{ news.worker.middle_name|slice:":1" }}.</p>
-
                 </div>
               </div>
               <hr>
@@ -94,7 +94,7 @@
             {#                        <p>Это дополнительный абзац с заполнителем контента. Он написан для заполнения доступного места и показа,#}
             {#                          как более длинный отрывок текста влияет на окружающий контент. Мы будем часто повторять его, чтобы#}
             {#                          продемонстрировать, как этот текст влияет на окружающий контент.</p>#}
-            <h3>Пополнения в библиотеке</h3>
+            <h3>Новые пополнения в фонде библиотеки</h3>
             {#                        <p>И не забывайте о таблицах в этих постах:</p>#}
 
             <table class="table">
@@ -113,8 +113,7 @@
                   </td>
                   <td>
                     {% for genre in book_copy.book.genre.all %}
-                      {{ genre.name }}
-                      {% if not forloop.last %}, {% endif %}
+                      {{ genre.name }}{% if not forloop.last %},{% endif %}
                     {% endfor %}
                   </td>
                 </tr>
@@ -146,7 +145,7 @@
           {#          <nav class="blog-pagination" aria-label="Навигация">#}
           {#            <a class="btn btn-outline-primary rounded-pill" href="#">Старые записи</a>#}
           {#            <a class="btn btn-outline-secondary rounded-pill disabled">Новые записи</a>#}
-          </nav>
+{#          </nav>#}
         </div>
 
         <div class="col-md-4">
@@ -154,7 +153,7 @@
             <div class="p-4 mb-3 bg-body-tertiary rounded">
               <h4 class="fst-italic">О нас</h4>
               <p class="mb-0">Библиотека, основана в 1801 году, с широким ассортиментом книг, периодических изданий и
-                электронных ресурсов. Мы предлагаем услуги по выдаче и возврату книг, а также доступ к коллекции редких
+                электронных ресурсов. Мы предлагаем услуги по выдаче книг, а также доступ к коллекции редких
                 и антикварных изданий. Наша миссия - обеспечение равного доступа к знаниям и информации для всех
                 граждан.</p>
             </div>

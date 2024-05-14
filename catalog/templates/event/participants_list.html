@@ -9,6 +9,7 @@
   <table class="table table-bordered">
     <thead>
     <tr>
+      <th>№</th>
       <th>Участник</th>
       <th>Дата регистрации</th>
       <th>Статус записи</th>
@@ -18,6 +19,7 @@
     <tbody>
     {% for participant in participants %}
       <tr>
+        <td>{{ forloop.counter }}</td>
         <td>{{ participant.borrower.last_name }} {{ participant.borrower.first_name }} {{ participant.borrower.middle_name }}</td>
         <td>{{ participant.date_record }}</td>
         <td>{{ participant.get_status_record_display }}</td>

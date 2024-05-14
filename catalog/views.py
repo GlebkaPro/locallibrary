@@ -1,36 +1,30 @@
 from datetime import date
-from uuid import UUID
 
-from django.contrib import messages
-from django.contrib.auth import login, get_user_model
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.db.models import Q
+from django.db.models import Max
 from django.forms import formset_factory
 from django.http import Http404
-from django.urls import reverse
 from django.urls import reverse_lazy
-from django.utils import timezone
 from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.views import View
-from django.shortcuts import redirect, get_object_or_404
+
 from catalog.forms import RenewBookForm, BookInstanceEditForm, GenreForm, LanguageForm, PositionDebitingActForm, \
-  ParticipantForm, AppealForm
+  ParticipantForm
 from users.models import User
 from .forms import AcceptActForm
 from .forms import AccountingBookCopyForm, BookCopyForm
 from .forms import BookExemplarForm
 from .forms import PositionAcceptActFormSet
-from .forms import UserRegistrationForm, BookInstanceForm, AddBookForm, EditBookForm, AuthorForm, \
-  ProfileUserForm
-from .models import AcceptAct, FizPersonSource, NewsImage
+from .forms import UserRegistrationForm, BookInstanceForm, AddBookForm, EditBookForm, AuthorForm
 from .models import Book, BookInstance, Author, Genre, Language
 from .models import BookCopy
 from .models import BookExemplar
-from django.views import View
-from django.db.models import Max
+from .models import NewsImage
+
+
 def index(request):
   """Функция представления для домашней страницы сайта."""
   # Генерация количества некоторых основных объектов
@@ -142,14 +136,28 @@ class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
     context['search_query'] = self.request.GET.get('search', '')
     return context
 
+
+def change_status_to_overdue():
+  overdue_instances = BookInstance.objects.filter(status='р').filter(
+    (Q(due_back__lt=date.today()) & Q(renewal_date__isnull=True)) |
+    (Q(renewal_date__lt=date.today()) & Q(renewal_date__isnull=False))
+  )
+  print(overdue_instances)
+  for overdue_instance in overdue_instances:
+    overdue_instance.status = 'о'
+    overdue_instance.save()
+
+
 class LoanedBooksAllListView(PermissionRequiredMixin, generic.ListView):
   """Общий класс-представление для списка всех книг, взятых на аренду. Доступно только пользователям с разрешением can_mark_returned."""
+  change_status_to_overdue()
+
   model = BookInstance
   permission_required = 'catalog.can_mark_returned'
   template_name = 'bookinstances/bookinstance_list_borrowed_all.html'
   paginate_by = 20
 
-  from django.utils import timezone
+
 
   def get_queryset(self):
     status = self.request.GET.get('status', None)
@@ -502,8 +510,6 @@ def return_book(request, book_instance_id):
   return redirect('all-borrowed')
 
 
-from django.core.exceptions import PermissionDenied
-
 @login_required
 def reserve_book(request, book_id):
     user = request.user
@@ -555,7 +561,6 @@ def create_book_copy(request, book_id):
   return render(request, 'books/create_book_copy.html', {'book': book, 'form': form})
 
 
-from django.shortcuts import render
 from django.views.generic import UpdateView
 from django.urls import reverse_lazy
 from django.contrib.auth import get_user_model
@@ -706,8 +711,6 @@ class EditPositionAcceptActView(View):
                   {'position_accept_act': position_accept_act, 'form': form})
 
 
-from django.shortcuts import redirect
-
 class EditAcceptActView(View):
     def get(self, request, pk):
         accept_act = get_object_or_404(AcceptAct, pk=pk)
@@ -763,7 +766,6 @@ def list_book_exemplar(request):
   return render(request, 'books/list_book_exemplar.html', {'book_exemplars': book_exemplars})
 
 
-from django.shortcuts import render
 from .models import Publisher
 from .forms import PublisherForm
 
@@ -900,9 +902,7 @@ class CreateDebitingActView(View):
 
 
 # ваш_проект/views.py
-from django.shortcuts import render
 from django.views import View
-from .models import DebitingAct
 
 
 class DebitingActListView(View):
@@ -919,7 +919,6 @@ class DebitingActListView(View):
 
 
 # ваш_проект/views.py
-from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from .models import DebitingAct, PositionDebitingAct
 from .forms import DebitingActForm, PositionDebitingActFormSet
@@ -1063,7 +1062,6 @@ def create_fiz_person_source(request):
   return render(request, 'source/create_fiz_person_source.html', {'form': form})
 
 
-from django.shortcuts import render
 from .models import Source
 
 
@@ -1072,7 +1070,6 @@ def source_list(request):
   return render(request, 'source/source_list.html', {'organizations': organizations})
 
 
-from django.shortcuts import render
 from .models import FizPersonSource
 
 
@@ -1081,10 +1078,6 @@ def fiz_person_source_list(request):
   return render(request, 'source/fiz_person_source_list.html', {'fiz_persons': fiz_persons})
 
 
-from django.shortcuts import render
-from django.views.generic import DetailView
-from django.http import HttpResponse
-from .models import AcceptAct
 from django.views.generic import DetailView
 from reportlab.pdfgen import canvas
 from .models import AcceptAct
@@ -1145,10 +1138,6 @@ class PrintAcceptActView(DetailView):
     return response
 
 
-from django.shortcuts import render, redirect
-from .forms import EventForm
-
-
 def create_event(request):
   if request.method == 'POST':
     form = EventForm(request.POST)
@@ -1160,26 +1149,14 @@ def create_event(request):
   return render(request, 'event/create_event.html', {'form': form})
 
 
-from django.shortcuts import render, redirect
-from .models import Event
-
-
 def event_list(request):
   events = Event.objects.all()
   return render(request, 'event/event_list.html',  {'events': events})
 
 
-from django.shortcuts import render
-from .models import Room
-
-
 def room_list(request):
   rooms = Room.objects.all()
   return render(request, 'event/room_list.html', {'rooms': rooms})
-
-
-from django.shortcuts import render, redirect
-from .forms import RoomForm
 
 
 def create_room(request):
@@ -1191,11 +1168,6 @@ def create_room(request):
   else:
     form = RoomForm()
   return render(request, 'event/create_room.html', {'form': form})
-
-
-from django.shortcuts import render, redirect
-from .models import TypeRoom
-from .forms import TypeRoomForm
 
 
 def type_room_list(request):
@@ -1215,8 +1187,6 @@ def create_type_room(request):
   return render(request, 'event/create_type_room.html', {'form': form})
 
 
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import TypeRoom
 from .forms import TypeRoomForm
 
 
@@ -1232,7 +1202,6 @@ def edit_type_room(request, type_room_id):
   return render(request, 'event/edit_type_room.html', {'form': form, 'type_room': type_room})
 
 
-from django.shortcuts import render, redirect, get_object_or_404
 from .models import TypeRoom
 
 
@@ -1244,8 +1213,6 @@ def delete_type_room(request, type_room_id):
   return render(request, 'event/delete_type_room.html', {'type_room': type_room})
 
 
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Room
 from .forms import RoomForm
 
 
@@ -1261,7 +1228,6 @@ def edit_room(request, room_id):
   return render(request, 'event/edit_room.html', {'form': form, 'room': room})
 
 
-from django.shortcuts import render, redirect, get_object_or_404
 from .models import Room
 
 
@@ -1273,10 +1239,6 @@ def delete_room(request, room_id):
   return render(request, 'event/delete_room.html', {'room': room})
 
 
-from django.shortcuts import render, get_object_or_404
-from .models import PositionEvent, Event
-
-
 def participants_list(request, event_id):
   event = get_object_or_404(Event, id=event_id)
   participants = PositionEvent.objects.filter(event=event)
@@ -1285,9 +1247,6 @@ def participants_list(request, event_id):
     'participants': participants,
   }
   return render(request, 'event/participants_list.html', context)
-
-
-from django.utils import timezone  # Импортируем timezone
 
 
 def add_participant(request, event_id):
@@ -1380,9 +1339,6 @@ def cancel_registration(request, registration_id):
   return redirect(redirect_url)
 
 
-from .models import Event
-
-
 def detail_event(request, event_id):
   # Получаем объект Event по event_id или возвращаем 404, если ивент не найден
   event = get_object_or_404(Event, id=event_id)
@@ -1422,9 +1378,6 @@ def delete_request(request, request_id):
   return redirect('request_list')  # В случае GET запроса перенаправляем обратно на страницу списка заявок
 
 
-from django.shortcuts import render
-from .forms import RequestForm
-from .models import Request
 from django.utils import timezone
 
 
@@ -1472,10 +1425,8 @@ def profile_delete_request(request, request_id):
   return redirect(redirect_url)
 
 
-from django.shortcuts import get_object_or_404, redirect
 from .models import PositionEvent
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse
 
 
 @login_required
@@ -1507,8 +1458,7 @@ def cancel_reservation(request, bookinst_id):
     redirect_url = reverse('profile') + '?tab=books'
     return redirect(redirect_url)
 
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Request
+
 from .forms import RequestForm
 
 @login_required
@@ -1530,18 +1480,7 @@ def reject_request(request, request_id):
         return redirect('request_list')
     return render(request, 'request/reject_request.html')
 
-
-from django.shortcuts import render
 from django.http import JsonResponse
-from .models import Request
-
-from django.template.loader import render_to_string
-
-
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse
-from django.template.loader import render_to_string
-from .models import Request
 
 def filtered_requests(request):
     start_date = request.GET.get('start_date')
@@ -1596,24 +1535,10 @@ def export_requests_xml(request):
     return response
 
 
-from django.shortcuts import redirect
-from .models import BookInstance
 from django.contrib import messages
-from django.urls import reverse
 
+from django.shortcuts import get_object_or_404
 
-def change_status_to_overdue(request):
-  overdue_instances = BookInstance.objects.filter(status='р').filter(
-    (Q(due_back__lt=date.today()) & Q(renewal_date__isnull=True)) |
-    (Q(renewal_date__lt=date.today()) & Q(renewal_date__isnull=False))
-  )
-
-  overdue_instances.update(status='о')
-
-  messages.success(request, "Статус всех просроченных книг был успешно изменен на 'Просрочено'.")
-  return redirect(reverse('all-borrowed'))
-
-from django.shortcuts import get_object_or_404, redirect
 
 @login_required
 def history_of_appeals(request, bookinst_id):
@@ -1624,11 +1549,8 @@ def history_of_appeals(request, bookinst_id):
 
 
 from .forms import AppealForm
-from django.shortcuts import render, redirect
 from .models import BookInstance
 from django.contrib.auth.decorators import login_required
-
-from django.urls import reverse
 
 from django.urls import reverse
 
@@ -1686,8 +1608,6 @@ from django.shortcuts import render, redirect
 from .forms import NewsForm
 from .models import Event, News
 
-
-from django.core.files.uploadedfile import UploadedFile
 
 def create_news(request, event_id):
     event = Event.objects.get(id=event_id)

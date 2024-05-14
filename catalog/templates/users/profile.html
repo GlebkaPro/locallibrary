@@ -39,9 +39,9 @@
        id="profile" role="tabpanel" aria-labelledby="profile-tab">
     <form method="post" enctype="multipart/form-data" class="card profile-container">
       {% csrf_token %}
-      <div class="row">
+      <div class="row" style="padding: 10px">
         <div class="col-md-4 text-center">
-          <div class="image-container">
+          <div class="image-container" >
             {% if user.avatar %}
               <img src="{{ user.avatar.url }}" class="img-fluid avatar-img" alt="Аватар">
             {% else %}
@@ -71,25 +71,25 @@
             <div class="mb-3">
               <label for="{{ form.last_name.id_for_label }}" class="form-label">Фамилия</label>
               <input type="text" class="form-control" id="{{ form.last_name.id_for_label }}"
-                     name="{{ form.last_name.name }}" value="{{ user.last_name }}">
+                     name="{{ form.last_name.name }}" value="{{ user.last_name }}" style="max-width: 300px">
               <div class="form-error">{{ form.last_name.errors }}</div>
             </div>
             <div class="mb-3">
               <label for="{{ form.first_name.id_for_label }}" class="form-label">Имя</label>
               <input type="text" class="form-control" id="{{ form.first_name.id_for_label }}"
-                     name="{{ form.first_name.name }}" value="{{ user.first_name }}">
+                     name="{{ form.first_name.name }}" value="{{ user.first_name }}" style="max-width: 300px">
               <div class="form-error">{{ form.first_name.errors }}</div>
             </div>
             <div class="mb-3">
               <label for="{{ form.middle_name.id_for_label }}" class="form-label">Отчество</label>
               <input type="text" class="form-control" id="{{ form.middle_name.id_for_label }}"
-                     name="{{ form.middle_name.name }}" value="{{ user.middle_name }}">
+                     name="{{ form.middle_name.name }}" value="{{ user.middle_name }}" style="max-width: 300px">
               <div class="form-error">{{ form.middle_name.errors }}</div>
             </div>
             <div class="mb-3">
               <label for="{{ form.date_birth.id_for_label }}" class="form-label">Дата рождения</label>
               <input type="text" class="form-control" id="{{ form.date_birth.id_for_label }}"
-                     name="{{ form.date_birth.name }}" value="{{ user.date_birth }}">
+                     name="{{ form.date_birth.name }}" value="{{ user.date_birth }}" style="max-width: 300px">
               <div class="form-error">{{ form.date_birth.errors }}</div>
             </div>
             <div class="mb-3">
@@ -111,8 +111,8 @@
     <div>
       {% if bookinstance_list %}
         <table class="table table table-card">
-          <thead>
-          <tr>
+    <thead>
+        <tr>
             <th>№</th>
             <th>Название книги</th>
             <th>Штамп</th>
@@ -121,39 +121,37 @@
             <th style="cursor:pointer;" data-sort="renewal-date" data-order="desc">Дата продления &#9660;</th>
             <th>Статус</th>
             <th>Действие</th>
-          </tr>
-          </thead>
-          <tbody>
-          {% for bookinst in bookinstance_list %}
-            <tr
-              class="{% if bookinst.is_overdue %}text-danger{% endif %} {% if bookinst.status == 'р' %}table-success{% elif bookinst.status == 'з' %}table-warning{% elif bookinst.status == 'д' %}table-info{% endif %}">
-              <td>{{ forloop.counter }}</td>
-              <td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for bookinst in bookinstance_list %}
+        <tr class="{% if bookinst.is_overdue %}text-danger{% endif %} {% if bookinst.status == 'р' %}table-success{% elif bookinst.status == 'з' %}table-warning{% elif bookinst.status == 'д' %}table-info{% endif %}">
+            <td>{{ forloop.counter }}</td>
+            <td>
                 <a href="{% url 'book-detail' bookinst.book.pk %}">{{ bookinst.book.title }}</a>
-              </td>
-              <td>{{ bookinst.loan.imprint }}</td>
-              <td>{{ bookinst.current_date }}</td>
-              <td>{{ bookinst.due_back }}</td>
-              <td>{{ bookinst.renewal_date }}</td>
-              <td>{{ bookinst.get_status_display }}</td>
-              <td>
+            </td>
+            <td>{{ bookinst.loan.imprint }}</td>
+            <td>{{ bookinst.current_date }}</td>
+            <td>{{ bookinst.due_back|default_if_none:"-" }}</td>
+            <td>{{ bookinst.renewal_date|default_if_none:"-" }}</td>
+            <td>{{ bookinst.get_status_display }}</td>
+            <td>
                 {% if bookinst.status == 'р' %}
-                  <a href="{% url 'renew-book-librarian' bookinst.id %}" class="btn btn-warning">Продлить</a>
+                <a href="{% url 'renew-book-librarian' bookinst.id %}" class="btn btn-warning">Продлить</a>
                 {% elif bookinst.status == 'з' %}
-                  <form action="{% url 'cancel_reservation' bookinst.id %}" method="post" style="display: inline;">
+                <form action="{% url 'cancel_reservation' bookinst.id %}" method="post" style="display: inline;">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Отменить
-                      резерв
-                    </button>
-                  </form>
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Отменить резерв</button>
+                </form>
                 {% else %}
-                  <span class="text-danger">Невозможно выполнить действие</span>
+                <span class="text-danger">Невозможно выполнить действие</span>
                 {% endif %}
-              </td>
-            </tr>
-          {% endfor %}
-          </tbody>
-        </table>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
       {% else %}
         <p>У вас нет взятых книг.</p>
       {% endif %}
@@ -246,7 +244,7 @@
           <td>{{ request.description|slice:":30" }}</td>
           <td>{{ request.date_creation }}</td>
           <td>{{ request.get_status_record_display }}</td>
-          <td>{{ request.reason|slice:":30" }}</td>
+          <td>{{ request.reason|slice:":30"|default_if_none:"-" }}</td>
           <td>
             {% if request.status_record == 'в' %}
               <a href="{% url 'edit_request' request_id=request.id %}" class="btn btn-warning">Редактировать</a>

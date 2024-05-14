@@ -41,14 +41,15 @@
           </thead>
           <tbody>
           {% for request in requests %}
-            <tr>
+            <tr class="{% if request.status_record == 'п' %}table-success
+              {% elif request.status_record == 'з' %}{% elif request.status_record == 'в' %}table-warning{% elif request.status_record == 'о' %}table-danger{% endif %}">
               <td>{{ forloop.counter }}</td>
               <td>{{ request.title }}</td>
               <td>{{ request.author }}</td>
               <td>{{ request.description|slice:":30" }}</td>
               <td>{{ request.date_creation }}</td>
               <td>{{ request.borrower }}</td>
-              <td>{{ request.worker }}</td>
+              <td>{{ request.worker|default_if_none:"-" }}</td>
               <td>
                 {% if request.status_record == 'п' %}
                   Принята
@@ -65,7 +66,8 @@
                   <form action="{% url 'accept_request' request_id=request.id %}" method="post"
                         style="display: inline;">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Вы уверены?')">Принять
+                    <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Вы уверены?')">
+                      Принять
                     </button>
                   </form>
                   <a href="{% url 'reject_request' request_id=request.id %}" class="btn btn-sm btn-danger">Отклонить</a>
