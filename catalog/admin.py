@@ -4,7 +4,7 @@ from django.contrib import admin
 
 from .models import Author, Book, BookInstance, Language, BookCopy, AcceptAct, PositionAcceptAct, Source, \
   FizPersonSource, BookExemplar, Publisher, Genre, DebitingAct, PositionDebitingAct, Event, PositionEvent, Request, \
-  History_of_appeals, AccountingBookCopy, News, Room
+  History_of_appeals, AccountingBookCopy, News, Room, Review
 from users.models import User
 # Minimal registration of Models.
 admin.site.register(Book)
@@ -29,3 +29,4 @@ admin.site.register(History_of_appeals)
 admin.site.register(AccountingBookCopy)
 admin.site.register(News)
 admin.site.register(Room)
+admin.site.register(Review)

@@ -1335,7 +1335,11 @@ from django.utils import timezone
 def event_list_borrower(request):
     events = Event.objects.all().order_by('-date_end')
     now = timezone.now()
-    return render(request, 'event/event_list_borrower.html', {'events': events, 'now': now})
+    context = {
+        'event': events,
+        'now': now
+    }
+    return render(request, 'event/detail_event.html', context)
 
 
 
@@ -1673,3 +1677,49 @@ def edit_book_exemplar(request, pk):
     form = BookExemplarForm(instance=book_exemplar, initial={'date_of_manufacture': book_exemplar.date_of_manufacture})
 
   return render(request, 'books/edit_book_exemplar.html', {'form': form})
+
+
+
+def review_list(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    reviews = event.reviews.all()
+    return render(request, 'review/review_list.html', {'event_name': event.event_name, 'event': event, 'reviews': reviews})
+
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Event, Review
+from .forms import ReviewForm
+
+def create_review(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.event = event
+            review.user = request.user
+            review.save()
+            return redirect('detail_event', event_id=event_id)
+    else:
+        form = ReviewForm()
+    return render(request, 'review/create_review.html', {'event': event, 'form': form})
+
+def delete_review(request, review_id):
+    review = get_object_or_404(Review, pk=review_id)
+    if request.method == 'POST':
+        review.delete()
+    return redirect('review_list', event_id=review.event.id)
+
+def publish_review(request, review_id):
+    review = get_object_or_404(Review, pk=review_id)
+    review.status_record = 'о'
+    review.save()
+    return redirect('review_list', event_id=review.event.id)
+
+
+def unpublish_review(request, review_id):
+  review = get_object_or_404(Review, pk=review_id)
+  review.status_record = 'н'
+  review.save()
+  return redirect('review_list', event_id=review.event.id)

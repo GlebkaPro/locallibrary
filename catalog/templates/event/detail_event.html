@@ -23,6 +23,9 @@
               <p><strong>Время начала:</strong> {{ event.date_start }}</p>
               <p><strong>Время окончания:</strong> {{ event.date_end }}</p>
               <p><strong>Описание:</strong> {{ event.description }}</p>
+              {% if event.date_end <= now %}
+              <a href="{% url 'create_review' event_id=event.id %}" class="btn btn-primary mb-3">Оставить отзыв</a>
+              {% endif %}
               {% if event.date_end >= now %}
                 <form action="{% url 'register_to_event' event_id=event.id %}" method="post" style="display: inline;">
                   {% csrf_token %}

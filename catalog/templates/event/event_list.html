@@ -14,7 +14,7 @@
             <th>Мест</th>
             <th>Дата начала</th>
             <th>Дата окончания</th>
-{#            <th>Дата фактического окончания</th>#}
+            {#            <th>Дата фактического окончания</th>#}
             <th>Ответственный сотрудник</th>
             <th>Комната</th>
             <th>Тип мероприятия</th>
@@ -29,7 +29,7 @@
               <td>{{ event.number_of_participants }}</td>
               <td>{{ event.date_start |date:"d.m.Y" }}</td>
               <td>{{ event.date_end |date:"d.m.Y" }}</td>
-{#              <td>{{ event.date_end2 }}</td>#}
+              {#              <td>{{ event.date_end2 }}</td>#}
               <td>{{ event.worker }}</td>
               <td>{{ event.room }}</td>
               <td>{{ event.typeroom }}</td>
@@ -38,11 +38,13 @@
                 <a href="{% url 'edit_event' event_id=event.id %}" class="btn btn-sm btn-warning">Редактировать</a>
                 <form action="{% url 'delete_event' event_id=event.id %}" method="post" style="display: inline;">
                   {% csrf_token %}
-                  <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Вы уверены?')">Удалить</button>
+                  <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Вы уверены?')">Удалить
+                  </button>
                 </form>
-{#                {% if event.date_end > now %}#}
-                  <a href="{% url 'create_news' event_id=event.id %}" class="btn btn-sm btn-success">Создать новость</a>
-{#                {% endif %}#}
+                {#                {% if event.date_end < now %}#}
+                <a href="{% url 'create_news' event_id=event.id %}" class="btn btn-sm btn-success">Создать новость</a>
+                {#                {% endif %}#}
+                <a href="{% url 'review_list' event_id=event.id %}" class="btn btn-sm btn-info">Отзывы</a>
               </td>
             </tr>
           {% endfor %}

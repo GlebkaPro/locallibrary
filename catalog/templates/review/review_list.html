@@ -1,0 +1,60 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Список отзывов о мероприятии:</h1>
+  <h1>"{{ event_name }}"</h1>
+  <div class="card">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead>
+          <tr>
+            <th>№</th>
+            <th>Текст отзыва</th>
+            <th>Пользователь</th>
+            <th>Дата отзыва</th>
+            <th>Статус</th>
+            <th>Действия</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for review in reviews %}
+            <tr class="{% if review.is_overdue %}text-danger{% endif %} 
+              {% if review.status_record == 'о' %}table-success{% elif review.status_record == 'н' %}table-danger{% endif %}">
+              <td>{{ forloop.counter }}</td>
+              <td>{{ review.review_text }}</td>
+              <td>{{ review.user }}</td>
+              <td>{{ review.review_date |date:"d.m.Y H:i" }}</td>
+              <td>{{ review.get_status_record_display }}</td>
+              <td>
+                {% if review.status_record == 'н' %}
+                  <form action="{% url 'publish_review' review_id=review.id %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-success">Опубликовать</button>
+                  </form>
+                {% endif %}
+                {% if review.status_record == 'о' %}
+                  <form action="{% url 'unpublish_review' review_id=review.id %}" method="post"
+                        style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-warning">Снять публикацию</button>
+                  </form>
+                {% endif %}
+                <form action="{% url 'delete_review' review_id=review.id %}" method="post" style="display: inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Вы уверены?')">Удалить
+                  </button>
+                </form>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="6">Пока нет отзывов</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

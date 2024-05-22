@@ -142,3 +142,12 @@ urlpatterns += [
 ]
 
 
+urlpatterns += [
+    path('event/<int:event_id>/reviews/', views.review_list, name='review_list'),
+    path('event/<int:event_id>/create_review/', views.create_review, name='create_review'),
+    path('review/<int:review_id>/delete/', views.delete_review, name='delete_review'),
+    path('review/<int:review_id>/publish/', views.publish_review, name='publish_review'),
+    path('review/<int:review_id>/unpublish/', views.unpublish_review, name='unpublish_review'),
+]
+
+
