@@ -1,22 +1,42 @@
 {% extends "base_generic.html" %}
-
+{% load widget_tweaks %}
 {% block content %}
-  <div class="container mt-4">
-    <h1>Добавить язык</h1>
+  <div class="d-flex justify-content-center">
+    <div class="card" style="width: 450px; padding: 20px;">
+      <div class="card-body">
+        <div class="container mt-4">
+          <h1>Добавить язык</h1>
 
-    <form action="{% url 'add-language' %}" method="post" class="mb-4">
-      {% csrf_token %}
-      {{ form.as_table }}
-      <div class="mb-3">
-        <button type="submit" class="btn btn-primary">Сохранить</button>
+          <form action="{% url 'add-language' %}" method="post" class="mb-4">
+            {% csrf_token %}
+            <div class="mb-3">
+              {{ form.name.label_tag }}
+              {{ form.name|add_class:"form-control" }}
+            </div>
+            <div class="mb-3">
+              <button type="submit" class="btn btn-primary">Сохранить</button>
+            </div>
+          </form>
+
+          <h2>Список языков</h2>
+          <table class="table">
+            <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Название</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for language in languages %}
+              <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ language.name }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </form>
-
-    <h2>Список языков</h2>
-    <ul class="list-group">
-      {% for language in languages %}
-        <li class="list-group-item">{{ language.name }}</li>
-      {% endfor %}
-    </ul>
+    </div>
   </div>
 {% endblock %}

@@ -321,6 +321,21 @@ class Event(models.Model):
   description = models.CharField(verbose_name='Описание', max_length=1000)
   image = models.ImageField(verbose_name='Изображение', upload_to='event_images/', blank=True, null=True)
 
+  class Review(models.Model):
+    event = models.ForeignKey('Event', on_delete=models.CASCADE, related_name='reviews', verbose_name='Мероприятие')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='Пользователь')
+    review_text = models.TextField(verbose_name='Отзыв')
+    review_date = models.DateTimeField(auto_now_add=True, verbose_name='Дата отзыва')
+    ACCEPT_status = (
+      ('о', 'опубликован'),
+      ('н', 'не опубликован'),
+    )
+
+    status_record = models.CharField(
+      max_length=1, choices=ACCEPT_status, blank=True, default='з', verbose_name='Статус записи')
+
+    def __str__(self):
+      return f"Отзыв от {self.user} на {self.event.event_name}"
 
 class PositionEvent(models.Model):
   event = models.ForeignKey('Event', on_delete=models.CASCADE, null=True)

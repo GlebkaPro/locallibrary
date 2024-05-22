@@ -3,7 +3,8 @@
 {% block content %}
   <div class="container">
     <h1>Каталог</h1>
-    {% if user.is_staff %}
+    {% load group_tags %}
+    {% if user|has_group:"Bibli" %}
       <a href="{% url 'add-book' %}" class="btn btn-primary mb-2">Добавить</a>
     {% endif %}
     <form method="get" class="mb-3">

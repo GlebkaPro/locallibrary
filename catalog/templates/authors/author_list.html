@@ -6,10 +6,11 @@
     <form method="get">
         <div class="input-group mb-3">
             <input type="text" class="form-control" placeholder="Введите фамилию автора" name="search" value="{{ search_query }}">
-            <button class="btn btn-outline-secondary" type="submit">Искать</button>
+            <button class="btn btn-primary" type="submit">Поиск</button>
         </div>
     </form>
-    {% if user.is_staff %}
+        {% load group_tags %}
+    {% if user|has_group:"Bibli" %}
     <a href="{% url 'add-author' %}" class="btn btn-primary mb-3">Добавить автора</a>
     {% endif %}
     {% if author_list %}

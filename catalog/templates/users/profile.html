@@ -162,58 +162,58 @@
   <!-- Events Tab Content -->
   <div class="tab-pane fade {% if request.GET.tab == 'events' %}show active{% endif %}" id="events" role="tabpanel"
        aria-labelledby="events-tab">
-    <table class="table table table-card" id="eventsTable">
-      <thead>
-      <tr>
-        <th>№</th>
-        <th>Название мероприятия</th>
-        <th style="cursor:pointer;" data-sort="date" data-order="desc">Дата начала &#9660;</th>
-        <th style="cursor:pointer;" data-sort="date-end" data-order="desc">Дата окончания &#9660;</th>
-        <th>Статус</th>
-        <th>Действия</th>
-      </tr>
-      </thead>
-      <tbody>
-      {% for event in registered_events %}
-        <tr {% if event.status_record == 'з' %}class="table-success"
-            {% elif event.status_record == 'н' %}class="table-danger"{% endif %}>
-          <td>{{ forloop.counter }}</td>
-          <td><a href="{% url 'detail_event' event_id=event.event.id %}">{{ event.event.event_name }}</a></td>
-          <td>{{ event.event.date_start }}</td>
-          <td>{{ event.event.date_end }}</td>
-          <td>
-            {% if event.status_record == 'з' %}
-              Записан
-            {% elif event.status_record == 'н' %}
-              Не записан
-            {% endif %}
-          </td>
-          <td>
-            {% if event.status_record == 'з' %}
-              <form action="{% url 'cancel_registration' registration_id=event.id %}" method="post"
-                    style="display: inline;">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-danger"
-                        onclick="return confirm('Вы уверены?')">Отменить регистрацию
-                </button>
-              </form>
-            {% elif event.status_record == 'н' %}
-              <form action="{% url 'profile_register_to_event' registration_id=event.id %}" method="post"
-                    style="display: inline;">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-success">Зарегистрироваться вновь</button>
-              </form>
+<table class="table table table-card" id="eventsTable">
+  <thead>
+  <tr>
+    <th>№</th>
+    <th>Название мероприятия</th>
+    <th style="cursor:pointer;" data-sort="date" data-order="desc">Дата начала &#9660;</th>
+    <th style="cursor:pointer;" data-sort="date-end" data-order="desc">Дата окончания &#9660;</th>
+    <th>Статус</th>
+    <th>Действия</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for event in registered_events %}
+    <tr {% if event.status_record == 'з' %}class="table-success"
+        {% elif event.status_record == 'н' %}class="table-danger"{% endif %}>
+      <td>{{ forloop.counter }}</td>
+      <td><a href="{% url 'detail_event' event_id=event.event.id %}">{{ event.event.event_name }}</a></td>
+      <td>{{ event.event.date_start }}</td>
+      <td>{{ event.event.date_end }}</td>
+      <td>
+        {% if event.status_record == 'з' %}
+          Записан
+        {% elif event.status_record == 'н' %}
+          Не записан
+        {% endif %}
+      </td>
+      <td>
+        {% if event.event.date_end|date:"Y-m-d" > now|date:"Y-m-d" %}
+          Окончено
+        {% else %}
+          {% if event.status_record == 'з' %}
+            <form action="{% url 'cancel_registration' registration_id=event.id %}" method="post" style="display: inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Отменить регистрацию</button>
+            </form>
+          {% elif event.status_record == 'н' %}
+            <form action="{% url 'profile_register_to_event' registration_id=event.id %}" method="post" style="display: inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-success">Зарегистрироваться вновь</button>
+            </form>
+          {% endif %}
+        {% endif %}
+      </td>
+    </tr>
+  {% empty %}
+    <tr>
+      <td colspan="6">Вы не зарегистрированы ни на одно мероприятие.</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
 
-            {% endif %}
-          </td>
-        </tr>
-      {% empty %}
-        <tr>
-          <td colspan="6">Вы не зарегистрированы ни на одно мероприятие.</td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
   </div>
 
 

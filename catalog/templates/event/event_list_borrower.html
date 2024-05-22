@@ -36,13 +36,13 @@
                   - {{ event.date_end|time:"H:i" }} | {{ event.date_end|date:"d.m.Y" }} <strong>Количество
                     мест:</strong> {{ event.number_of_participants }}</p>
                 <p class="card-text"><strong>Описание:</strong> {{ event.description }}</p>
-                {% if event.date_start > now %}
+                {% if event.date_end <= now %}
+                  <p class="text-danger">Мероприятие окончено</p>
+                {% else %}
                   <form action="{% url 'register_to_event' event_id=event.id %}" method="post" style="display: inline;">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-success">Зарегистрироваться</button>
                   </form>
-                {% else %}
-                  <p class="text-danger">Мероприятие окончено</p>
                 {% endif %}
               </div>
             </div>

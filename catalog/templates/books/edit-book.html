@@ -1,40 +1,35 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-<div class="container">
-  <h1>Редактировать книгу: {{ book.title }}</h1>
+  <div class="container">
+    <div class="d-flex justify-content-center">
+    <div class="card" style="width: 450px; padding: 20px">
+      <div class="card-body">
+    <h1>Редактировать книгу: {{ book.title }}</h1>
 
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <div class="form-group">
-      <label for="{{ form.title.id_for_label }}">Название книги</label>
-      <input type="text" class="form-control form-control-sm" id="{{ form.title.id_for_label }}" name="{{ form.title.name }}" style="max-width: 200px;" value="{{ form.title.value }}">
-    </div>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="{{ form.title.id_for_label }}">Название книги</label>
+        <input type="text" class="form-control form-control" id="{{ form.title.id_for_label }}"
+               name="{{ form.title.name }}" style="max-width: 300px;" value="{{ form.title.value }}">
+      </div>
 
-    <div class="form-group">
-      <label for="{{ form.author.id_for_label }}">Автор</label>
-      <select class="form-select" id="{{ form.author.id_for_label }}" name="{{ form.author.name }}" style="max-width: 200px;">
-        <option value="">Выберите автора</option>
-        {% for author in form.author.field.queryset %}
-          <option value="{{ author.id }}" {% if author.id == form.author.value %}selected{% endif %}>{{ author }}</option>
-        {% endfor %}
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label for="{{ form.summary.id_for_label }}">Описание</label>
-      <textarea class="form-control" style="max-width: 200px;" id="{{ form.summary.id_for_label }}" name="{{ form.summary.name }}" rows="4">{{ form.summary.value|default_if_none:"" }}</textarea>
-    </div>
-
-    <div class="form-group">
-      <label for="{{ form.isbn.id_for_label }}">ISBN</label>
-      <input type="text" class="form-control form-control-sm" id="{{ form.isbn.id_for_label }}" name="{{ form.isbn.name }}" style="max-width: 200px;" value="{{ form.isbn.value }}" placeholder="Вводите только цифры">
-    </div>
-
-      <div class="form-group">
+      <div class="mb-3">
+        <label for="{{ form.author.id_for_label }}">Автор</label>
+        <select class="form-select" id="{{ form.author.id_for_label }}" name="{{ form.author.name }}"
+                style="max-width: 300px;">
+          <option value="">Выберите автора</option>
+          {% for author in form.author.field.queryset %}
+            <option value="{{ author.id }}"
+                    {% if author.id == form.author.value %}selected{% endif %}>{{ author }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-3">
         <label for="{{ form.genre.id_for_label }}">Жанр</label>
         <select class="form-select" id="{{ form.genre.id_for_label }}" name="{{ form.genre.name }}" multiple
-                style="max-width: 200px;">
+                style="max-width: 300px;">
           <option value="">Выберите жанры</option>
           {% for genre in form.genre.field.queryset %}
             <option value="{{ genre.id }}" {% if genre in form.genre.value %}selected{% endif %}>{{ genre }}</option>
@@ -42,41 +37,50 @@
         </select>
       </div>
 
-    <div class="form-group">
-      <label for="{{ form.language.id_for_label }}">Язык</label>
-      <select class="form-select" id="{{ form.language.id_for_label }}" name="{{ form.language.name }}" style="max-width: 200px;">
-        <option value="">Выберите язык</option>
-        {% for language in form.language.field.queryset %}
-          <option value="{{ language.id }}" {% if language.id == form.language.value %}selected{% endif %}>{{ language }}</option>
-        {% endfor %}
-      </select>
-    </div>
+      <div class="mb-3">
+        <label for="{{ form.language.id_for_label }}">Язык</label>
+        <select class="form-select" id="{{ form.language.id_for_label }}" name="{{ form.language.name }}"
+                style="max-width: 300px;">
+          <option value="">Выберите язык</option>
+          {% for language in form.language.field.queryset %}
+            <option value="{{ language.id }}"
+                    {% if language.id == form.language.value %}selected{% endif %}>{{ language }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="{{ form.summary.id_for_label }}">Описание</label>
+        <textarea class="form-control" style="max-width: 400px; max-height: 400px" id="{{ form.summary.id_for_label }}"
+                  name="{{ form.summary.name }}" rows="4">{{ form.summary.value|default_if_none:"" }}</textarea>
+      </div>
+
+
       <div style="display: flex; gap: 8px; margin-top: 8px;">
         <button type="submit" class="btn btn-primary">Сохранить</button>
         <a href="{% url 'book-detail' book.id %}" class="btn btn-secondary">Отменить</a>
       </div>
-  </form>
-</div>
+    </form>
+  </div>
 
 
   {#    {{ form.as_p }}#}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-  $(document).ready(function () {
-    const isbnInput = $('#{{ form.isbn.id_for_label }}');
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      const isbnInput = $('#{{ form.isbn.id_for_label }}');
 
-    isbnInput.on('input', function (event) {
-      let value = event.target.value.replace(/-/g, ''); // Удалить тире
-      // Ограничение на 13 символов
-      if (value.length > 13) {
-        value = value.slice(0, 13);
-      }
-      if (value.length > 0) {
-        value = value.replace(/(\d{3})(\d{1})(\d{4})(\d{4})(\d{1})/, '$1-$2-$3-$4-$5');
-      }
-      isbnInput.val(value);
+      isbnInput.on('input', function (event) {
+        let value = event.target.value.replace(/-/g, ''); // Удалить тире
+        // Ограничение на 13 символов
+        if (value.length > 13) {
+          value = value.slice(0, 13);
+        }
+        if (value.length > 0) {
+          value = value.replace(/(\d{3})(\d{1})(\d{4})(\d{4})(\d{1})/, '$1-$2-$3-$4-$5');
+        }
+        isbnInput.val(value);
+      });
     });
-  });
-</script>
+  </script>
 {% endblock %}
 

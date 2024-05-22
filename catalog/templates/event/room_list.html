@@ -1,32 +1,38 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <h1>Список помещений</h1>
-  <a href="{% url 'create_room' %}" class="btn btn-primary mb-3">Создать помещение</a>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Тип</th>
-        <th>Номер</th>
-        <th>Количество мест</th>
-        <th>Действия</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for room in rooms %}
-        <tr>
-          <td>{{ room.type }}</td>
-          <td>{{ room.number }}</td>
-          <td>{{ room.number_seats }}</td>
-          <td>
-            <a href="{% url 'edit_room' room.id %}" class="btn btn-sm btn-primary">Изменить</a>
-            <form action="{% url 'delete_room' room.id %}" method="post" style="display: inline;">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
-            </form>
-          </td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="d-flex justify-content-center">
+    <div class="card" style="width: 850px; padding: 20px;">
+      <div class="card-body">
+        <h1>Список помещений</h1>
+        <a href="{% url 'create_room' %}" class="btn btn-primary mb-3">Создать помещение</a>
+        <table class="table">
+          <thead>
+          <tr>
+            <th>Тип</th>
+            <th>Номер</th>
+            <th>Количество мест</th>
+            <th>Действия</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for room in rooms %}
+            <tr>
+              <td>{{ room.type }}</td>
+              <td>{{ room.number }}</td>
+              <td>{{ room.number_seats }}</td>
+              <td>
+                <a href="{% url 'edit_room' room.id %}" class="btn btn-sm btn-primary">Изменить</a>
+                <form action="{% url 'delete_room' room.id %}" method="post" style="display: inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 {% endblock %}

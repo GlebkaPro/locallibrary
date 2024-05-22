@@ -17,7 +17,8 @@
               {% endif %}
             </div>
             <div>
-              {% if user.is_staff and perms.catalog.can_mark_returned %}
+              {% load group_tags %}
+              {% if user|has_group:"Bibli" %}
                 <a class="btn btn-primary" href="{% url 'author-update' author.pk %}">Редактировать</a>
                 <form method="post" action="{% url 'author-delete' author.pk %}" style="display: inline;">
                   {% csrf_token %}

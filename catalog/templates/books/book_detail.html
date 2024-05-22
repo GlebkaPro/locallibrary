@@ -5,7 +5,8 @@
     <div class="card">
       <div class="card-body">
         <div class="container">
-          {% if user.is_staff %}
+          {% load group_tags %}
+          {% if user|has_group:"Bibli" %}
             <div style="display: flex; gap: 8px; margin-top: 8px; margin-bottom: 8px;">
               <form method="get" action="{% url 'edit-book' book_id=book.id %}">
                 <button type="submit" class="btn btn-primary">Редактировать</button>
@@ -36,8 +37,10 @@
                 <p class="card-text">Всего копий (шт.): {{ book.bookcopy_set.all.count }}</p>
                 <p class="card-text">Доступно экземпляров (шт.): {{ book.available_copies_count }}</p>
                 <form method="get" action="{% url 'reserve-book' book_id=book.id %}">
-                  {% if user.is_authenticated %}
-                    <button type="submit" class="btn btn-primary" style="margin-top: 10px">Зарезервировать книгу</button>
+                  {% load group_tags %}
+                  {% if user|has_group:"Abonents" %}
+                    <button type="submit" class="btn btn-primary" style="margin-top: 10px">Зарезервировать книгу
+                    </button>
                   {% endif %}
                   {% if messages %}
                     <ul class="messages">
@@ -59,25 +62,25 @@
 
             </div>
           </div>
-          <div class="card" style="margin-top: 16px">
-            {% if user.is_staff %}
-              <h4>Статусы экземпляров:</h4>
-              {% for copy in book.bookcopy_set.all %}
-                <hr>
-                <h5>№ {{ forloop.counter }}</h5>
-                <p
-                  class="{% if copy.status == 'д' %}text-success{% elif copy.status == 'р' %}text-danger{% else %}text-warning{% endif %}">
-                  <strong>Статус: </strong>{{ copy.get_status_display }}</p>
-                {% if user.is_staff %}
-                  <p class="text-muted"><strong>Штамп:</strong> {{ copy.imprint }}</p>
-                {% endif %}
-              {% endfor %}
-              </div>
-              </div>
-              </div>
-              </div>
-              </div>
-            {% endif %}
+          {#          <div class="card" style="margin-top: 16px">#}
+          {#            {% if user.is_staff %}#}
+          {#              <h4>Статусы экземпляров:</h4>#}
+          {#              {% for copy in book.bookcopy_set.all %}#}
+          {#                <hr>#}
+          {#                <h5>№ {{ forloop.counter }}</h5>#}
+          {#                <p#}
+          {#                  class="{% if copy.status == 'д' %}text-success{% elif copy.status == 'р' %}text-danger{% else %}text-warning{% endif %}">#}
+          {#                  <strong>Статус: </strong>{{ copy.get_status_display }}</p>#}
+          {#                {% if user.is_staff %}#}
+          {#                  <p class="text-muted"><strong>Штамп:</strong> {{ copy.imprint }}</p>#}
+          {#                {% endif %}#}
+          {#              {% endfor %}#}
+          {#              </div>#}
+        </div>
+      </div>
+    </div>
+  </div>
+  {#            {% endif %}#}
 
   <style>
     .book-info {

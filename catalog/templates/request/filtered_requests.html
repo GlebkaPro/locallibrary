@@ -1,32 +1,34 @@
-    {% for request in requests %}
-      <tr>
-        <td>{{ request.title }}</td>
-        <td>{{ request.author }}</td>
-        <td>{{ request.description|slice:":30" }}</td>
-        <td>{{ request.date_creation }}</td>
-        <td>{{ request.borrower }}</td>
-        <td>{{ request.worker }}</td>
-        <td>
-          {% if request.status_record == 'п' %}
-            Принята
-          {% elif request.status_record == 'з' %}
-            Закрыта
-          {% elif request.status_record == 'в' %}
-            В обработке
-          {% elif request.status_record == 'о' %}
-            Отклонена
-          {% endif %}
-        </td>
-        <td>
-           {% if request.status_record == 'в' %} 
-          <form action="{% url 'accept_request' request_id=request.id %}" method="post" style="display: inline;">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-success" onclick="return confirm('Вы уверены?')">Принять</button>
-          </form>
-          <a href="{% url 'reject_request' request_id=request.id %}" class="btn btn-danger">Отклонить</a>
-           {% else %} 
-           <span>Действия невозможны</span> 
-           {% endif %} 
-        </td>
-      </tr>
-    {% endfor %}
+{% for request in requests %}
+  <tr class="{% if request.status_record == 'п' %}table-success
+              {% elif request.status_record == 'з' %}{% elif request.status_record == 'в' %}table-warning{% elif request.status_record == 'о' %}table-danger{% endif %}">
+    <td>{{ forloop.counter }}</td>
+    <td>{{ request.title }}</td>
+    <td>{{ request.author }}</td>
+    <td>{{ request.description|slice:":30" }}</td>
+    <td>{{ request.date_creation }}</td>
+    <td>{{ request.borrower }}</td>
+    <td>{{ request.worker }}</td>
+    <td>
+      {% if request.status_record == 'п' %}
+        Принята
+      {% elif request.status_record == 'з' %}
+        Закрыта
+      {% elif request.status_record == 'в' %}
+        В обработке
+      {% elif request.status_record == 'о' %}
+        Отклонена
+      {% endif %}
+    </td>
+    <td>
+      {% if request.status_record == 'в' %}
+        <form action="{% url 'accept_request' request_id=request.id %}" method="post" style="display: inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-success" onclick="return confirm('Вы уверены?')">Принять</button>
+        </form>
+        <a href="{% url 'reject_request' request_id=request.id %}" class="btn btn-danger">Отклонить</a>
+      {% else %}
+        <span>Действия невозможны</span>
+      {% endif %}
+    </td>
+  </tr>
+{% endfor %}

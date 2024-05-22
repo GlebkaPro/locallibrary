@@ -41,12 +41,11 @@
 
 
             <div class="mb-3">
-              <label for="{{ form.image.id_for_label }}">Изображение</label>
+              <label for="{{ form.image.id_for_label }}">Выберите фотографию</label>
               <input type="file" class="form-control" id="{{ form.image.id_for_label }}" name="{{ form.image.name }}"
                      style="max-width: 300px;">
               {% if author.image %}
-                <img src="{{ author.image.url }}" class="img-thumbnail" alt="Author Image"
-                >
+                <img src="{{ author.image.url }}" class="img-thumbnail" alt="Author Image" style="max-height: 200px">
               {% endif %}
             </div>
 

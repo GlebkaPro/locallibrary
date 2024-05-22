@@ -3,13 +3,13 @@
 <requests>
   {% for request in requests %}
   <request>
-    <title>{{ request.title }}</title>
-    <author>{{ request.author }}</author>
-    <description>{{ request.description }}</description>
-    <date_creation>{{ request.date_creation|date:"Y-m-d" }}</date_creation>
-    <borrower>{{ request.borrower }}</borrower>
-    <worker>{{ request.worker }}</worker>
-    <status_record>{{ request.get_status_record_display }}</status_record>
+    <Название>{{ request.title }}</Название>
+    <Автор>{{ request.author }}</Автор>
+    <Описание>{{ request.description }}</Описание>
+    <ДатаИзменения>{{ request.date_creation|date:"Y-m-d" }}</ДатаИзменения>
+    <Абонент>{{ request.borrower }}</Абонент>
+    <Сотрудник>{{ request.worker }}</Сотрудник>
+    <СтатусЗаявки>{{ request.get_status_record_display }}</СтатусЗаявки>
   </request>
   {% endfor %}
 </requests>

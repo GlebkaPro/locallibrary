@@ -4,7 +4,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.db.models import Max
+from django.db.models import Max, ExpressionWrapper
 from django.forms import formset_factory
 from django.http import Http404
 from django.urls import reverse_lazy
@@ -147,48 +147,51 @@ def change_status_to_overdue():
     overdue_instance.status = 'о'
     overdue_instance.save()
 
+from django.utils import timezone
+from django.views import generic
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from .models import BookInstance
 
 class LoanedBooksAllListView(PermissionRequiredMixin, generic.ListView):
-  """Общий класс-представление для списка всех книг, взятых на аренду. Доступно только пользователям с разрешением can_mark_returned."""
-  change_status_to_overdue()
+    """Общий класс-представление для списка всех книг, взятых на аренду. Доступно только пользователям с разрешением can_mark_returned."""
+    change_status_to_overdue()
 
-  model = BookInstance
-  permission_required = 'catalog.can_mark_returned'
-  template_name = 'bookinstances/bookinstance_list_borrowed_all.html'
-  paginate_by = 20
+    model = BookInstance
+    permission_required = 'catalog.can_mark_returned'
+    template_name = 'bookinstances/bookinstance_list_borrowed_all.html'
+    paginate_by = 20
 
+    def get_queryset(self):
+        status = self.request.GET.get('status', None)
+        search_type = self.request.GET.get('search_type', None)
+        search_query = self.request.GET.get('search_query', None)
+        date_type = self.request.GET.get('date_type', None)
+        start_date = self.request.GET.get('start_date', None)
+        end_date = self.request.GET.get('end_date', None)
 
+        queryset = BookInstance.objects.all().order_by('-current_date')
 
-  def get_queryset(self):
-    status = self.request.GET.get('status', None)
-    search_type = self.request.GET.get('search_type', None)
-    search_query = self.request.GET.get('search_query', None)
-    date_type = self.request.GET.get('date_type', None)
-    start_date = self.request.GET.get('start_date', None)
-    end_date = self.request.GET.get('end_date', None)
+        if status:
+            queryset = queryset.filter(status=status)
 
-    queryset = BookInstance.objects.all().order_by('current_date')
+        if search_type == 'lastname' and search_query:
+            queryset = queryset.filter(borrower__last_name__icontains=search_query)
+        elif search_type == 'username' and search_query:
+            queryset = queryset.filter(borrower__username__icontains=search_query)
 
-    if status:
-        queryset = queryset.filter(status=status)
+        if start_date and end_date:
+            start_date = timezone.datetime.strptime(start_date, "%Y-%m-%d").date()
+            end_date = timezone.datetime.strptime(end_date, "%Y-%m-%d").date()
 
-    if search_type == 'lastname' and search_query:
-        queryset = queryset.filter(borrower__last_name__icontains=search_query)
-    elif search_type == 'username' and search_query:
-        queryset = queryset.filter(borrower__username__icontains=search_query)
+            if date_type == 'current_date':
+                queryset = queryset.filter(current_date__range=[start_date, end_date])
+            elif date_type == 'due_back':
+                queryset = queryset.filter(due_back__range=[start_date, end_date])
+            elif date_type == 'renewal_date':
+                queryset = queryset.filter(renewal_date__range=[start_date, end_date])
 
-    if start_date and end_date:
-        start_date = timezone.datetime.strptime(start_date, "%Y-%m-%d").date()
-        end_date = timezone.datetime.strptime(end_date, "%Y-%m-%d").date()
+        return queryset
 
-        if date_type == 'current_date':
-            queryset = queryset.filter(current_date__range=[start_date, end_date])
-        elif date_type == 'due_back':
-            queryset = queryset.filter(due_back__range=[start_date, end_date])
-        elif date_type == 'renewal_date':
-            queryset = queryset.filter(renewal_date__range=[start_date, end_date])
-
-    return queryset
 
 # @login_required
 # @permission_required('catalog.can_mark_returned', raise_exception=True)
@@ -275,11 +278,11 @@ class BookCreate(PermissionRequiredMixin, CreateView):
     permission_required = 'catalog.can_mark_returned'
 
     def form_valid(self, form):
-        # Добавляем обработку множественного выбора жанров
+
         self.object = form.save(commit=False)
         form.instance.author = self.request.user
         form.instance.save()
-        form.save_m2m()  # Сохраняем множественный выбор жанров
+        form.save_m2m()
         return super().form_valid(form)
 
 class BookUpdate(PermissionRequiredMixin, UpdateView):
@@ -1327,9 +1330,13 @@ def register_to_event(request, event_id):
 
 
 # @login_required
+from django.utils import timezone
+
 def event_list_borrower(request):
-  events = Event.objects.all()
-  return render(request, 'event/event_list_borrower.html', {'events': events})
+    events = Event.objects.all().order_by('-date_end')
+    now = timezone.now()
+    return render(request, 'event/event_list_borrower.html', {'events': events, 'now': now})
+
 
 
 def cancel_registration(request, registration_id):
@@ -1346,11 +1353,19 @@ def cancel_registration(request, registration_id):
   return redirect(redirect_url)
 
 
+
 def detail_event(request, event_id):
-  # Получаем объект Event по event_id или возвращаем 404, если ивент не найден
-  event = get_object_or_404(Event, id=event_id)
-  context = {'event': event}
-  return render(request, 'event/detail_event.html', context)
+    # Получаем объект Event по event_id или возвращаем 404, если ивент не найден
+    event = get_object_or_404(Event, id=event_id)
+    now = timezone.now()
+    context = {
+        'event': event,
+        'now': now
+    }
+    return render(request, 'event/detail_event.html', context)
+
+
+
 
 
 from django.contrib.auth.decorators import login_required

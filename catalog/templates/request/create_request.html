@@ -1,81 +1,50 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <div class="container">
-    <h1>Создание заявки</h1>
-    <form method="post" class="mt-4">
-      {% csrf_token %}
-      <div class="mb-3">
-        <label for="{{ form.title.id_for_label }}" class="form-label">Название издания</label>
-        <input type="text" class="form-control {% if form.title.errors %}is-invalid{% endif %}"
-               id="{{ form.title.id_for_label }}" name="{{ form.title.name }}"
-               value="{% if form.title.value %}{{ form.title.value }}{% endif %}" style="max-width: 200px;">
-        {% if form.title.errors %}
-          <span class="invalid-feedback">{{ form.title.errors }}</span>
-        {% endif %}
-      </div>
-      <div class="mb-3">
-        <label for="{{ form.author.id_for_label }}" class="form-label">Автор издания</label>
-        <input type="text" class="form-control {% if form.author.errors %}is-invalid{% endif %}"
-               id="{{ form.author.id_for_label }}" name="{{ form.author.name }}"
-               value="{% if form.author.value %}{{ form.author.value }}{% endif %}" style="max-width: 200px;">
-        {% if form.author.errors %}
-          <span class="invalid-feedback">{{ form.author.errors }}</span>
-        {% endif %}
-      </div>
-
-      <div class="mb-3">
-        <label for="{{ form.description.id_for_label }}" class="form-label">Примечание</label>
-        <textarea class="form-control {% if form.description.errors %}is-invalid{% endif %}"
-                  id="{{ form.description.id_for_label }}" name="{{ form.description.name }}"
-                  style="max-width: 100%;" rows="5">{% if form.description.value %}
-          {{ form.description.value }}{% endif %}</textarea>
-        {% if form.description.errors %}
-          <span class="invalid-feedback">{{ form.description.errors }}</span>
-        {% endif %}
-      </div>
-
-{#      <div class="mb-3">#}
-{#        <label for="{{ form.date_creation.id_for_label }}" class="form-label">Дата создания</label>#}
-{#        <input type="date" class="form-control {% if form.date_creation.errors %}is-invalid{% endif %}"#}
-{#               id="{{ form.date_creation.id_for_label }}" name="{{ form.date_creation.name }}"#}
-{#               value="{{ form.date_creation.value }}" style="max-width: 200px;">#}
-{#        {% if form.date_creation.errors %}#}
-{#          <span class="invalid-feedback">{{ form.date_creation.errors }}</span>#}
-{#        {% endif %}#}
-{#      </div>#}
-
-{#      <div class="mb-3">#}
-{#        <label for="{{ form.borrower.id_for_label }}" class="form-label">Абонент</label>#}
-{#        <input type="text" class="form-control {% if form.borrower.errors %}is-invalid{% endif %}"#}
-{#               id="{{ form.borrower.id_for_label }}" name="{{ form.borrower.name }}"#}
-{#               value="{{ user.username }}" disabled>#}
-{#        {% if form.borrower.errors %}#}
-{#          <span class="invalid-feedback">{{ form.borrower.errors }}</span>#}
-{#        {% endif %}#}
-{#      </div>#}
-
-{#      <div class="mb-3">#}
-{#        <label for="{{ form.worker.id_for_label }}" class="form-label">Сотрудник</label>#}
-{#        <select class="form-select {% if form.worker.errors %}is-invalid{% endif %}"#}
-{#                id="{{ form.worker.id_for_label }}" name="{{ form.worker.name }}"#}
-{#                style="max-width: 200px;">#}
-{#          <option value="" {% if not form.worker.value %}selected{% endif %}>Выберите сотрудника:</option>#}
-{#          {% for worker in form.worker.field.queryset %}#}
-{#            <option value="{{ worker.id }}">{{ worker }}</option>#}
-{#          {% endfor %}#}
-{#        </select>#}
-{#        {% if form.worker.errors %}#}
-{#          <span class="invalid-feedback">{{ form.worker.errors }}</span>#}
-{#        {% endif %}#}
-{#      </div>#}
-
-      <button type="submit" class="btn btn-primary">Создать</button>
-      {% if form.non_field_errors %}
-        <div class="alert alert-danger mt-3" role="alert">
-          {{ form.non_field_errors }}
+  <div class="d-flex justify-content-center">
+    <div class="card" style="width: 500px; padding: 20px">
+      <div class="card-body">
+        <div class="container">
+          <h1>Создание заявки</h1>
+          <form method="post" class="mt-4">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="{{ form.title.id_for_label }}" class="form-label">Название издания</label>
+              <input type="text" class="form-control {% if form.title.errors %}is-invalid{% endif %}"
+                     id="{{ form.title.id_for_label }}" name="{{ form.title.name }}"
+                     value="{% if form.title.value %}{{ form.title.value }}{% endif %}" style="max-width: 300px;">
+              {% if form.title.errors %}
+                <span class="invalid-feedback">{{ form.title.errors }}</span>
+              {% endif %}
+            </div>
+            <div class="mb-3">
+              <label for="{{ form.author.id_for_label }}" class="form-label">Автор издания</label>
+              <input type="text" class="form-control {% if form.author.errors %}is-invalid{% endif %}"
+                     id="{{ form.author.id_for_label }}" name="{{ form.author.name }}"
+                     value="{% if form.author.value %}{{ form.author.value }}{% endif %}" style="max-width: 300px;">
+              {% if form.author.errors %}
+                <span class="invalid-feedback">{{ form.author.errors }}</span>
+              {% endif %}
+            </div>
+            <div class="mb-3">
+              <label for="{{ form.description.id_for_label }}" class="form-label">Примечание</label>
+              <textarea class="form-control {% if form.description.errors %}is-invalid{% endif %}"
+                        id="{{ form.description.id_for_label }}" name="{{ form.description.name }}"
+                        style="max-width: 100%;" rows="5">{% if form.description.value %}
+                {{ form.description.value }}{% endif %}</textarea>
+              {% if form.description.errors %}
+                <span class="invalid-feedback">{{ form.description.errors }}</span>
+              {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primary">Создать</button>
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger mt-3" role="alert">
+                {{ form.non_field_errors }}
+              </div>
+            {% endif %}
+          </form>
         </div>
-      {% endif %}
-    </form>
+      </div>
+    </div>
   </div>
 {% endblock %}
