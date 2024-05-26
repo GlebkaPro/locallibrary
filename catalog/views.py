@@ -1159,10 +1159,22 @@ def create_event(request):
   return render(request, 'event/create_event.html', {'form': form})
 
 
-def event_list(request):
-  events = Event.objects.all()
-  return render(request, 'event/event_list.html',  {'events': events})
+from django.db.models import Count
 
+def event_list(request):
+  events = Event.objects.annotate(
+    num_reviews=Count('reviews'),
+    num_unpublished_reviews=Count(
+      'reviews',
+      filter=Q(reviews__status_record='н')
+    )
+  ).all().order_by('-date_end')
+  return render(request, 'event/event_list.html', {'events': events})
+
+def event_list_borrower(request):
+  events = Event.objects.all().order_by('-date_end')
+  now = timezone.now()
+  return render(request, 'event/event_list_borrower.html',  {'events': events, 'now': now})
 
 def room_list(request):
   rooms = Room.objects.all()
@@ -1327,11 +1339,6 @@ def register_to_event(request, event_id):
     position_event = PositionEvent(event=event, borrower=request.user, date_record=date.today())
     position_event.save()
     return redirect('participants_list', event_id=event.id)
-
-
-def event_list_borrower(request):
-  events = Event.objects.all().order_by('-date_end')
-  return render(request, 'event/event_list_borrower.html',  {'events': events})
 
 
 def cancel_registration(request, registration_id):
@@ -1678,12 +1685,19 @@ def edit_book_exemplar(request, pk):
   return render(request, 'books/edit_book_exemplar.html', {'form': form})
 
 
-
 def review_list(request, event_id):
-    event = get_object_or_404(Event, pk=event_id)
-    reviews = event.reviews.all()
-    return render(request, 'review/review_list.html', {'event_name': event.event_name, 'event': event, 'reviews': reviews})
+  event = get_object_or_404(Event, pk=event_id)
+  reviews = event.reviews.all()
 
+  # Получение параметра status из GET-запроса
+  selected_status = request.GET.get('status')
+
+  # Фильтрация отзывов по выбранному статусу, если он указан
+  if selected_status:
+    reviews = reviews.filter(status_record=selected_status)
+
+  return render(request, 'review/review_list.html', {'event_name': event.event_name, 'event': event, 'reviews': reviews,
+                                                     'selected_status': selected_status})
 
 
 from django.shortcuts import render, redirect, get_object_or_404

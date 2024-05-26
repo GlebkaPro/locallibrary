@@ -3,6 +3,17 @@
 {% block content %}
   <h1>Список отзывов о мероприятии:</h1>
   <h1>"{{ event_name }}"</h1>
+<form method="GET" action="{% url 'review_list' event_id=event.id %}">
+  <div class="input-group mb-3" >
+    <label class="input-group-text" for="status">Выберите статус:</label>
+    <select name="status" id="status" class="form-select">
+      <option value="">Все статусы</option>
+      <option value="о" {% if selected_status == 'о' %}selected{% endif %}>Опубликованные</option>
+      <option value="н" {% if selected_status == 'н' %}selected{% endif %}>Неопубликованные</option>
+    </select>
+    <button type="submit" class="btn btn-primary">Применить</button>
+  </div>
+</form>
   <div class="card">
     <div class="card-body">
       <div class="table-responsive">
@@ -19,11 +30,11 @@
           </thead>
           <tbody>
           {% for review in reviews %}
-            <tr class="{% if review.is_overdue %}text-danger{% endif %} 
+            <tr class="{% if review.is_overdue %}text-danger{% endif %}
               {% if review.status_record == 'о' %}table-success{% elif review.status_record == 'н' %}table-danger{% endif %}">
               <td>{{ forloop.counter }}</td>
               <td>{{ review.review_text }}</td>
-              <td>{{ review.user }}</td>
+              <td>{{ review.user.last_name }} {{ review.user.first_name|slice:":1" }}. {{ review.user.middle_name|slice:":1" }}</td>
               <td>{{ review.review_date |date:"d.m.Y H:i" }}</td>
               <td>{{ review.get_status_record_display }}</td>
               <td>

@@ -10,14 +10,14 @@
           <thead>
           <tr>
             <th>№</th>
-            <th>Наименование мероприятия</th>
+            <th>Наименование</th>
             <th>Мест</th>
-            <th>Дата начала</th>
-            <th>Дата окончания</th>
+            <th>Начало</th>
+            <th>Окончание</th>
             {#            <th>Дата фактического окончания</th>#}
-            <th>Ответственный сотрудник</th>
-            <th>Комната</th>
-            <th>Тип мероприятия</th>
+            <th>Ответственный</th>
+            <th>Кабинет</th>
+            <th>Тип</th>
             <th>Действия</th>
           </tr>
           </thead>
@@ -30,7 +30,7 @@
               <td>{{ event.date_start |date:"d.m.Y" }}</td>
               <td>{{ event.date_end |date:"d.m.Y" }}</td>
               {#              <td>{{ event.date_end2 }}</td>#}
-              <td>{{ event.worker }}</td>
+              <td>{{ event.worker.last_name }} {{ event.worker.first_name|slice:":1" }}. {{ event.worker.middle_name|slice:":1" }}</td>
               <td>{{ event.room }}</td>
               <td>{{ event.typeroom }}</td>
               <td>
@@ -44,7 +44,7 @@
                 {#                {% if event.date_end < now %}#}
                 <a href="{% url 'create_news' event_id=event.id %}" class="btn btn-sm btn-success">Создать новость</a>
                 {#                {% endif %}#}
-                <a href="{% url 'review_list' event_id=event.id %}" class="btn btn-sm btn-info">Отзывы</a>
+                <a href="{% url 'review_list' event_id=event.id %}" class="btn btn-sm btn-info">Отзывы: {{ event.num_unpublished_reviews }} (новые: {{ event.num_unpublished_reviews }})</a>
               </td>
             </tr>
           {% endfor %}
