@@ -1329,18 +1329,9 @@ def register_to_event(request, event_id):
     return redirect('participants_list', event_id=event.id)
 
 
-# @login_required
-from django.utils import timezone
-
 def event_list_borrower(request):
-    events = Event.objects.all().order_by('-date_end')
-    now = timezone.now()
-    context = {
-        'event': events,
-        'now': now
-    }
-    return render(request, 'event/detail_event.html', context)
-
+  events = Event.objects.all().order_by('-date_end')
+  return render(request, 'event/event_list_borrower.html',  {'events': events})
 
 
 def cancel_registration(request, registration_id):
@@ -1357,19 +1348,27 @@ def cancel_registration(request, registration_id):
   return redirect(redirect_url)
 
 
-
 def detail_event(request, event_id):
-    # Получаем объект Event по event_id или возвращаем 404, если ивент не найден
-    event = get_object_or_404(Event, id=event_id)
-    now = timezone.now()
-    context = {
-        'event': event,
-        'now': now
-    }
-    return render(request, 'event/detail_event.html', context)
+  event = get_object_or_404(Event, id=event_id)
+  now = timezone.now()
 
+  user_reviews = Review.objects.filter(event=event, user=request.user)
+  public_reviews = Review.objects.filter(event=event, status_record='о').exclude(user=request.user)
 
+  if request.method == 'POST' and not user_reviews.exists():
+    review_text = request.POST.get('review_text')
+    if review_text:
+      review = Review.objects.create(event=event, review_text=review_text, review_date=now, user=request.user)
+      review.save()
+      return redirect('detail_event', event_id=event.id)
 
+  context = {
+    'event': event,
+    'now': now,
+    'user_reviews': user_reviews,
+    'public_reviews': public_reviews,
+  }
+  return render(request, 'event/detail_event.html', context)
 
 
 from django.contrib.auth.decorators import login_required

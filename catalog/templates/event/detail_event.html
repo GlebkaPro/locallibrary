@@ -8,35 +8,101 @@
   <div class="d-flex justify-content-center">
     <div class="card" style="width: 1200px;">
       <div class="card-body">
-        <form method="post">
-          <div class="d-flex">
-            <div class="me-4">
-              {% if event.image %}
-                <img src="{{ event.image.url }}" alt="{{ event.event_name }}" style="max-width: 500px;">
-              {% else %}
-                <p>Изображение отсутствует</p>
-              {% endif %}
-            </div>
-            <div>
-              <h1>"{{ event.event_name }}"</h1>
-              <p><strong>Количество мест:</strong> {{ event.number_of_participants }}</p>
-              <p><strong>Время начала:</strong> {{ event.date_start }}</p>
-              <p><strong>Время окончания:</strong> {{ event.date_end }}</p>
-              <p><strong>Описание:</strong> {{ event.description }}</p>
-              {% if event.date_end <= now %}
-              <a href="{% url 'create_review' event_id=event.id %}" class="btn btn-primary mb-3">Оставить отзыв</a>
-              {% endif %}
-              {% if event.date_end >= now %}
-                <form action="{% url 'register_to_event' event_id=event.id %}" method="post" style="display: inline;">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-success">Зарегистрироваться</button>
-                </form>
-              {% else %}
-                <p class="text-danger">Мероприятие окончено</p>
-              {% endif %}
+        <div class="d-flex">
+          <div class="me-4">
+            {% if event.image %}
+              <img src="{{ event.image.url }}" alt="{{ event.event_name }}" style="max-width: 500px;">
+            {% else %}
+              <p>Изображение отсутствует</p>
+            {% endif %}
+          </div>
+          <div>
+            <h1>"{{ event.event_name }}"</h1>
+            <p><strong>Количество мест:</strong> {{ event.number_of_participants }}</p>
+            <p><strong>Время начала:</strong> {{ event.date_start }}</p>
+            <p><strong>Время окончания:</strong> {{ event.date_end }}</p>
+            <p><strong>Описание:</strong> {{ event.description }}</p>
+            {% if event.date_end >= now %}
+              <form action="{% url 'register_to_event' event_id=event.id %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">Зарегистрироваться</button>
+              </form>
+            {% else %}
+              <p class="text-danger">Мероприятие окончено</p>
+            {% endif %}
+          </div>
+        </div>
+        <h3>Ваш отзыв:</h3>
+        {% if event.date_end <= now %}
+          {% if not user_reviews.exists %}
+            <form method="post">
+              {% csrf_token %}
+              <textarea name="review_text" class="form-control mb-3" placeholder="Введите ваш отзыв здесь"
+                        required></textarea>
+              <button type="submit" class="btn btn-success">Отправить</button>
+            </form>
+          {% endif %}
+
+          {% load static %}
+
+          <div class="mt-5">
+            <div class="row">
+              {% for review in user_reviews %}
+                <h3>Ваши отзывы:</h3>
+                {% if review.status_record == 'о' or review.user == request.user %}
+                  <div class="d-flex mb-4">
+                    <div class="me-4">
+                      {% if review.user.avatar %}
+                        <img src="{{ review.user.avatar.url }}" alt="{{ review.user.get_full_name }}"
+                             style="max-width: 64px; max-height: 64px;">
+                      {% else %}
+                        <img src="{% static 'images/clients/default.jpg' %}" alt="default avatar"
+                             style="max-width: 64px; max-height: 64px;">
+                      {% endif %}
+                    </div>
+                    <div>
+                      <div class="testimonial">
+                        <p class="overview">
+                          <b>{{ review.user.last_name }} {{ review.user.first_name|slice:":1" }}. {{ review.user.middle_name|slice:":1" }}.</b>, {{ review.review_date|date:"d.m.Y H:i" }}
+                          ({{ review.get_status_record_display }})
+                        </p>
+                        <p>{{ review.review_text }}</p>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+              {% endfor %}
             </div>
           </div>
-        </form>
+
+          <div class="mt-2">
+
+            <div class="row">
+              {% for review in public_reviews %}
+                <h3>Отзывы:</h3>
+                <div class="d-flex mb-4">
+                  <div class="me-4">
+                    {% if review.user.avatar %}
+                      <img src="{{ review.user.avatar.url }}" alt="{{ review.user.get_full_name }}"
+                           style="max-width: 64px; max-height: 64px;">
+                    {% else %}
+                      <img src="{% static 'images/clients/default.jpg' %}" alt="default avatar"
+                           style="max-width: 64px; max-height: 64px;">
+                    {% endif %}
+                  </div>
+                  <div>
+                    <div class="testimonial">
+                      <p class="overview">
+                        <b>{{ review.user.last_name }} {{ review.user.first_name|slice:":1" }}. {{ review.user.middle_name|slice:":1" }}.</b>, {{ review.review_date|date:"d.m.Y H:i" }}
+                      </p>
+                      <p>{{ review.review_text }}</p>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
       </div>
     </div>
   </div>
