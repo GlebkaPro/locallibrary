@@ -148,6 +148,7 @@ urlpatterns += [
     path('review/<int:review_id>/delete/', views.delete_review, name='delete_review'),
     path('review/<int:review_id>/publish/', views.publish_review, name='publish_review'),
     path('review/<int:review_id>/unpublish/', views.unpublish_review, name='unpublish_review'),
+    path('report/', views.report_view, name='reports'),
 ]
 
 

@@ -1736,3 +1736,30 @@ def unpublish_review(request, review_id):
   review.status_record = 'н'
   review.save()
   return redirect('review_list', event_id=review.event.id)
+
+from django.shortcuts import render
+from django.db.models import Count
+from .models import BookInstance
+
+
+def report_view(request):
+  # Получение параметров даты и типа даты из запроса
+  start_date = request.GET.get('start_date')
+  end_date = request.GET.get('end_date')
+  date_type = request.GET.get('date_type', 'current_date')
+
+  # Фильтрация по диапазону дат, если они указаны
+  if start_date and end_date:
+    filter_kwargs = {f"{date_type}__range": [start_date, end_date]}
+    book_popularity = BookInstance.objects.filter(**filter_kwargs).values('book__title').annotate(
+      count=Count('book')).order_by('-count')
+  else:
+    book_popularity = BookInstance.objects.values('book__title').annotate(count=Count('book')).order_by('-count')
+
+  return render(request, 'bookinstances/reports.html', {
+    'book_popularity': book_popularity,
+    'start_date': start_date,
+    'end_date': end_date,
+    'date_type': date_type
+  })
+
