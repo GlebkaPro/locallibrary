@@ -1763,3 +1763,22 @@ def report_view(request):
     'date_type': date_type
   })
 
+
+from django.shortcuts import render, get_object_or_404
+from .models import Event, PositionEvent
+from django.db.models import Count
+
+
+def event_report_view(request, event_id):
+  event = get_object_or_404(Event, id=event_id)
+  participants_stats = PositionEvent.objects.filter(event=event).values('status_record').annotate(
+    count=Count('status_record'))
+
+  status_counts = {'з': 0, 'н': 0}
+  for stat in participants_stats:
+    status_counts[stat['status_record']] = stat['count']
+
+  return render(request, 'event/report_event.html', {
+    'event': event,
+    'status_counts': status_counts,
+  })

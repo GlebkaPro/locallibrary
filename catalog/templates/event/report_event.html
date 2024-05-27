@@ -1,0 +1,63 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Отчет по мероприятию: {{ event.event_name }}</h1>
+
+  <div>
+    <h2>Основная информация</h2>
+    <p><strong>ФИО организатора:</strong> {{ event.fio }}</p>
+    <p><strong>Количество участников:</strong> {{ event.number_of_participants }}</p>
+    <p><strong>Дата начала:</strong> {{ event.date_start }}</p>
+    <p><strong>Дата окончания:</strong> {{ event.date_end }}</p>
+    <p><strong>Дата фактического окончания:</strong> {{ event.date_end2 }}</p>
+    <p><strong>Сотрудник:</strong> {{ event.worker }}</p>
+    <p><strong>Описание:</strong> {{ event.description }}</p>
+  </div>
+
+  <div>
+    <div class="d-flex justify-content-center">
+    <div class="card" style="width: 600px;">
+      <div class="card-body">
+    <h2>Статистика участников</h2>
+    <canvas id="myChart" width="400" height="400"></canvas>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var data = {
+      labels: ['Записан', 'Не записан'],
+      datasets: [{
+        label: 'Количество участников',
+        data: [{{ status_counts.з }}, {{ status_counts.н }}],
+        backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 99, 132, 0.2)'],
+        borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
+        borderWidth: 1
+      }]
+    };
+    var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: data,
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: function(tooltipItem) {
+                return tooltipItem.label + ': ' + tooltipItem.raw;
+              }
+            }
+          }
+        }
+      }
+    });
+  </script>
+{% endblock %}

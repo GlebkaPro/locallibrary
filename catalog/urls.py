@@ -110,6 +110,7 @@ urlpatterns += [
   path('events/<int:event_id>/register/', views.register_to_event, name='register_to_event'),
   path('cancel_registration/<int:registration_id>/', views.cancel_registration, name='cancel_registration'),
   path('events/<int:event_id>/', views.detail_event, name='detail_event'),
+  path('event_report/<int:event_id>/', views.event_report_view, name='event_report'),
 ]
 
 urlpatterns += [

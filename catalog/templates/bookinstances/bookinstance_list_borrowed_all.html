@@ -9,6 +9,7 @@
 {#        <button type="submit" class="btn btn-danger my-3">Проверить просроченные</button>#}
 {#      </form>#}
       <a class="btn btn-success my-3" href="{% url 'add-bookinstance' %}">Выдать книгу</a>
+      <a class="btn btn-warning my-3" href="{% url 'reports' %}">Отчёт</a>
     </div>
     <form method="GET" action="{% url 'all-borrowed' %}">
       <div class="input-group mb-3">

@@ -45,6 +45,7 @@
                 <a href="{% url 'create_news' event_id=event.id %}" class="btn btn-sm btn-success">Создать новость</a>
                 {#                {% endif %}#}
                 <a href="{% url 'review_list' event_id=event.id %}" class="btn btn-sm btn-info">Отзывы: {{ event.num_unpublished_reviews }} (новые: {{ event.num_unpublished_reviews }})</a>
+                <a href="{% url 'event_report' event_id=event.id %}" class="btn btn-sm btn-secondary">Отчет</a>
               </td>
             </tr>
           {% endfor %}

@@ -1,29 +1,29 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-
-  <form method="get">
-    <div class="input-group mb-3">
-      <label class="input-group-text" for="date_type">Выбрать по:</label>
-      <select name="date_type" id="date_type" class="form-select">
-        <option value="current_date" {% if date_type == 'current_date' %}selected{% endif %}>Дата начала</option>
-        <option value="due_back" {% if date_type == 'due_back' %}selected{% endif %}>Дата окончания</option>
-      </select>
-
-      <input type="date" name="start_date" id="start_date" class="form-control" placeholder="Начальная дата"
-             value="{{ request.GET.start_date|default_if_none:'' }}">
-      <input type="date" name="end_date" id="end_date" class="form-control" placeholder="Конечная дата"
-             value="{{ request.GET.end_date|default_if_none:'' }}">
-
-      <button type="submit" class="btn btn-primary">Фильтр</button>
-    </div>
-  </form>
-  
-  
   <div class="d-flex justify-content-center">
-    <div class="card" style="width: 600px;">
+    <div class="card" style="width: 700px;">
       <div class="card-body">
         <h1>Отчет по взятым книгам</h1>
+
+        <form method="get">
+          <div class="input-group mb-3" style="width: 660px">
+            <label class="input-group-text" for="date_type">Выбрать по:</label>
+            <select name="date_type" id="date_type" class="form-select">
+              <option value="current_date" {% if date_type == 'current_date' %}selected{% endif %}>Дата начала</option>
+              <option value="due_back" {% if date_type == 'due_back' %}selected{% endif %}>Дата окончания</option>
+            </select>
+
+            <input type="date" name="start_date" id="start_date" class="form-control" placeholder="Начальная дата"
+                   value="{{ request.GET.start_date|default_if_none:'' }}">
+            <input type="date" name="end_date" id="end_date" class="form-control" placeholder="Конечная дата"
+                   value="{{ request.GET.end_date|default_if_none:'' }}">
+
+            <button type="submit" class="btn btn-primary">Применить</button>
+          </div>
+        </form>
+        
+
         <canvas id="myChart" width="400" height="400"></canvas>
 
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
