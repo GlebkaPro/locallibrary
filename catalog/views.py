@@ -95,22 +95,30 @@ class BookDetailView(generic.DetailView):
   model = Book
   template_name = 'books/book_detail.html'
 
-class AuthorListView(generic.ListView):
-  """Общий класс-представление для списка авторов."""
-  model = Author
-  paginate_by = 10
-  template_name = 'authors/author_list.html'
 
-  def get_queryset(self):
-    query = self.request.GET.get('search', '')
-    return Author.objects.filter(
-      Q(first_name__icontains=query) | Q(last_name__icontains=query) | Q(middle_name__icontains=query)
-    )
+from django.shortcuts import render
+from .models import Author
+from collections import defaultdict
 
-  def get_context_data(self, **kwargs):
-    context = super().get_context_data(**kwargs)
-    context['search_query'] = self.request.GET.get('search', '')
-    return context
+
+def author_list(request):
+  search_query = request.GET.get('search', '')
+  if search_query:
+    authors = Author.objects.filter(last_name__icontains=search_query)
+  else:
+    authors = Author.objects.all()
+
+  authors_by_letter = defaultdict(list)
+  for author in authors:
+    first_letter = author.last_name[0].upper()
+    authors_by_letter[first_letter].append(author)
+
+  authors_by_letter = dict(sorted(authors_by_letter.items()))
+
+  return render(request, 'authors/author_list.html', {
+    'search_query': search_query,
+    'authors_by_letter': authors_by_letter,
+  })
 
 
 class AuthorDetailView(generic.DetailView):
@@ -246,7 +254,7 @@ from .forms import AuthorForm
 
 class AuthorUpdate(PermissionRequiredMixin, UpdateView):
     model = Author
-    form_class = AuthorForm  # Используем кастомную форму
+    form_class = AuthorForm
     permission_required = 'catalog.can_mark_returned'
     template_name = 'authors/author_edit.html'
     success_url = reverse_lazy('authors')
@@ -267,7 +275,6 @@ class AuthorDelete(PermissionRequiredMixin, DeleteView):
   model = Author
   success_url = reverse_lazy('authors')
   permission_required = 'catalog.can_mark_returned'
-  template_name = 'authors/author_confirm_delete.html'  # Создайте шаблон подтверждения удаления автора
 
 
 from django.views.generic.edit import CreateView
@@ -457,7 +464,7 @@ def add_author(request):
         # Если дата смерти не введена, устанавливаем ее в None
         form.cleaned_data['date_of_death'] = None
       author = form.save()
-      return redirect('author-detail', pk=author.id)
+      return redirect('author_list')
   else:
     form = AuthorForm()
 

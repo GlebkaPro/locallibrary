@@ -19,7 +19,7 @@ urlpatterns = [
 ]
 
 urlpatterns += [
-  path('authors/', views.AuthorListView.as_view(), name='authors'),
+  path('authors/', views.author_list, name='author_list'),
   path('author/<int:pk>/', views.AuthorDetailView.as_view(), name='author-detail'),
   path('author/add/', views.add_author, name='add-author'),
   path('author/<int:pk>/update/', views.AuthorUpdate.as_view(), name='author-update'),

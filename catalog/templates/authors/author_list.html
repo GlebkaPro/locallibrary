@@ -2,31 +2,46 @@
 
 {% block content %}
 <div class="container">
-    <h1 class="mb-4">Список авторов</h1>
-    <form method="get">
+    <h1 class="mb-4">Каталог авторов</h1>
+    
+    <!-- Форма поиска -->
+    <form method="get" class="mb-4">
         <div class="input-group mb-3">
             <input type="text" class="form-control" placeholder="Введите фамилию автора" name="search" value="{{ search_query }}">
             <button class="btn btn-primary" type="submit">Поиск</button>
         </div>
     </form>
-        {% load group_tags %}
+    
+    <!-- Ссылка для добавления автора для группы "Bibli" -->
+    {% load group_tags %}
     {% if user|has_group:"Bibli" %}
     <a href="{% url 'add-author' %}" class="btn btn-primary mb-3">Добавить автора</a>
     {% endif %}
-    {% if author_list %}
-    <ul class="list-group">
-        {% for author in author_list %}
-        <li class="list-group-item">
-            <a href="{{ author.get_absolute_url }}" class="text-decoration-none">
-                {{ author.last_name }} {{ author.first_name }}
-                {% if author.middle_name %}{{ author.middle_name }}{% endif %}
-                ({{ author.date_of_birth }} - {% if author.date_of_death %}{{ author.date_of_death }}{% endif %})
-            </a>
-        </li>
+    
+    <!-- Ссылки для перехода по буквам алфавита -->
+    <div class="authors__alfabet mb-3">
+        {% for letter in "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЭЮЯ" %}
+        <a href="#{{ letter }}">{{ letter }}</a>
         {% endfor %}
-    </ul>
-    {% else %}
-    <p>Авторов нет</p>
-    {% endif %}
+    </div>
+    
+    <div class="authors__flex">
+        <!-- Список авторов по буквам алфавита -->
+        {% for letter, authors in authors_by_letter.items %}
+        <div id="{{ letter }}" class="authors__letter">{{ letter }}</div>
+        <ul class="list-group">
+            {% for author in authors %}
+            <li class="list-group-item">
+                <a href="{{ author.get_absolute_url }}" class="text-decoration-none">
+                    {{ author.last_name }} {{ author.first_name }} {% if author.middle_name %}{{ author.middle_name }}{% endif %}
+                    ({% if author.date_of_birth %}{{ author.date_of_birth|date:"Y" }}{% endif %}
+                    -
+                    {% if author.date_of_death %}{{ author.date_of_death|date:"Y" }}){% endif %}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}
