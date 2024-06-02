@@ -11,8 +11,12 @@
         </div>
         <form method="get">
           <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Введите фамилию пользователя" name="search"
-                   value="{{ search_query }}">
+            <input type="text" class="form-control" placeholder="Введите фамилию пользователя" name="search_last_name"
+                   value="{{ search_query_last_name }}">
+            <input type="text" class="form-control" placeholder="Введите имя пользователя" name="search_first_name"
+                   value="{{ search_query_first_name }}">
+            <input type="text" class="form-control" placeholder="Введите отчество пользователя" name="search_middle_name"
+                   value="{{ search_query_middle_name }}">
             <button type="submit" class="btn btn-primary">Поиск</button>
           </div>
         </form>
@@ -21,26 +25,36 @@
           <table class="table table-bordered">
             <thead>
             <tr>
+              <th>№</th>
               <th>Фамилия</th>
               <th>Имя</th>
               <th>Отчество</th>
               <th>Имя пользователя</th>
               <th>Дата регистрации</th>
               <th>Электронная почта</th>
+              <th>Статус записи</th>
               <th>Действие</th>
             </tr>
             </thead>
             <tbody>
             {% for user in users %}
-              <tr>
+              <tr class="{% if user.is_overdue %}text-danger{% endif %}
+                    {% if user.record_status == 'а' %}table-success{% elif user.record_status == 'н' %}table-danger{% endif %}">
+                <td>{{ forloop.counter }}</td>
                 <td>{{ user.last_name }}</td>
                 <td>{{ user.first_name }}</td>
                 <td>{{ user.middle_name }}</td>
                 <td>{{ user.username }}</td>
                 <td>{{ user.date_joined|date:"d.m.Y" }}</td>
                 <td>{{ user.email }}</td>
+                <td>{{ user.get_record_status_display }}</td>
                 <td>
-                  <a href="{% url 'user_loans' user.id %}" class="btn btn-primary btn-sm">Книги абонента</a>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <a href="{% url 'user_loans' user.id %}" style="margin-right: 10px" class="btn btn-primary btn-sm">Книги</a>
+                  {% if user.record_status == 'н' %}
+                  <a href="{% url 'record_activation' user.id %}" class="btn btn-success btn-sm">Активировать</a>
+                  {% endif %}
+                </div>
                 </td>
               </tr>
             {% endfor %}

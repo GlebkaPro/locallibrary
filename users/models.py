@@ -8,6 +8,13 @@ class User(AbstractUser):
   privacy_policy_agreement = models.BooleanField(default=False)
   phone_number = models.CharField(max_length=100, blank=True, null=True)
 
+  record_status = (
+    ('а', 'активирована'),
+    ('н', 'не активирована'),
+  )
+
+  record_status = models.CharField(
+    max_length=1, choices=record_status, blank=True, default='н', verbose_name='Статус записи-')
   def __str__(self):
     return '{0} {1} {2}'.format( self.last_name, self.first_name, self.middle_name)
 

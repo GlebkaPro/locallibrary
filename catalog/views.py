@@ -12,7 +12,7 @@ from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from catalog.forms import RenewBookForm, BookInstanceEditForm, GenreForm, LanguageForm, PositionDebitingActForm, \
-  ParticipantForm
+  ParticipantForm, UserEditForm
 from users.models import User
 from .forms import AcceptActForm
 from .forms import AccountingBookCopyForm, BookCopyForm
@@ -327,13 +327,46 @@ def create_user(request):
 
 
 def user_list(request):
-    if request.user.is_staff:
-        search_query = request.GET.get('search', '')
-        if search_query:
-            users = get_user_model().objects.filter(Q(last_name__icontains=search_query))
-        else:
-            users = get_user_model().objects.all()
-        return render(request, 'users/user_list.html', {'users': users, 'search_query': search_query})
+  if request.user.is_staff:
+    search_query_last_name = request.GET.get('search_last_name', '')
+    search_query_first_name = request.GET.get('search_first_name', '')
+    search_query_middle_name = request.GET.get('search_middle_name', '')
+
+    filters = Q()
+
+    if search_query_last_name:
+      filters &= Q(last_name__icontains=search_query_last_name)
+    if search_query_first_name:
+      filters &= Q(first_name__icontains=search_query_first_name)
+    if search_query_middle_name:
+      filters &= Q(middle_name__icontains=search_query_middle_name)
+
+    users = get_user_model().objects.filter(filters)
+
+    context = {
+      'users': users,
+      'search_query_last_name': search_query_last_name,
+      'search_query_first_name': search_query_first_name,
+      'search_query_middle_name': search_query_middle_name,
+    }
+
+    return render(request, 'users/user_list.html', context)
+
+
+def record_activation(request, user_id):
+  user = get_object_or_404(get_user_model(), pk=user_id)
+
+  if request.method == 'POST':
+    form = UserEditForm(request.POST, instance=user)
+    if form.is_valid():
+      user = form.save(commit=False)
+      user.record_status = 'а'
+      user.save()
+      return redirect('user_list')
+  else:
+    form = UserEditForm(instance=user)
+
+  return render(request, 'users/edit_user.html', {'form': form, 'user': user})
 
 
 def add_bookinstance(request):

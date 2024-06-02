@@ -42,12 +42,23 @@ class UserRegistrationForm(UserCreationForm):
     label='Согласен с обработкой персональных данных'
   )
   phone_number = forms.CharField(label='Номер телефона', required=False)
+  record_status = (
+    ('а', 'активирована'),
+    ('н', 'не активирована'),
+  )
 
   class Meta:
     model = get_user_model()
     fields = ('username', 'email', 'password1', 'password2', 'first_name', 'last_name', 'middle_name', 'date_birth',
               'privacy_policy_agreement', 'phone_number')
 
+from django import forms
+from django.contrib.auth import get_user_model
+
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model = get_user_model()
+        fields = ['last_name', 'first_name', 'middle_name', 'date_birth', 'phone_number', 'email']
 
 class BookInstanceForm(forms.ModelForm):
   class Meta:
