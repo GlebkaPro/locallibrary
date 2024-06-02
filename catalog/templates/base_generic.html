@@ -38,7 +38,7 @@
     {% if user|has_group:"Abonents" %}
     <li class="nav-item" style="margin-right: 10px"><a href="{% url 'books' %}" class="nav-link button-color"
                                                        aria-current="page">Каталог</a></li>
-    <li class="nav-item" style="margin-right: 10px"><a href="{% url 'authors' %}" class="nav-link button-color"
+    <li class="nav-item" style="margin-right: 10px"><a href="{% url 'author_list' %}" class="nav-link button-color"
                                                        aria-current="page">Авторы</a></li>
     <li class="nav-item" style="margin-right: 10px"><a href="{% url 'news_list' %}"
                                                        class="nav-link button-color"
@@ -52,7 +52,7 @@
     {% load group_tags %}
     {% if user|has_group:"Bibli" %}
       <div class="dropdown">
-        <button class="nav-link link-color border border-primary btn btn-secondary dropdown-toggle"
+        <button class="nav-link button-color link-color border border-primary btn btn-secondary dropdown-toggle"
                 style="margin-right: 10px" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
           Акты
@@ -65,20 +65,18 @@
 
       </div>
       <li class="nav-item" style="margin-right: 10px"><a href="{% url 'request_list' %}"
-                                                         class="nav-link link-color border border-primary"
+                                                         class="nav-link button-color link-color border border-primary"
                                                          aria-current="page">Заявки</a>
 
 
       <li class="nav-item" style="margin-right: 10px"><a href="{% url 'all-borrowed' %}"
-                                                         class="nav-link link-color border border-primary">Все
-        выдачи</a></li>
+                                                         class="nav-link button-color link-color border border-primary">Выдача изданий</a></li>
       <li class="nav-item" style="margin-right: 10px"><a href="{% url 'event_list' %}"
-                                                         class="nav-link link-color border border-primary">Все
-        мероприятия</a></li>
+                                                         class="nav-link button-color link-color border border-primary">Мероприятия</a></li>
       
 
       <div class="dropdown">
-        <button class="nav-link link-color border border-primary btn btn-secondary dropdown-toggle"
+        <button class="nav-link button-color link-color border border-primary btn btn-secondary dropdown-toggle"
                 style="margin-right: 10px" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
           Справочники

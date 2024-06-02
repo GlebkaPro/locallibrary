@@ -1,47 +1,58 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-<div class="container">
-    <h1 class="mb-4">Каталог авторов</h1>
-    
-    <!-- Форма поиска -->
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1>Каталог авторов</h1>
+      {% load group_tags %}
+      {% if user|has_group:"Bibli" %}
+        <a href="{% url 'add-author' %}" class="btn btn-success mb-3">Создать</a>
+      {% endif %}
+    </div>
+
     <form method="get" class="mb-4">
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Введите фамилию автора" name="search" value="{{ search_query }}">
-            <button class="btn btn-primary" type="submit">Поиск</button>
-        </div>
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Введите фамилию автора" name="search"
+               value="{{ search_query }}">
+        <button class="btn btn-primary" type="submit">Поиск</button>
+      </div>
     </form>
-    
-    <!-- Ссылка для добавления автора для группы "Bibli" -->
-    {% load group_tags %}
-    {% if user|has_group:"Bibli" %}
-    <a href="{% url 'add-author' %}" class="btn btn-primary mb-3">Добавить автора</a>
-    {% endif %}
-    
-    <!-- Ссылки для перехода по буквам алфавита -->
-    <div class="authors__alfabet mb-3">
-        {% for letter in "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЭЮЯ" %}
+
+    <div class="authors__alfabet mb-3" style="font-size: 1.5rem;">
+      {% for letter in "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЭЮЯ" %}
         <a href="#{{ letter }}">{{ letter }}</a>
-        {% endfor %}
+      {% endfor %}
     </div>
-    
+
     <div class="authors__flex">
-        <!-- Список авторов по буквам алфавита -->
-        {% for letter, authors in authors_by_letter.items %}
-        <div id="{{ letter }}" class="authors__letter">{{ letter }}</div>
+      {% for letter, authors in authors_by_letter.items %}
+        <div id="{{ letter }}" style="font-size: 1.5rem" class="authors__letter">{{ letter }}</div>
         <ul class="list-group">
-            {% for author in authors %}
-            <li class="list-group-item">
+          {% for author in authors %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
                 <a href="{{ author.get_absolute_url }}" class="text-decoration-none">
-                    {{ author.last_name }} {{ author.first_name }} {% if author.middle_name %}{{ author.middle_name }}{% endif %}
-                    ({% if author.date_of_birth %}{{ author.date_of_birth|date:"Y" }}{% endif %}
-                    -
-                    {% if author.date_of_death %}{{ author.date_of_death|date:"Y" }}){% endif %}
+                  {{ author.last_name }} {{ author.first_name }}
+                  {% if author.middle_name %}{{ author.middle_name }}{% endif %}
+                  ({% if author.date_of_birth %}{{ author.date_of_birth|date:"Y" }}{% endif %}
+                  -
+                  {% if author.date_of_death %}{{ author.date_of_death|date:"Y" }}{% endif %})
                 </a>
+              </div>
+              <div>
+                {% load group_tags %}
+                {% if user|has_group:"Bibli" %}
+                  <a class="btn btn-sm btn-primary me-2" href="{% url 'author-update' author.pk %}">Редактировать</a>
+                  <form method="post" action="{% url 'author-delete' author.pk %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+                  </form>
+                {% endif %}
+              </div>
             </li>
-            {% endfor %}
+          {% endfor %}
         </ul>
-        {% endfor %}
+      {% endfor %}
     </div>
-</div>
+  </div>
 {% endblock %}

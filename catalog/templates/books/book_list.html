@@ -2,12 +2,14 @@
 
 {% block content %}
   <div class="container">
-    <h1>Каталог</h1>
-    {% load group_tags %}
-    {% if user|has_group:"Bibli" %}
-      <a href="{% url 'add-book' %}" class="btn btn-primary mb-2">Добавить</a>
-    {% endif %}
-    <form method="get" class="mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1>Каталог</h1>
+      {% load group_tags %}
+      {% if user|has_group:"Bibli" %}
+        <a href="{% url 'add-book' %}" class="btn btn-success mb-2">Создать</a>
+      {% endif %}
+    </div>
+    <form method="get" class="mb-4">
       <div class="input-group">
         <label class="input-group-text" for="status">Название книги:</label>
         <input type="text" class="form-control" name="search" placeholder="Введите название" value="{{ search_query }}">
@@ -27,37 +29,52 @@
     </form>
 
     {% if book_list %}
-<div class="row gx-5 gy-4">
-  {% for book in book_list %}
-    {% if not book.is_deleted %}
-      <div class="col-md-6 col-lg-3 mb-5">
-        <div class="card shadow-sm">
-          {% if book.image %}
-            <img src="{{ book.image.url }}" class="bd-placeholder-img card-img-top" width="100%" height="325" alt="Book Image">
-          {% else %}
-            <div class="placeholder-image" style="width: 100%; height: 225px; background-color: #e9ecef;"></div>
-          {% endif %}
-          <div class="card-body">
-            <h5 class="card-title"><a href="{{ book.get_absolute_url }}">{{ book.title }}</a></h5>
-            <p class="card-text">
-              <strong>Автор: </strong>
-              <a href="{{ book.author.get_absolute_url }}" title="{{ book.author }}">
-                {{ book.author.first_name|first }}.{{ book.author.middle_name|first }}. {{ book.author.last_name }}
-              </a>
-            </p>
-            <p class="card-text">
-              <strong>Жанр: </strong>
-              <a href="{{ book.genre.get_absolute_url }}">{{ book.genre.all|join:", " }}</a>
-            </p>
-            <div class="d-flex justify-content-between align-items-center">
+      <div class="row gx-5 gy-4">
+        {% for book in book_list %}
+          {% if not book.is_deleted %}
+            <div class="col-md-6 col-lg-3 mb-4">
+              <div class="card shadow-sm">
+                <a href="{{ book.get_absolute_url }}" style="text-decoration: none; color: inherit;">
+                  <div class="card-img-wrapper" style="position: relative;">
+                    {% if book.image %}
+                      <img src="{{ book.image.url }}" class="bd-placeholder-img card-img-top" width="100%" height="325"
+                           alt="Book Image">
+                    {% else %}
+                      <div class="placeholder-image"
+                           style="width: 100%; height: 225px; background-color: #e9ecef;"></div>
+                    {% endif %}
+                    {% if user|has_group:"Bibli" %}
+                      <div class="card-img-overlay d-flex justify-content-end align-items-end p-2">
+                        <div class="btn-group">
+                          <form method="get" action="{% url 'edit-book' book_id=book.id %}">
+                            <button type="submit" class="btn btn-sm btn-primary">Редактировать</button>
+                          </form>
+                          <form method="get" action="{% url 'delete-book' book_id=book.id %}">
+                            <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+                          </form>
+                        </div>
+                      </div>
+                    {% endif %}
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title">{{ book.title }}</h5>
+                    <p class="card-text">
+                      <strong>Автор: </strong>
+                      <a href="{{ book.author.get_absolute_url }}" title="{{ book.author }}">
+                        {{ book.author.first_name|first }}.{{ book.author.middle_name|first }}. {{ book.author.last_name }}
+                      </a>
+                    </p>
+                    <p class="card-text">
+                      <strong>Жанр: </strong>
+                      <a>{{ book.genre.all|join:", " }}</a>
+                    </p>
+                  </div>
+                </a>
+              </div>
             </div>
-          </div>
-        </div>
+          {% endif %}
+        {% endfor %}
       </div>
-    {% endif %}
-  {% endfor %}
-</div>
-
     {% else %}
       <p>Книг нет.</p>
     {% endif %}
@@ -74,5 +91,17 @@
       text-overflow: ellipsis; /* Отображение многоточия в конце текста, если он обрезается */
     }
 
+    .card-img-overlay {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      padding: 10px;
+    }
+
+    .card-img-overlay .btn-group {
+      display: flex;
+      gap: 8px;
+    }
   </style>
 {% endblock %}

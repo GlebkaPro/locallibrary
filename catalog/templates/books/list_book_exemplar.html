@@ -2,9 +2,10 @@
 
 {% block content %}
   <div class="container mt-3">
-    <h1>Список экземпляров книг</h1>
-    <a href="{% url 'create_book_exemplar' %}" class="btn btn-primary mb-3">Создать экземпляр</a>
-
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1>Список экземпляров книг</h1>
+      <a href="{% url 'create_book_exemplar' %}" class="btn btn-success mb-3">Создать экземпляр</a>
+    </div>
     {% if book_exemplars %}
       <div class="card">
       <div class="card-body">
@@ -36,7 +37,8 @@
             <td>{{ book_exemplar.date_of_manufacture }}</td>
             <td>{{ book_exemplar.city_of_publication }}</td>
             <td>
-              <a href="{% url 'edit_book_exemplar' pk=book_exemplar.pk %}" class="btn btn-primary btn-sm">Редактировать</a>
+              <a href="{% url 'edit_book_exemplar' pk=book_exemplar.pk %}"
+                 class="btn btn-warning btn-sm">Редактировать</a>
             </td>
           </tr>
         {% endfor %}

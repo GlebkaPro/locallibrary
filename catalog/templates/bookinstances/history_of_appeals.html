@@ -1,42 +1,45 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-<div class="container">
-    <h1>История обращений</h1>
-    <div class="row mt-3">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1>История обращений</h1>
+      <div class="row mt-3">
         <div class="col">
-            <a href="{% url 'add-appeal' bookinst_id=book_instance.id %}" style="margin-bottom: 10px" class="btn btn-primary">Добавить историю обращения</a>
+          <a href="{% url 'add-appeal' bookinst_id=book_instance.id %}" style="margin-bottom: 10px"
+             class="btn btn-success">Добавить</a>
         </div>
+      </div>
     </div>
     <div class="card">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>№</th>
-                            <th>Дата</th>
-                            <th>Название</th>
-                            <th>Примечание</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for history in history_list %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ history.date_creation|date:"d.m.Y" }}</td>
-                            <td>{{ history.title }}</td>
-                            <td>{{ history.note }}</td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="3">Нет истории обращений</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead>
+            <tr>
+              <th>№</th>
+              <th>Дата</th>
+              <th>Название</th>
+              <th>Примечание</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for history in history_list %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ history.date_creation|date:"d.m.Y" }}</td>
+                <td>{{ history.title }}</td>
+                <td>{{ history.note }}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="3">Нет истории обращений</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
         </div>
+      </div>
     </div>
-</div>
+  </div>
 {% endblock %}

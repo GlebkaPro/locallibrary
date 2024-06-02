@@ -2,9 +2,11 @@
 
 {% block content %}
   <div class="container">
-    <h1>Список актов о списании</h1>
-    <a href="{% url 'create_debiting_act' %}" style="margin-bottom: 10px" class="btn btn-primary">Создать акт о списании</a>
-
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1>Список актов о списании</h1>
+      <a href="{% url 'create_debiting_act' %}" style="margin-bottom: 10px" class="btn btn-success">Создать акт о
+        списании</a>
+    </div>
     {% if debiting_acts %}
       <div class="card">
       <div class="card-body">
@@ -25,7 +27,7 @@
             <td>{{ debiting_act.current_date }}</td>
             <td>{{ debiting_act.worker }}</td>
             <td>
-              <a href="{% url 'edit_debiting_act' pk=debiting_act.pk %}" class="btn btn-warning">Изменить</a>
+              <a href="{% url 'edit_debiting_act' pk=debiting_act.pk %}" class="btn btn-warning">Редактировать</a>
               <a href="{% url 'print_accept_act' pk=debiting_act.pk %}" class="btn btn-secondary">Печать акта</a>
             </td>
           </tr>

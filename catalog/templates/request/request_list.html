@@ -1,7 +1,10 @@
 {% extends "base_generic.html" %}
 {% block content %}
-  <h1>Список заявок</h1>
-  <a href="{% url 'create_request' %}" class="btn btn-primary mb-3">Создать заявку</a>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Список заявок</h1>
+    <button id="export-xml-btn" class="btn btn-primary mb-3">Сохранить в XML</button>
+    <a href="{% url 'create_request' %}" class="btn btn-success mb-3">Создать заявку</a>
+  </div>
   <form id="filter-form">
     <div class="form-row ">
       <div class="form-group col-md-9 d-flex justify-content-between align-items-center mb-3">
@@ -21,7 +24,6 @@
       </div>
     </div>
   </form>
-  <button id="export-xml-btn" class="btn btn-primary mb-3">Скачать в XML</button>
   <div class="card">
     <div class="card-body">
       <div class="table-responsive">
@@ -42,6 +44,7 @@
           <tbody>
           {% for request in requests %}
             <tr class="{% if request.status_record == 'п' %}table-success
+              
               {% elif request.status_record == 'з' %}{% elif request.status_record == 'в' %}table-warning{% elif request.status_record == 'о' %}table-danger{% endif %}">
               <td>{{ forloop.counter }}</td>
               <td>{{ request.title }}</td>

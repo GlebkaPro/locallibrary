@@ -41,11 +41,12 @@ class UserRegistrationForm(UserCreationForm):
     widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}),
     label='Согласен с обработкой персональных данных'
   )
+  phone_number = forms.CharField(label='Номер телефона', required=False)
 
   class Meta:
     model = get_user_model()
     fields = ('username', 'email', 'password1', 'password2', 'first_name', 'last_name', 'middle_name', 'date_birth',
-              'privacy_policy_agreement')
+              'privacy_policy_agreement', 'phone_number')
 
 
 class BookInstanceForm(forms.ModelForm):

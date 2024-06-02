@@ -2,9 +2,11 @@
 
 {% block content %}
   <div class="container">
-    <h1>Список актов о приёме</h1>
-    <a href="{% url 'create_accept_act' %}" style="margin-bottom: 10px" class="btn btn-primary">Создать акт о приёме</a>
-
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1>Список актов о приёме</h1>
+      <a href="{% url 'create_accept_act' %}" style="margin-bottom: 10px" class="btn btn-success">Создать акт о
+        приёме</a>
+    </div>
     {% if accept_acts %}
       <div class="card">
         <div class="card-body">

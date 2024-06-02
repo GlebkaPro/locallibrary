@@ -2,47 +2,52 @@
 
 {% block content %}
   <div class="container">
-  <div class="card" style="padding: 30px;">
-    <div class="card-body">
-      <h1>Список пользователей</h1>
-      <form method="get">
-        <div class="input-group mb-3">
-          <input type="text" class="form-control" placeholder="Введите фамилию пользователя" name="search" value="{{ search_query }}">
-          <button class="btn btn-outline-secondary" type="submit">Искать</button>
+    <div class="card" style="padding: 30px;">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h1>Список пользователей</h1>
+          <a href="{% url 'create_user' %}" style="margin-bottom: 10px" class="btn btn-primary">Зарегистрировать
+            пользователя</a>
         </div>
-      </form>
-      <a href="{% url 'create_user' %}" style="margin-bottom: 10px" class="btn btn-primary">Зарегистрировать пользователя</a>
-      <div class="table-responsive">
-        <table class="table table-bordered">
-          <thead>
-          <tr>
-            <th>Фамилия</th>
-            <th>Имя</th>
-            <th>Отчество</th>
-            <th>Имя пользователя</th>
-            <th>Дата регистрации</th>
-            <th>Электронная почта</th>
-            <th>Действие</th>
-          </tr>
-          </thead>
-          <tbody>
-          {% for user in users %}
+        <form method="get">
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Введите фамилию пользователя" name="search"
+                   value="{{ search_query }}">
+            <button type="submit" class="btn btn-primary">Поиск</button>
+          </div>
+        </form>
+
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead>
             <tr>
-              <td>{{ user.last_name }}</td>
-              <td>{{ user.first_name }}</td>
-              <td>{{ user.middle_name }}</td>
-              <td>{{ user.username }}</td>
-              <td>{{ user.date_joined|date:"d.m.Y" }}</td>
-              <td>{{ user.email }}</td>
-              <td>
-                <a href="{% url 'user_loans' user.id %}" class="btn btn-primary btn-sm">Книги абонента</a>
-              </td>
+              <th>Фамилия</th>
+              <th>Имя</th>
+              <th>Отчество</th>
+              <th>Имя пользователя</th>
+              <th>Дата регистрации</th>
+              <th>Электронная почта</th>
+              <th>Действие</th>
             </tr>
-          {% endfor %}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+            {% for user in users %}
+              <tr>
+                <td>{{ user.last_name }}</td>
+                <td>{{ user.first_name }}</td>
+                <td>{{ user.middle_name }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.date_joined|date:"d.m.Y" }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                  <a href="{% url 'user_loans' user.id %}" class="btn btn-primary btn-sm">Книги абонента</a>
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-  </div>
   </div>
 {% endblock %}

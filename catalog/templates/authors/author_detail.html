@@ -8,6 +8,16 @@
           {% if author.middle_name %}{{ author.middle_name }}{% endif %}
         </h1>
         <p>{{ author.date_of_birth }} - {% if author.date_of_death %}{{ author.date_of_death }}{% endif %}</p>
+        <div>
+          {% load group_tags %}
+          {% if user|has_group:"Bibli" %}
+            <a class="btn btn-primary" href="{% url 'author-update' author.pk %}">Редактировать</a>
+            <form method="post" action="{% url 'author-delete' author.pk %}" style="display: inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Удалить</button>
+            </form>
+          {% endif %}
+        </div>
         <div class="row">
           <div class="col-md-3">
             <div style="margin-top: 30px">
@@ -16,28 +26,18 @@
                      style="max-width: 200px; margin-bottom: 20px;">
               {% endif %}
             </div>
-            <div>
-              {% load group_tags %}
-              {% if user|has_group:"Bibli" %}
-                <a class="btn btn-primary" href="{% url 'author-update' author.pk %}">Редактировать</a>
-                <form method="post" action="{% url 'author-delete' author.pk %}" style="display: inline;">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-danger">Удалить</button>
-                </form>
-              {% endif %}
-            </div>
           </div>
           <div class="col-md-9">
-            <div style="margin-left:20px;margin-top:20px">
+            <div style="margin-left:20px;margin-top:20px;">
               <h4>Книги автора:</h4>
               <dl class="row" style="margin-top: 20px">
                 {% for book in author.book_set.all %}
-                  <dt class="col-md-3">
+                  <dt class="col-md-3" style="border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 10px;">
                     {% if book.image %}
                       <img src="{{ book.image.url }}" alt="{{ book.title }}" style="max-width: 100px;">
                     {% endif %}
                   </dt>
-                  <dd class="col-md-9" style="margin-bottom: 20px;">
+                  <dd class="col-md-9" style="border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 10px;">
                     <a href="{% url 'book-detail' book.pk %}">{{ book }}</a> ({{ book.bookcopy_set.all.count }})
                     <p>{{ book.summary }}</p>
                   </dd>

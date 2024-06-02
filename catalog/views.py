@@ -327,11 +327,13 @@ def create_user(request):
 
 
 def user_list(request):
-  if request.user.is_staff:
-    users = get_user_model().objects.all()
-    return render(request, 'users/user_list.html', {'users': users})
-  else:
-    return render(request, 'access_denied.html')
+    if request.user.is_staff:
+        search_query = request.GET.get('search', '')
+        if search_query:
+            users = get_user_model().objects.filter(Q(last_name__icontains=search_query))
+        else:
+            users = get_user_model().objects.all()
+        return render(request, 'users/user_list.html', {'users': users, 'search_query': search_query})
 
 
 def add_bookinstance(request):

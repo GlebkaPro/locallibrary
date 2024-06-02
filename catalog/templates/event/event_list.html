@@ -1,8 +1,10 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <h1>Список мероприятий</h1>
-  <a href="{% url 'create_event' %}" class="btn btn-primary mb-3">Создать мероприятие</a>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Список мероприятий</h1>
+    <a href="{% url 'create_event' %}" class="btn btn-success mb-3">Создать мероприятие</a>
+  </div>
   <div class="card">
     <div class="card-body">
       <div class="table-responsive">
@@ -44,7 +46,9 @@
                 {#                {% if event.date_end < now %}#}
                 <a href="{% url 'create_news' event_id=event.id %}" class="btn btn-sm btn-success">Создать новость</a>
                 {#                {% endif %}#}
-                <a href="{% url 'review_list' event_id=event.id %}" class="btn btn-sm btn-info">Отзывы: {{ event.num_unpublished_reviews }} (новые: {{ event.num_unpublished_reviews }})</a>
+                <a href="{% url 'review_list' event_id=event.id %}"
+                   class="btn btn-sm btn-info">Отзывы: {{ event.num_unpublished_reviews }}
+                  (новые: {{ event.num_unpublished_reviews }})</a>
                 <a href="{% url 'event_report' event_id=event.id %}" class="btn btn-sm btn-secondary">Отчет</a>
               </td>
             </tr>
