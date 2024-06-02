@@ -352,21 +352,21 @@ def user_list(request):
 
     return render(request, 'users/user_list.html', context)
 
+def edit_user(request, user_id):
+    user = get_object_or_404(get_user_model(), pk=user_id)
 
-def record_activation(request, user_id):
-  user = get_object_or_404(get_user_model(), pk=user_id)
+    if request.method == 'POST':
+        form = UserEditForm(request.POST, instance=user)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.record_status = 'а'  # Устанавливаем статус 'а' при редактировании
+            user.save()
+            return redirect('user_list')
+    else:
+        form = UserEditForm(instance=user)
 
-  if request.method == 'POST':
-    form = UserEditForm(request.POST, instance=user)
-    if form.is_valid():
-      user = form.save(commit=False)
-      user.record_status = 'а'
-      user.save()
-      return redirect('user_list')
-  else:
-    form = UserEditForm(instance=user)
+    return render(request, 'users/edit_user.html', {'form': form, 'user': user})
 
-  return render(request, 'users/edit_user.html', {'form': form, 'user': user})
 
 
 def add_bookinstance(request):
@@ -565,34 +565,45 @@ def return_book(request, book_instance_id):
 @login_required
 def reserve_book(request, book_id):
     user = request.user
-    # Получите все резервы текущего пользователя
+    user_status = user.record_status
+
+    # Определяем максимальное количество резерваций в зависимости от статуса пользователя
+    if user_status == 'н':
+        max_reservations = 1
+    elif user_status == 'а':
+        max_reservations = 3
+    else:
+        max_reservations = 0  # Для случаев, когда статус неизвестен или отличается от 'н' и 'а'
+
+    # Получаем все резервы текущего пользователя
     user_reservations_count = BookInstance.objects.filter(borrower=user, status='з').count()
 
-    # Проверьте количество резервов
-    if user_reservations_count < 3:
+    # Проверяем количество резерваций пользователя
+    if user_reservations_count < max_reservations:
         book = get_object_or_404(Book, pk=book_id)
-        # Проверка наличия доступных экземпляров для резервации
+        # Проверяем наличие доступных экземпляров для резервации
         available_copy = book.bookcopy_set.filter(status='д').first()
 
         if available_copy:
-            # Создайте аренду экземпляра и заполните поле 'loan' доступным экземпляром
+            # Создаем резерв экземпляра и привязываем его к доступному экземпляру
             new_copy = BookInstance(book=book, borrower=user, status='з', loan=available_copy)
             new_copy.save()
 
-            # Измените статус экземпляра на 'з'
+            # Изменяем статус экземпляра на 'з'
             available_copy.status = 'з'
             available_copy.borrower = user
             available_copy.save()
 
             messages.success(request, "Экземпляр успешно зарезервирован.")
         else:
-            # Если нет доступных экземпляров, установите сообщение об ошибке
+            # Если доступных экземпляров нет, устанавливаем сообщение об ошибке
             messages.error(request, "Нет доступных экземпляров для резервации")
     else:
-        # Если количество резервов больше или равно трём, выдайте ошибку разрешения
-        messages.error(request, "Вы уже зарезервировали максимальное количество книг (3шт.).")
+        # Если количество резерваций превышает максимальное, выводим ошибку
+        messages.error(request, f"Вы уже зарезервировали максимальное количество книг ({max_reservations} шт.).")
 
     return redirect('book-detail', pk=book_id)
+
 
 
 

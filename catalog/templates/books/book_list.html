@@ -43,6 +43,7 @@
                       <div class="placeholder-image"
                            style="width: 100%; height: 225px; background-color: #e9ecef;"></div>
                     {% endif %}
+
                     {% if user|has_group:"Bibli" %}
                       <div class="card-img-overlay d-flex justify-content-end align-items-end p-2">
                         <div class="btn-group">
@@ -53,6 +54,12 @@
                             <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
                           </form>
                         </div>
+                      </div>
+                    {% endif %}
+                    {% if user|has_group:"Abonents" %}
+                      <div class="card-img-overlay d-flex justify-content-end align-items-end p-2">
+                        <button type="submit" class="btn btn-sm btn-primary" style="margin-top: 10px">Зарезервировать
+                        </button>
                       </div>
                     {% endif %}
                   </div>

@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-center">
       <div class="card" style="width: 450px; padding: 20px">
         <div class="card-body">
-          <h1>Редактирование пользователя: {{ user.username }}</h1>
+          <h1>Пользователь:  {{ user.username }}</h1>
 
           <form method="post">
             {% csrf_token %}
@@ -32,12 +32,12 @@
               <input type="date" class="form-control" id="{{ form.date_birth.id_for_label }}"
                      name="{{ form.date_birth.name }}" value="{{ form.date_birth.value|date:"Y-m-d" }}">
             </div>
-            
-<div class="mb-3">
-  <label for="{{ form.phone_number.id_for_label }}">Мобильный телефон</label>
-  <input type="text" class="form-control" id="{{ form.phone_number.id_for_label }}"
-         name="{{ form.phone_number.name }}" value="{{ form.phone_number.value }}">
-</div>
+
+            <div class="mb-3">
+              <label for="{{ form.phone_number.id_for_label }}">Мобильный телефон</label>
+              <input type="text" class="form-control" id="{{ form.phone_number.id_for_label }}"
+                     name="{{ form.phone_number.name }}" value="{{ form.phone_number.value }}">
+            </div>
 
 
             <div class="mb-3">

@@ -32,7 +32,7 @@ urlpatterns += [
   path('user_list/', views.user_list, name='user_list'),
   path('user_loans/<int:pk>/', views.UserLoansListView.as_view(), name='user_loans'),
   path('user/<str:username>/', views.UserProfileView.as_view(), name='user-profile'),
-  path('user_list/<int:user_id>/activation/', views.record_activation, name='record_activation'),
+  path('user_list/<int:user_id>/activation/', views.edit_user, name='record_activation'),
 ]
 
 urlpatterns += [
