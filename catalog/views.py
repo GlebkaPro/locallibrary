@@ -1844,26 +1844,23 @@ from .models import Event, PositionEvent
 
 from django.db.models import Count
 
+from django.db.models import Count, Case, When, IntegerField
+
 def event_report_view(request):
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
     date_type = request.GET.get('date_type', 'date_start')
-    status = request.GET.get('status')
 
     filter_kwargs = {}
     if start_date and end_date:
         filter_kwargs[f"{date_type}__range"] = [start_date, end_date]
-    if status:
-        filter_kwargs['status'] = status
 
     registered_count = Count(Case(
         When(positionevent__status_record='з', then=1),
-        default=0,
         output_field=IntegerField()
     ))
     unregistered_count = Count(Case(
         When(positionevent__status_record='н', then=1),
-        default=0,
         output_field=IntegerField()
     ))
 
@@ -1873,7 +1870,7 @@ def event_report_view(request):
     events = Event.objects.filter(**filter_kwargs).annotate(
         registered_count=registered_count,
         unregistered_count=unregistered_count,
-        review_count=review_count  # Добавляем аннотацию для количества отзывов
+        review_count=review_count
     )
 
     return render(request, 'event/report_event.html', {
@@ -1882,5 +1879,6 @@ def event_report_view(request):
         'end_date': end_date,
         'date_type': date_type,
     })
+
 
 
