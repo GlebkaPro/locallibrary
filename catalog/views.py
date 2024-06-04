@@ -3,13 +3,11 @@ from datetime import date
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.db.models import Max, ExpressionWrapper
+from django.db.models import Max
 from django.forms import formset_factory
 from django.http import Http404
-from django.urls import reverse_lazy
 from django.views import generic
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.edit import CreateView, DeleteView
 
 from catalog.forms import RenewBookForm, BookInstanceEditForm, GenreForm, LanguageForm, PositionDebitingActForm, \
   ParticipantForm, UserEditForm
@@ -18,8 +16,8 @@ from .forms import AcceptActForm
 from .forms import AccountingBookCopyForm, BookCopyForm
 from .forms import BookExemplarForm
 from .forms import PositionAcceptActFormSet
-from .forms import UserRegistrationForm, BookInstanceForm, AddBookForm, EditBookForm, AuthorForm
-from .models import Book, BookInstance, Author, Genre, Language
+from .forms import UserRegistrationForm, BookInstanceForm, AddBookForm, EditBookForm
+from .models import Book, BookInstance, Genre, Language
 from .models import BookCopy
 from .models import BookExemplar
 from .models import NewsImage
@@ -96,7 +94,6 @@ class BookDetailView(generic.DetailView):
   template_name = 'books/book_detail.html'
 
 
-from django.shortcuts import render
 from .models import Author
 from collections import defaultdict
 
@@ -155,7 +152,7 @@ def change_status_to_overdue():
     overdue_instance.status = 'о'
     overdue_instance.save()
 
-from django.utils import timezone
+
 from django.views import generic
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from .models import BookInstance
@@ -1212,8 +1209,6 @@ def create_event(request):
   return render(request, 'event/create_event.html', {'form': form})
 
 
-from django.db.models import Count
-
 def event_list(request):
   events = Event.objects.annotate(
     num_reviews=Count('reviews'),
@@ -1510,7 +1505,6 @@ def profile_delete_request(request, request_id):
   return redirect(redirect_url)
 
 
-from .models import PositionEvent
 from django.contrib.auth.decorators import login_required
 
 
@@ -1622,8 +1616,6 @@ def export_requests_xml(request):
 
 from django.contrib import messages
 
-from django.shortcuts import get_object_or_404
-
 
 @login_required
 def history_of_appeals(request, bookinst_id):
@@ -1689,9 +1681,9 @@ class UserProfileView(DetailView):
 
     return context
 
-from django.shortcuts import render, redirect
+
 from .forms import NewsForm
-from .models import Event, News
+from .models import News
 
 
 def create_news(request, event_id):
@@ -1753,8 +1745,8 @@ def review_list(request, event_id):
                                                      'selected_status': selected_status})
 
 
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Event, Review
+from django.shortcuts import redirect
+from .models import Review
 from .forms import ReviewForm
 
 def create_review(request, event_id):
@@ -1790,48 +1782,105 @@ def unpublish_review(request, review_id):
   review.save()
   return redirect('review_list', event_id=review.event.id)
 
-from django.shortcuts import render
-from django.db.models import Count
-from .models import BookInstance
 
+from django.db.models import Value
+from django.db.models.functions import Concat, Substr
 
 def report_view(request):
-  # Получение параметров даты и типа даты из запроса
-  start_date = request.GET.get('start_date')
-  end_date = request.GET.get('end_date')
-  date_type = request.GET.get('date_type', 'current_date')
+    # Получение параметров даты, типа даты и статуса из запроса
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    date_type = request.GET.get('date_type', 'current_date')
+    status = request.GET.get('status')
 
-  # Фильтрация по диапазону дат, если они указаны
-  if start_date and end_date:
-    filter_kwargs = {f"{date_type}__range": [start_date, end_date]}
-    book_popularity = BookInstance.objects.filter(**filter_kwargs).values('book__title').annotate(
-      count=Count('book')).order_by('-count')
-  else:
-    book_popularity = BookInstance.objects.values('book__title').annotate(count=Count('book')).order_by('-count')
+    # Фильтрация по диапазону дат, если они указаны
+    filter_kwargs = {}
+    if start_date and end_date:
+        filter_kwargs[f"{date_type}__range"] = [start_date, end_date]
+    if status:
+        filter_kwargs['status'] = status
 
-  return render(request, 'bookinstances/reports.html', {
-    'book_popularity': book_popularity,
-    'start_date': start_date,
-    'end_date': end_date,
-    'date_type': date_type
-  })
+    # Используем аннотации для получения автора и количества книг
+    book_popularity = BookInstance.objects.filter(**filter_kwargs).values(
+        'book__id',
+        'book__title',
+        'book__author__last_name'
+    ).annotate(
+        count=Count('book'),
+        author_initial=Concat(
+            Substr('book__author__first_name', 1, 1),
+            Value('.')
+        )
+    ).order_by('-count')
+
+    # Получение жанров для каждой книги
+    book_ids = [book['book__id'] for book in book_popularity]
+    books_with_genres = Book.objects.filter(id__in=book_ids).prefetch_related('genre')
+
+    # Создание словаря, где ключ - ID книги, а значение - строка жанров
+    genres_dict = {}
+    for book in books_with_genres:
+        genres_dict[book.id] = ', '.join(genre.name for genre in book.genre.all())
+
+    # Добавление жанров к book_popularity
+    for book in book_popularity:
+        book['genres'] = genres_dict.get(book['book__id'], '')
+
+    return render(request, 'bookinstances/reports.html', {
+        'book_popularity': book_popularity,
+        'start_date': start_date,
+        'end_date': end_date,
+        'date_type': date_type,
+        'status': status,
+    })
 
 
-from django.shortcuts import render, get_object_or_404
+
+from django.shortcuts import get_object_or_404
+
+from django.shortcuts import render
+from django.db.models import Case, When, IntegerField
 from .models import Event, PositionEvent
+
 from django.db.models import Count
 
+def event_report_view(request):
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    date_type = request.GET.get('date_type', 'date_start')
+    status = request.GET.get('status')
 
-def event_report_view(request, event_id):
-  event = get_object_or_404(Event, id=event_id)
-  participants_stats = PositionEvent.objects.filter(event=event).values('status_record').annotate(
-    count=Count('status_record'))
+    filter_kwargs = {}
+    if start_date and end_date:
+        filter_kwargs[f"{date_type}__range"] = [start_date, end_date]
+    if status:
+        filter_kwargs['status'] = status
 
-  status_counts = {'з': 0, 'н': 0}
-  for stat in participants_stats:
-    status_counts[stat['status_record']] = stat['count']
+    registered_count = Count(Case(
+        When(positionevent__status_record='з', then=1),
+        default=0,
+        output_field=IntegerField()
+    ))
+    unregistered_count = Count(Case(
+        When(positionevent__status_record='н', then=1),
+        default=0,
+        output_field=IntegerField()
+    ))
 
-  return render(request, 'event/report_event.html', {
-    'event': event,
-    'status_counts': status_counts,
-  })
+    # Аннотация для подсчета количества отзывов к каждому мероприятию
+    review_count = Count('reviews')
+
+    events = Event.objects.filter(**filter_kwargs).annotate(
+        registered_count=registered_count,
+        unregistered_count=unregistered_count,
+        review_count=review_count  # Добавляем аннотацию для количества отзывов
+    )
+
+    return render(request, 'event/report_event.html', {
+        'events': events,
+        'start_date': start_date,
+        'end_date': end_date,
+        'date_type': date_type,
+    })
+
+

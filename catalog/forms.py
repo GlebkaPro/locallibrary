@@ -33,11 +33,14 @@ class RenewBookForm(forms.ModelForm):
 
 
 class UserRegistrationForm(UserCreationForm):
-  email = forms.EmailField(required=True, label='Email')
+  email = forms.EmailField(required=False, label='Email')  # Ставим required=False
   this_year = datetime.date.today().year
-  date_birth = forms.DateField(widget=forms.SelectDateWidget(years=tuple(range(this_year - 100, this_year - 5))))
+  date_birth = forms.DateField(
+    required=False,  # Ставим required=False
+    widget=forms.SelectDateWidget(years=tuple(range(this_year - 100, this_year - 5)))
+  )
   privacy_policy_agreement = forms.BooleanField(
-    required=True,
+    required=False,
     widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}),
     label='Согласен с обработкой персональных данных'
   )
@@ -49,8 +52,11 @@ class UserRegistrationForm(UserCreationForm):
 
   class Meta:
     model = get_user_model()
-    fields = ('username', 'email', 'password1', 'password2', 'first_name', 'last_name', 'middle_name', 'date_birth',
-              'privacy_policy_agreement', 'phone_number')
+    fields = (
+      'username', 'email', 'password1', 'password2', 'first_name', 'last_name', 'middle_name', 'date_birth',
+      'privacy_policy_agreement', 'phone_number'
+    )
+
 
 from django import forms
 from django.contrib.auth import get_user_model

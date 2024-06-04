@@ -3,6 +3,7 @@
 {% block content %}
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h1>Список мероприятий</h1>
+    <a href="{% url 'event_report' %}" class="btn btn-secondary">Отчет</a>
     <a href="{% url 'create_event' %}" class="btn btn-success mb-3">Создать мероприятие</a>
   </div>
   <div class="card">
@@ -49,7 +50,7 @@
                 <a href="{% url 'review_list' event_id=event.id %}"
                    class="btn btn-sm btn-info">Отзывы: {{ event.num_unpublished_reviews }}
                   (новые: {{ event.num_unpublished_reviews }})</a>
-                <a href="{% url 'event_report' event_id=event.id %}" class="btn btn-sm btn-secondary">Отчет</a>
+{#                <a href="{% url 'event_report' event_id=event.id %}" class="btn btn-sm btn-secondary">Отчет</a>#}
               </td>
             </tr>
           {% endfor %}

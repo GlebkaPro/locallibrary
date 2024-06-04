@@ -2,12 +2,12 @@
 
 {% block content %}
   <div class="d-flex justify-content-center">
-    <div class="card" style="width: 700px;">
+    <div class="card" style="width: 1000px; padding: 30px">
       <div class="card-body">
-        <h1>Отчет по взятым книгам</h1>
+        <h1>Отчет по выдаче экзмеляров изданий</h1>
 
-        <form method="get">
-          <div class="input-group mb-3" style="width: 660px">
+        <form method="get" style="margin-top: 40px">
+          <div class="input-group mb-3">
             <label class="input-group-text" for="date_type">Выбрать по:</label>
             <select name="date_type" id="date_type" class="form-select">
               <option value="current_date" {% if date_type == 'current_date' %}selected{% endif %}>Дата начала</option>
@@ -19,51 +19,45 @@
             <input type="date" name="end_date" id="end_date" class="form-control" placeholder="Конечная дата"
                    value="{{ request.GET.end_date|default_if_none:'' }}">
 
+            <select name="status" id="status" class="form-select">
+              <option value="">Все статусы</option>
+              <option value="р" {% if request.GET.status == 'р' %}selected{% endif %}>Выдано</option>
+              <option value="п" {% if request.GET.status == 'п' %}selected{% endif %}>Погашено</option>
+              <option value="з" {% if request.GET.status == 'з' %}selected{% endif %}>Зарезервировано</option>
+              <option value="о" {% if request.GET.status == 'о' %}selected{% endif %}>Просрочено</option>
+            </select>
+
             <button type="submit" class="btn btn-primary">Применить</button>
           </div>
         </form>
-        
 
-        <canvas id="myChart" width="400" height="400"></canvas>
-
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script>
-          var ctx = document.getElementById('myChart').getContext('2d');
-          var data = {
-            labels: [{% for item in book_popularity %}"{{ item.book__title }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
-            datasets: [{
-              label: 'Количество взятий',
-              data: [{% for item in book_popularity %}{{ item.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
-              backgroundColor: 'rgba(54, 162, 235, 0.2)',
-              borderColor: 'rgba(54, 162, 235, 1)',
-              borderWidth: 1
-            }]
-          };
-          var myChart = new Chart(ctx, {
-            type: 'bar',
-            data: data,
-            options: {
-              responsive: true,
-              scales: {
-                y: {
-                  beginAtZero: true
-                }
-              },
-              plugins: {
-                legend: {
-                  display: false
-                },
-                tooltip: {
-                  callbacks: {
-                    label: function (tooltipItem) {
-                      return tooltipItem.label + ': ' + tooltipItem.raw;
-                    }
-                  }
-                }
-              }
-            }
-          });
-        </script>
+        <!-- Отображение отчета -->
+        {% if book_popularity %}
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>№</th>
+                <th>Название книги</th>
+                <th>Автор</th>
+                <th>Жанр</th>
+                <th>Количество</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for book in book_popularity %}
+                <tr>
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{ book.book__title }}</td>
+                  <td>{{ book.author_initial }} {{ book.book__author__last_name }}</td>
+                  <td>{{ book.genres }}</td>
+                  <td>{{ book.count }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p>Нет данных для отображения</p>
+        {% endif %}
       </div>
     </div>
   </div>

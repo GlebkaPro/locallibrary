@@ -4,12 +4,12 @@
   <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h1>Все выдачи</h1>
-{#      <form action="{% url 'change-status-to-overdue' %}" method="post">#}
-{#        {% csrf_token %}#}
-{#        <button type="submit" class="btn btn-danger my-3">Проверить просроченные</button>#}
-{#      </form>#}
-      <a class="btn btn-success my-3" href="{% url 'add-bookinstance' %}">Выдать книгу</a>
+      {#      <form action="{% url 'change-status-to-overdue' %}" method="post">#}
+      {#        {% csrf_token %}#}
+      {#        <button type="submit" class="btn btn-danger my-3">Проверить просроченные</button>#}
+      {#      </form>#}
       <a class="btn btn-warning my-3" href="{% url 'reports' %}">Отчёт</a>
+      <a class="btn btn-success my-3" href="{% url 'add-bookinstance' %}">Выдать книгу</a>
     </div>
     <form method="GET" action="{% url 'all-borrowed' %}">
       <div class="input-group mb-3">
@@ -70,7 +70,7 @@
               {% for bookinst in bookinstance_list %}
                 <tr class="{% if bookinst.is_overdue %}text-danger{% endif %}
                     {% if bookinst.status == 'р' %}table-success{% elif bookinst.status == 'з' %}table-warning{% elif bookinst.status == 'д' %}table-info{% elif bookinst.status == 'о' %}table-danger{% endif %}">
-                              <td>{{ forloop.counter }}</td>
+                  <td>{{ forloop.counter }}</td>
                   <td title="{{ bookinst.borrower.get_full_name }}">
                     <a href="{% url 'user-profile' bookinst.borrower.username %}">
                       {{ bookinst.borrower.last_name }} {{ bookinst.borrower.first_name|slice:":1" }}. {{ bookinst.borrower.middle_name|slice:":1" }}.
