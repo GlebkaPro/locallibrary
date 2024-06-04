@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h1>Каталог авторов</h1>
       {% load group_tags %}
-      {% if user|has_group:"Bibli" %}
+      {% if user|has_group:"Bibli-katal" %}
         <a href="{% url 'add-author' %}" class="btn btn-success mb-3">Создать</a>
       {% endif %}
     </div>
@@ -41,7 +41,7 @@
               </div>
               <div>
                 {% load group_tags %}
-                {% if user|has_group:"Bibli" %}
+                {% if user|has_group:"Bibli-katal" %}
                   <a class="btn btn-sm btn-primary me-2" href="{% url 'author-update' author.pk %}">Редактировать</a>
                   <form method="post" action="{% url 'author-delete' author.pk %}" style="display: inline;">
                     {% csrf_token %}

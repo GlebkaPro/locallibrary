@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h1>Каталог</h1>
       {% load group_tags %}
-      {% if user|has_group:"Bibli" %}
+      {% if user|has_group:"Bibli-katal" %}
         <a href="{% url 'add-book' %}" class="btn btn-success mb-2">Создать</a>
       {% endif %}
     </div>
@@ -31,7 +31,7 @@
     {% if book_list %}
       <div class="row gx-5 gy-4">
         {% for book in book_list %}
-          {% if not book.is_deleted %}
+          {% if not book.is_deleted and book.visibility_status == 'о' or user|has_group:"Bibli-katal" %}
             <div class="col-md-6 col-lg-3 mb-4">
               <div class="card shadow-sm">
                 <a href="{{ book.get_absolute_url }}" style="text-decoration: none; color: inherit;">
@@ -44,7 +44,7 @@
                            style="width: 100%; height: 225px; background-color: #e9ecef;"></div>
                     {% endif %}
 
-                    {% if user|has_group:"Bibli" %}
+                    {% if user|has_group:"Bibli-katal" %}
                       <div class="card-img-overlay d-flex justify-content-end align-items-end p-2">
                         <div class="btn-group">
                           <form method="get" action="{% url 'edit-book' book_id=book.id %}">

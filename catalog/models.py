@@ -55,8 +55,18 @@ class Book(models.Model):
   language = models.ForeignKey('Language', on_delete=models.SET_NULL, null=True)
   image = models.ImageField(upload_to='books/', blank=True, null=True)
 
+  LOAN_VISIBILITY = (
+    ('о', 'Отображать'),
+    ('н', 'Не отображать'),
+  )
+
+  visibility_status = models.CharField(
+    max_length=1, choices=LOAN_VISIBILITY, blank=True, default='о', help_text='Статус видимости',
+    verbose_name='Статус видимости')
+
   def available_copies_count(self):
     return self.bookcopy_set.filter(status='д').count()
+
   class Meta:
     ordering = ['title', 'author']
 
@@ -163,9 +173,19 @@ class Author(models.Model):
   date_of_death = models.DateField('Дата смерти', null=True, blank=True)
   image = models.ImageField(upload_to='authors/', null=True, blank=True, verbose_name='Изображение')
 
+  LOAN_VISIBILITY = (
+    ('о', 'Отображать'),
+    ('н', 'Не отображать'),
+  )
+
+  visibility_status = models.CharField(
+    max_length=1, choices=LOAN_VISIBILITY, blank=True, default='о', help_text='Статус видимости',
+    verbose_name='Статус видимости')
+
   def __str__(self):
     """Строка для представления объекта модели."""
     return '{0} {1} {2}'.format(self.last_name, self.first_name, self.middle_name)
+
   class Meta:
     ordering = ['last_name', 'first_name', 'middle_name']
 
@@ -220,6 +240,7 @@ class AcceptAct(models.Model):
 
   status_record = models.CharField(
     max_length=1, choices=ACCEPT_status, blank=True, default='н', verbose_name='Статус записи')
+
   def __str__(self):
     return f"{self.current_date} - {self.worker}"
 
@@ -238,6 +259,7 @@ class PositionAcceptAct(models.Model):
 
   status_record = models.CharField(
     max_length=1, choices=ACCEPT_status, blank=True, default='н', verbose_name='Статус записи')
+
   def __str__(self):
     return f"{self.price} - {self.exemplar}"
 
@@ -321,6 +343,7 @@ class Event(models.Model):
   description = models.CharField(verbose_name='Описание', max_length=1000)
   image = models.ImageField(verbose_name='Изображение', upload_to='event_images/', blank=True, null=True)
 
+
 class Review(models.Model):
   event = models.ForeignKey('Event', on_delete=models.CASCADE, related_name='reviews', verbose_name='Мероприятие')
   user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='Пользователь')
@@ -336,6 +359,7 @@ class Review(models.Model):
 
   def __str__(self):
     return f"Отзыв от {self.user} на {self.event.event_name}"
+
 
 class PositionEvent(models.Model):
   event = models.ForeignKey('Event', on_delete=models.CASCADE, null=True)
@@ -390,8 +414,10 @@ class Request(models.Model):
 
   class Meta:
     ordering = ['title', 'author']
+
   def __str__(self):
     return self.title
+
 
 class History_of_appeals(models.Model):
   title = models.CharField(max_length=200)
@@ -400,21 +426,25 @@ class History_of_appeals(models.Model):
   bookinstance = models.ForeignKey('BookInstance', on_delete=models.CASCADE, null=True)
   worker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
                              related_name='worked_history', verbose_name='Сотрудник')
+
   def __str__(self):
     return self.title
 
-class News(models.Model):
-    event = models.ForeignKey('Event', on_delete=models.CASCADE, related_name='news', verbose_name='Мероприятие')
-    title = models.CharField(verbose_name='Название новости', max_length=100)
-    description = models.TextField(verbose_name='Описание')
-    images = models.ManyToManyField('NewsImage', verbose_name='Изображения', blank=True)
-    worker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
-                               related_name='worked_news', verbose_name='Сотрудник')
-    date_creation = models.DateField(null=True, blank=True, verbose_name='Дата создания')
-    title_image = models.ImageField(verbose_name='Титульное изображение', upload_to='news_title_images/', blank=True,
-                                    null=True)
-class NewsImage(models.Model):
-    image = models.ImageField(verbose_name='Изображение', upload_to='news_images/')
 
-    def __str__(self):
-        return self.image.name
+class News(models.Model):
+  event = models.ForeignKey('Event', on_delete=models.CASCADE, related_name='news', verbose_name='Мероприятие')
+  title = models.CharField(verbose_name='Название новости', max_length=100)
+  description = models.TextField(verbose_name='Описание')
+  images = models.ManyToManyField('NewsImage', verbose_name='Изображения', blank=True)
+  worker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+                             related_name='worked_news', verbose_name='Сотрудник')
+  date_creation = models.DateField(null=True, blank=True, verbose_name='Дата создания')
+  title_image = models.ImageField(verbose_name='Титульное изображение', upload_to='news_title_images/', blank=True,
+                                  null=True)
+
+
+class NewsImage(models.Model):
+  image = models.ImageField(verbose_name='Изображение', upload_to='news_images/')
+
+  def __str__(self):
+    return self.image.name

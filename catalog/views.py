@@ -1881,4 +1881,24 @@ def event_report_view(request):
     })
 
 
+def toggle_author_visibility(request, pk):
+  author = Author.objects.get(pk=pk)
+  # Меняем статус видимости на противоположный
+  if author.visibility_status == 'о':
+    author.visibility_status = 'н'
+  else:
+    author.visibility_status = 'о'
+  author.save()
+
+  # Меняем статус видимости всех книг, связанных с этим автором
+  books = Book.objects.filter(author=author)
+  for book in books:
+    if book.visibility_status == 'о':
+      book.visibility_status = 'н'
+    else:
+      book.visibility_status = 'о'
+    book.save()
+
+  return redirect('author-detail', pk=pk)
+
 

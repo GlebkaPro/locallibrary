@@ -6,7 +6,7 @@
       <div class="card-body">
         <div class="container">
           {% load group_tags %}
-          {% if user|has_group:"Bibli" %}
+          {% if user|has_group:"Bibli-katal" %}
             <div style="display: flex; gap: 8px; margin-top: 8px; margin-bottom: 8px;">
               <form method="get" action="{% url 'edit-book' book_id=book.id %}">
                 <button type="submit" class="btn btn-primary">Редактировать</button>
@@ -62,25 +62,24 @@
 
             </div>
           </div>
-          {#          <div class="card" style="margin-top: 16px">#}
-          {#            {% if user.is_staff %}#}
-          {#              <h4>Статусы экземпляров:</h4>#}
-          {#              {% for copy in book.bookcopy_set.all %}#}
-          {#                <hr>#}
-          {#                <h5>№ {{ forloop.counter }}</h5>#}
-          {#                <p#}
-          {#                  class="{% if copy.status == 'д' %}text-success{% elif copy.status == 'р' %}text-danger{% else %}text-warning{% endif %}">#}
-          {#                  <strong>Статус: </strong>{{ copy.get_status_display }}</p>#}
-          {#                {% if user.is_staff %}#}
-          {#                  <p class="text-muted"><strong>Штамп:</strong> {{ copy.imprint }}</p>#}
-          {#                {% endif %}#}
-          {#              {% endfor %}#}
-          {#              </div>#}
-        </div>
-      </div>
-    </div>
-  </div>
-  {#            {% endif %}#}
+          <div class="card" style="margin-top: 16px">
+            {% load group_tags %}
+            {% if user|has_group:"Bibli-katal" %}
+              <h4>Статусы экземпляров:</h4>
+              {% for copy in book.bookcopy_set.all %}
+                <hr>
+                <h5>№ {{ forloop.counter }}</h5>
+                <p
+                  class="{% if copy.status == 'д' %}text-success{% elif copy.status == 'р' %}text-danger{% else %}text-warning{% endif %}">
+                  <strong>Статус: </strong>{{ copy.get_status_display }}</p>
+                <p class="text-muted"><strong>Штамп:</strong> {{ copy.imprint }}</p>
+              {% endfor %}
+              </div>
+              </div>
+              </div>
+              </div>
+              </div>
+            {% endif %}
 
   <style>
     .book-info {

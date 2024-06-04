@@ -58,6 +58,7 @@ urlpatterns += [
   path('book/create/', views.BookCreate.as_view(), name='book-create'),
   path('book/<int:pk>/update/', views.BookUpdate.as_view(), name='book-update'),
   path('book/<int:pk>/delete/', views.BookDelete.as_view(), name='book-delete'),
+  path('author/<int:pk>/toggle_visibility/', views.toggle_author_visibility, name='toggle-author-visibility'),
 ]
 
 urlpatterns += [
