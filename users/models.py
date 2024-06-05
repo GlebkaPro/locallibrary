@@ -7,6 +7,7 @@ class User(AbstractUser):
   date_birth = models.DateField('Дата рождения', null=True, blank=True)
   privacy_policy_agreement = models.BooleanField(default=False)
   phone_number = models.CharField(max_length=100, blank=True, null=True)
+  document = models.FileField(upload_to='documents/', null=True, blank=True)
 
   record_status = (
     ('а', 'активирована'),

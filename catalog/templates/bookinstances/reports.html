@@ -4,7 +4,10 @@
   <div class="d-flex justify-content-center">
     <div class="card" style="width: 1000px; padding: 30px">
       <div class="card-body">
-        <h1>Отчет по выдаче экзмеляров изданий</h1>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h1>Отчет по выдаче экземпляров изданий</h1>
+          <button id="printButton" class="btn btn-secondary">Печать</button>
+        </div>
 
         <form method="get" style="margin-top: 40px">
           <div class="input-group mb-3">
@@ -35,24 +38,24 @@
         {% if book_popularity %}
           <table class="table table-striped">
             <thead>
-              <tr>
-                <th>№</th>
-                <th>Название книги</th>
-                <th>Автор</th>
-                <th>Жанр</th>
-                <th>Количество</th>
-              </tr>
+            <tr>
+              <th>№</th>
+              <th>Название книги</th>
+              <th>Автор</th>
+              <th>Жанр</th>
+              <th>Количество</th>
+            </tr>
             </thead>
             <tbody>
-              {% for book in book_popularity %}
-                <tr>
-                  <td>{{ forloop.counter }}</td>
-                  <td>{{ book.book__title }}</td>
-                  <td>{{ book.author_initial }} {{ book.book__author__last_name }}</td>
-                  <td>{{ book.genres }}</td>
-                  <td>{{ book.count }}</td>
-                </tr>
-              {% endfor %}
+            {% for book in book_popularity %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ book.book__title }}</td>
+                <td>{{ book.author_initial }} {{ book.book__author__last_name }}</td>
+                <td>{{ book.genres }}</td>
+                <td>{{ book.count }}</td>
+              </tr>
+            {% endfor %}
             </tbody>
           </table>
         {% else %}
@@ -61,4 +64,18 @@
       </div>
     </div>
   </div>
+
+  <script>
+    document.getElementById('printButton').addEventListener('click', function () {
+      const content = document.querySelector('.card-body').innerHTML;
+      const printWindow = window.open('', '', 'height=600,width=800');
+      printWindow.document.write('<html><head><title>Отчет по выдаче экземпляров изданий</title>');
+      printWindow.document.write('<link rel="stylesheet" href="/static/css/style.css">');  // Подключите стили при необходимости
+      printWindow.document.write('</head><body >');
+      printWindow.document.write(content);
+      printWindow.document.write('</body></html>');
+      printWindow.document.close();
+      printWindow.print();
+    });
+  </script>
 {% endblock %}

@@ -141,9 +141,10 @@ class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
     context['search_query'] = self.request.GET.get('search', '')
     return context
 
-
+from datetime import date, timedelta
+from django.db.models import Q
 def change_status_to_overdue():
-  overdue_instances = BookInstance.objects.filter(status='р').filter(
+  overdue_instances = BookInstance.objects.filter(Q(status='р') | Q(status='д')).filter(
     (Q(due_back__lt=date.today()) & Q(renewal_date__isnull=True)) |
     (Q(renewal_date__lt=date.today()) & Q(renewal_date__isnull=False))
   )
@@ -152,6 +153,18 @@ def change_status_to_overdue():
     overdue_instance.status = 'о'
     overdue_instance.save()
 
+  # Проверка записей со статусом 'з'
+  reserved_instances = BookInstance.objects.filter(status='з')
+  for book_instance in reserved_instances:
+    if book_instance.current_date < date.today() - timedelta(days=3):
+      book_instance.status = 'п'
+      book_instance.save()
+
+      book_copy = BookCopy.objects.filter(book=book_instance.book, status='з').first()
+      if book_copy:
+        book_copy.status = 'д'
+        book_copy.save()
+
 
 from django.views import generic
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -159,7 +172,7 @@ from .models import BookInstance
 
 class LoanedBooksAllListView(PermissionRequiredMixin, generic.ListView):
     """Общий класс-представление для списка всех книг, взятых на аренду. Доступно только пользователям с разрешением can_mark_returned."""
-    change_status_to_overdue()
+    # change_status_to_overdue()
 
     model = BookInstance
     permission_required = 'catalog.can_mark_returned'
@@ -321,6 +334,7 @@ def create_user(request):
     form = UserRegistrationForm()
 
   return render(request, 'registration/create_user.html', {'form': form})
+from django.contrib.auth.models import Group
 
 
 def user_list(request):
@@ -328,6 +342,7 @@ def user_list(request):
     search_query_last_name = request.GET.get('search_last_name', '')
     search_query_first_name = request.GET.get('search_first_name', '')
     search_query_middle_name = request.GET.get('search_middle_name', '')
+    search_query_status = request.GET.get('search_status', '')
 
     filters = Q()
 
@@ -337,8 +352,13 @@ def user_list(request):
       filters &= Q(first_name__icontains=search_query_first_name)
     if search_query_middle_name:
       filters &= Q(middle_name__icontains=search_query_middle_name)
+    if search_query_status:
+      filters &= Q(record_status=search_query_status)
 
-    users = get_user_model().objects.filter(filters)
+    # Получаем группу "Abonents"
+    abonents_group = Group.objects.get(name='Abonents')
+    # Фильтруем пользователей по принадлежности к группе "Abonents" и добавляем фильтры поиска
+    users = get_user_model().objects.filter(filters, groups=abonents_group)
 
     context = {
       'users': users,
@@ -348,21 +368,25 @@ def user_list(request):
     }
 
     return render(request, 'users/user_list.html', context)
+  else:
+    # Перенаправляем на страницу входа, если пользователь не является администратором
+    return redirect('login')
+
 
 def edit_user(request, user_id):
-    user = get_object_or_404(get_user_model(), pk=user_id)
+  user = get_object_or_404(get_user_model(), pk=user_id)
 
-    if request.method == 'POST':
-        form = UserEditForm(request.POST, instance=user)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.record_status = 'а'  # Устанавливаем статус 'а' при редактировании
-            user.save()
-            return redirect('user_list')
-    else:
-        form = UserEditForm(instance=user)
+  if request.method == 'POST':
+    form = UserEditForm(request.POST, request.FILES, instance=user) 
+    if form.is_valid():
+      user = form.save(commit=False)
+      user.record_status = 'а'
+      user.save()
+      return redirect('user_list')
+  else:
+    form = UserEditForm(instance=user)
 
-    return render(request, 'users/edit_user.html', {'form': form, 'user': user})
+  return render(request, 'users/edit_user.html', {'form': form, 'user': user})
 
 
 
@@ -530,7 +554,7 @@ def return_book(request, book_instance_id):
       book_copy.save()
 
 
-  if book_instance.status == 'д':
+  elif book_instance.status == 'д':
     # Если статус аренды равен 'д', 'Продлено', устанавливаем его в 'п', 'Погашено'
     book_instance.return_date = timezone.now()
     book_instance.status = 'п'
@@ -1901,4 +1925,29 @@ def toggle_author_visibility(request, pk):
 
   return redirect('author-detail', pk=pk)
 
+
+from django.shortcuts import render
+from .models import Book
+
+
+def issue_book(request, book_id):
+  book = Book.objects.get(pk=book_id)
+  if request.method == 'POST':
+    form = BookInstanceForm(request.POST)
+    if form.is_valid():
+      worker = request.user
+      available_copy = book.bookcopy_set.filter(status='д').first()
+      if available_copy:
+        form.instance.loan = available_copy
+        form.instance.worker = worker
+        form.save()
+        available_copy.status = 'р'
+        available_copy.borrower = form.cleaned_data['borrower']
+        available_copy.save()
+        return redirect('all-borrowed')
+      else:
+        raise Http404("Нет доступных экземпляров для аренды")
+  else:
+    form = BookInstanceForm(initial={'book': book})
+  return render(request, 'bookinstances/add_bookinstance.html', {'form': form, 'book': book})
 

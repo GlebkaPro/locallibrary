@@ -42,6 +42,8 @@ urlpatterns += [
   path('edit-bookinstance/<uuid:bookinstance_id>/', views.edit_bookinstance, name='edit-bookinstance'),
   path('book/<uuid:pk>/renew/', views.renew_book_librarian, name='renew-book-librarian'),
   path('cancel_reservation/<uuid:bookinst_id>/', views.cancel_reservation, name='cancel_reservation'),
+  path('books/<int:book_id>/issue/', views.issue_book, name='issue-book'),
+
 ]
 
 urlpatterns += [
@@ -144,14 +146,11 @@ urlpatterns += [
   path('news/<int:news_id>/', views.news_detail, name='news_detail'),
 ]
 
-
 urlpatterns += [
-    path('event/<int:event_id>/reviews/', views.review_list, name='review_list'),
-    path('event/<int:event_id>/create_review/', views.create_review, name='create_review'),
-    path('review/<int:review_id>/delete/', views.delete_review, name='delete_review'),
-    path('review/<int:review_id>/publish/', views.publish_review, name='publish_review'),
-    path('review/<int:review_id>/unpublish/', views.unpublish_review, name='unpublish_review'),
-    path('report/', views.report_view, name='reports'),
+  path('event/<int:event_id>/reviews/', views.review_list, name='review_list'),
+  path('event/<int:event_id>/create_review/', views.create_review, name='create_review'),
+  path('review/<int:review_id>/delete/', views.delete_review, name='delete_review'),
+  path('review/<int:review_id>/publish/', views.publish_review, name='publish_review'),
+  path('review/<int:review_id>/unpublish/', views.unpublish_review, name='unpublish_review'),
+  path('report/', views.report_view, name='reports'),
 ]
-
-

@@ -17,6 +17,11 @@
                    value="{{ search_query_first_name }}">
             <input type="text" class="form-control" placeholder="Введите отчество пользователя" name="search_middle_name"
                    value="{{ search_query_middle_name }}">
+            <select class="form-select" name="search_status">
+              <option value="">Все статусы</option>
+              <option value="а" {% if search_query_status == 'а' %}selected{% endif %}>Активированы</option>
+              <option value="н" {% if search_query_status == 'н' %}selected{% endif %}>Не активированы</option>
+            </select>
             <button type="submit" class="btn btn-primary">Поиск</button>
           </div>
         </form>
@@ -43,7 +48,7 @@
                 <td>{{ forloop.counter }}</td>
                 <td>{{ user.last_name }}</td>
                 <td>{{ user.first_name }}</td>
-                <td>{{ user.middle_name }}</td>
+                <td>{{ user.middle_name|default_if_none:'' }}</td>
                 <td>{{ user.username }}</td>
                 <td>{{ user.date_joined|date:"d.m.Y" }}</td>
                 <td>{{ user.email }}</td>

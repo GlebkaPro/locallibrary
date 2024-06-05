@@ -4,7 +4,7 @@
   <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h1>Все выдачи</h1>
-      {#      <form action="{% url 'change-status-to-overdue' %}" method="post">#}
+      {#            <form action="{% url 'change-status-to-overdue' %}" method="post">#}
       {#        {% csrf_token %}#}
       {#        <button type="submit" class="btn btn-danger my-3">Проверить просроченные</button>#}
       {#      </form>#}
@@ -71,21 +71,30 @@
                 <tr class="{% if bookinst.is_overdue %}text-danger{% endif %}
                     {% if bookinst.status == 'р' %}table-success{% elif bookinst.status == 'з' %}table-warning{% elif bookinst.status == 'д' %}table-info{% elif bookinst.status == 'о' %}table-danger{% endif %}">
                   <td>{{ forloop.counter }}</td>
-                  <td title="{{ bookinst.borrower.get_full_name }}">
+                  <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ bookinst.borrower.get_full_name }}">
                     <a href="{% url 'user-profile' bookinst.borrower.username %}">
-                      {{ bookinst.borrower.last_name }} {{ bookinst.borrower.first_name|slice:":1" }}. {{ bookinst.borrower.middle_name|slice:":1" }}.
+                      {{ bookinst.borrower.last_name }} {{ bookinst.borrower.first_name|slice:":1" }}. {{ bookinst.borrower.middle_name|default_if_none:''|slice:":1" }}.
                     </a>
                   </td>
                   <td>{{ bookinst.borrower.username }}</td>
-                  <td>
+                  <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                     <a href="{% url 'book-detail' bookinst.book.pk %}">{{ bookinst.book.title }}</a>
                   </td>
                   <td>{{ bookinst.loan.imprint }}</td>
                   <td>{{ bookinst.current_date|date:"d.m.Y" }}</td>
                   <td>{{ bookinst.due_back|date:"d.m.Y" }}</td>
                   <td>{{ bookinst.renewal_date|date:"d.m.Y" }}</td>
-                  <td>{{ bookinst.get_status_display }} {{ bookinst.return_date|date:"d.m.y" }}</td>
-                  <td>
+                  <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    {{ bookinst.get_status_display }}
+                    {% if bookinst.status == 'з' or bookinst.status == 'р' %}
+                      {{ bookinst.current_date|date:"d.m.Y" }}
+                    {% elif bookinst.status == 'д' %}
+                      {{ bookinst.renewal_date|date:"d.m.Y" }}
+                    {% elif bookinst.status == 'п' %}
+                      {{ bookinst.due_back|date:"d.m.Y" }}
+                    {% endif %}
+                  </td>
+                  <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                     {% if bookinst.status == 'р' %}
                       <a class="btn btn-success btn-sm" href="{% url 'renew-book-librarian' bookinst.id %}">Продлить</a>
                       <a class="btn btn-warning btn-sm" href="{% url 'return-book' bookinst.id %}"

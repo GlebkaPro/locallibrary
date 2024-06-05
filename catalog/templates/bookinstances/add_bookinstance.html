@@ -9,6 +9,8 @@
         <form method="post" class="mt-4">
           {% csrf_token %}
           <div class="mb-3">
+          <input type="hidden" name="book_id" value="{{ book_id }}">
+
             <label for="{{ form.book.id_for_label }}" class="form-label">Книга</label>
             <select class="form-select" id="{{ form.book.id_for_label }}" name="{{ form.book.name }}"
                     style="max-width: 400px;">

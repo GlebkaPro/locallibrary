@@ -1,10 +1,12 @@
-<!-- event_reports.html -->
 {% extends "base_generic.html" %}
 
 {% block content %}
   <div class="card">
     <div class="card-body">
-      <h1>Отчет по мероприятиям</h1>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Отчет по мероприятиям</h1>
+        <button id="printButton" class="btn btn-secondary">Печать</button>
+      </div>
       <form method="get" style="margin-top: 40px">
         <div class="input-group mb-3">
           <label class="input-group-text" for="date_type">Выбрать по:</label>
@@ -60,4 +62,21 @@
           {% endfor %}
           </tbody>
         </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('printButton').addEventListener('click', function () {
+      const content = document.querySelector('.card-body').innerHTML;
+      const printWindow = window.open('', '', 'height=600,width=800');
+      printWindow.document.write('<html><head><title>Отчет по мероприятиям</title>');
+      printWindow.document.write('<link rel="stylesheet" href="/static/css/style.css">');  // Подключите стили при необходимости
+      printWindow.document.write('</head><body >');
+      printWindow.document.write(content);
+      printWindow.document.write('</body></html>');
+      printWindow.document.close();
+      printWindow.print();
+    });
+  </script>
 {% endblock %}

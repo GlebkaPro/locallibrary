@@ -36,6 +36,13 @@
               <div class="text-container card-body order-last">
                 <p class="card-text">Всего копий (шт.): {{ book.bookcopy_set.all.count }}</p>
                 <p class="card-text">Доступно экземпляров (шт.): {{ book.available_copies_count }}</p>
+                  {% load group_tags %}
+                  {% if user|has_group:"Bibli" %}
+                <form method="post" action="{% url 'issue-book' book_id=book.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-success" style="margin-top: 10px;">Выдать</button>
+                </form>
+                                {% endif %}
                 <form method="get" action="{% url 'reserve-book' book_id=book.id %}">
                   {% load group_tags %}
                   {% if user|has_group:"Abonents" %}
@@ -62,9 +69,10 @@
 
             </div>
           </div>
-          <div class="card" style="margin-top: 16px">
-            {% load group_tags %}
-            {% if user|has_group:"Bibli-katal" %}
+          {% load group_tags %}
+          {% if user|has_group:"Bibli-katal" %}
+            <div class="card" style="margin-top: 16px">
+
               <h4>Статусы экземпляров:</h4>
               {% for copy in book.bookcopy_set.all %}
                 <hr>
@@ -74,12 +82,12 @@
                   <strong>Статус: </strong>{{ copy.get_status_display }}</p>
                 <p class="text-muted"><strong>Штамп:</strong> {{ copy.imprint }}</p>
               {% endfor %}
-              </div>
-              </div>
-              </div>
-              </div>
-              </div>
-            {% endif %}
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
+          {% endif %}
 
   <style>
     .book-info {

@@ -45,6 +45,12 @@
               <input type="email" class="form-control" id="{{ form.email.id_for_label }}"
                      name="{{ form.email.name }}" value="{{ form.email.value }}">
             </div>
+            
+            <div class="mb-3">
+              <label for="{{ form.document.id_for_label }}">Согласие на обработку персональных данных (PDF)</label>
+              <input type="file" class="form-control" id="{{ form.document.id_for_label }}"
+                     name="{{ form.document.name }}">
+            </div>
 
             <div style="display: flex; gap: 8px; margin-top: 8px;">
               <button type="submit" class="btn btn-primary">Сохранить</button>

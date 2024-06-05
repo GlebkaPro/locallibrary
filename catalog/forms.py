@@ -64,7 +64,7 @@ from django.contrib.auth import get_user_model
 class UserEditForm(forms.ModelForm):
     class Meta:
         model = get_user_model()
-        fields = ['last_name', 'first_name', 'middle_name', 'date_birth', 'phone_number', 'email']
+        fields = ['last_name', 'first_name', 'middle_name', 'date_birth', 'phone_number', 'email', 'document']
 
 class BookInstanceForm(forms.ModelForm):
   class Meta:
