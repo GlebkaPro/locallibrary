@@ -25,19 +25,6 @@ from .models import NewsImage
 
 def index(request):
   """Функция представления для домашней страницы сайта."""
-  # Генерация количества некоторых основных объектов
-  # Запрос всех книг и подсчет их количества
-  num_books = Book.objects.all().count()
-  num_instances = BookInstance.objects.all().count()
-  # Доступные книги (статус = 'д')
-  num_instances_available = BookInstance.objects.filter(status__exact='д').count()
-  num_authors = Author.objects.count()  # 'all()'
-
-  # Количество посещений этого представления, как подсчитывается в переменной сессии.
-  # Количество посещений этого представления, как подсчитывается в переменноувшей сессии.
-  num_visits = request.session.get('num_visits', 1)
-  request.session['num_visits'] = num_visits + 1
-
   # Отображение HTML-шаблона index.html с данными в переменной контекста.
   latest_events = Event.objects.order_by('-date_start')[:3]
   latest_news = News.objects.order_by('-date_creation')[:3]
@@ -46,10 +33,8 @@ def index(request):
   return render(
     request,
     'index.html',
-    context={'latest_events': latest_events, 'latest_news': latest_news, 'num_books': num_books,
-             'num_instances': num_instances,
-             'num_instances_available': num_instances_available, 'num_authors': num_authors,
-             'num_visits': num_visits, 'latest_book_copies': latest_book_copies},
+    context={'latest_events': latest_events, 'latest_news': latest_news,
+              'latest_book_copies': latest_book_copies},
   )
 
 from django.db.models import Q
@@ -377,7 +362,7 @@ def edit_user(request, user_id):
   user = get_object_or_404(get_user_model(), pk=user_id)
 
   if request.method == 'POST':
-    form = UserEditForm(request.POST, request.FILES, instance=user) 
+    form = UserEditForm(request.POST, request.FILES, instance=user)
     if form.is_valid():
       user = form.save(commit=False)
       user.record_status = 'а'
@@ -395,24 +380,23 @@ def add_bookinstance(request):
     form = BookInstanceForm(request.POST)
     if form.is_valid():
       book = form.cleaned_data['book']
-      # Проверьте наличие доступного экземпляра
+      # Проверка доступности экземпляров
       worker = request.user
       available_copy = book.bookcopy_set.filter(status='д').first()
       if available_copy:
         form.instance.loan = available_copy
         form.instance.worker = worker
         form.save()
-        # Измените статус экземпляра на 'з'
+        # Изменение статуса экземпляра на '('р', 'Выдано')'
         available_copy.status = 'р'
         available_copy.borrower = form.cleaned_data['borrower']
         available_copy.save()
         return redirect('all-borrowed')
       else:
-        # Если нет доступных экземпляров, возбудите исключение Http404
+        # Если нет доступных экземпляров
         raise Http404("Нет доступных экземпляров для аренды")
   else:
     form = BookInstanceForm()
-
   return render(request, 'bookinstances/add_bookinstance.html', {'form': form})
 
 
@@ -1951,3 +1935,47 @@ def issue_book(request, book_id):
     form = BookInstanceForm(initial={'book': book})
   return render(request, 'bookinstances/add_bookinstance.html', {'form': form, 'book': book})
 
+
+def delete_genre(request, id):
+  genre = get_object_or_404(Genre, id=id)
+  if request.method == 'POST':
+    genre.delete()
+    return redirect('add-genre')
+  return redirect('add-genre')
+
+def delete_language(request, id):
+  language = get_object_or_404(Language, id=id)
+  if request.method == 'POST':
+    language.delete()
+    return redirect('add-language')
+  return redirect('add-language')
+
+def delete_book_exemplar(request, pk):
+    book_exemplar = get_object_or_404(BookExemplar, pk=pk)
+    if request.method == 'POST':
+      book_exemplar.delete()
+      return redirect('list_book_exemplar')
+    return redirect('list_book_exemplar')
+
+
+def delete_publisher(request, pk):
+  publisher = get_object_or_404(Publisher, pk=pk)
+  if request.method == 'POST':
+    publisher.delete()
+    return redirect('list_publishers')
+  return redirect('list_publishers')
+
+
+def delete_organization(request, pk):
+  organization = get_object_or_404(Source, pk=pk)
+  if request.method == 'POST':
+    organization.delete()
+    return redirect('Source_list')
+  return redirect('source_list')
+
+def delete_fiz_person(request, pk):
+  fiz_person = get_object_or_404(FizPersonSource, pk=pk)
+  if request.method == 'POST':
+    fiz_person.delete()
+    return redirect('fiz_person_source_list')
+  return redirect('fiz_person_source_list')

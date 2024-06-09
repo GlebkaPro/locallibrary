@@ -10,12 +10,19 @@ urlpatterns = [
   path('book/<int:book_id>/edit/', views.edit_book, name='edit-book'),
   path('book/<int:book_id>/delete/', views.delete_book, name='delete-book'),
   path('add/genre/', views.add_genre, name='add-genre'),
+  path('delete-genre/<int:id>/', views.delete_genre, name='delete-genre'),
   path('add/language/', views.add_language, name='add-language'),
+  path('delete-language/<int:id>/', views.delete_language, name='delete-language'),
   path('create_book_exemplar/', views.create_book_exemplar, name='create_book_exemplar'),
   path('list_book_exemplar/', views.list_book_exemplar, name='list_book_exemplar'),
   path('edit_book_exemplar/<int:pk>/', views.edit_book_exemplar, name='edit_book_exemplar'),
   path('list_publishers/', views.list_publishers, name='list_publishers'),
   path('create_publisher/', views.create_publisher, name='create_publisher'),
+  path('delete-book-exemplar/<int:pk>/', views.delete_book_exemplar, name='delete_book_exemplar'),
+  path('delete-publisher/<int:pk>/', views.delete_publisher, name='delete_publisher'),
+  path('delete-organization/<int:pk>/', views.delete_organization, name='delete_organization'),
+  path('delete-fiz-person/<int:pk>/', views.delete_fiz_person, name='delete_fiz_person'),
+
 ]
 
 urlpatterns += [

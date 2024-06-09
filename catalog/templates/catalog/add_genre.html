@@ -22,6 +22,7 @@
           <tr>
             <th scope="col">№</th>
             <th scope="col">Название</th>
+            <th scope="col">Действие</th>
           </tr>
           </thead>
           <tbody>
@@ -29,6 +30,12 @@
             <tr>
               <th scope="row">{{ forloop.counter }}</th>
               <td>{{ genre.name }}</td>
+              <td>
+                <form action="{% url 'delete-genre' genre.id %}" method="post" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                </form>
+              </td>
             </tr>
           {% endfor %}
           </tbody>
@@ -37,4 +44,3 @@
     </div>
   </div>
 {% endblock %}
-

@@ -2,25 +2,38 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <h1>Список изданий</h1>
-      <a href="{% url 'create_publisher' %}" class="btn btn-primary">Создать издателя</a>
+  <div class="d-flex justify-content-center">
+    <div class="card" style="width: 450px; padding: 20px;">
+      <div class="card-body">
+        <h1>Список издательств</h1>
+        <a href="{% url 'create_publisher' %}" class="btn btn-primary">Создать издателя</a>
 
-  {% if publishers %}
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Наименование</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for publisher in publishers %}
-          <tr>
-            <td>{{ publisher.name }}</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-    <p>Нет данных об изданиях</p>
-  {% endif %}
+        {% if publishers %}
+          <table class="table">
+            <thead>
+            <tr>
+              <th>Наименование</th>
+              <th>Действия</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for publisher in publishers %}
+              <tr>
+                <td>{{ publisher.name }}</td>
+                <td>
+                  <form action="{% url 'delete_publisher' publisher.pk %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p>Нет данных об изданиях</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
 {% endblock %}

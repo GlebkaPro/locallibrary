@@ -11,20 +11,13 @@
         <div class="input-group mb-3">
           <label class="input-group-text" for="date_type">Выбрать по:</label>
           <select name="date_type" id="date_type" class="form-select">
-            <option value="date_start" {% if date_type == 'date_start' %}selected{% endif %}>Дата и время начала
-              проведения
-            </option>
-            <option value="date_end" {% if date_type == 'date_end' %}selected{% endif %}>Дата и время окончания
-              проведения
-            </option>
-            <option value="date_end2" {% if date_type == 'date_end2' %}selected{% endif %}>Дата фактического окончания
-            </option>
+            <option value="date_start" {% if date_type == 'date_start' %}selected{% endif %}>Дата и время начала проведения</option>
+            <option value="date_end" {% if date_type == 'date_end' %}selected{% endif %}>Дата и время окончания проведения</option>
+            <option value="date_end2" {% if date_type == 'date_end2' %}selected{% endif %}>Дата фактического окончания</option>
           </select>
 
-          <input type="date" name="start_date" id="start_date" class="form-control" placeholder="Начальная дата"
-                 value="{{ start_date }}">
-          <input type="date" name="end_date" id="end_date" class="form-control" placeholder="Конечная дата"
-                 value="{{ end_date }}">
+          <input type="date" name="start_date" id="start_date" class="form-control" placeholder="Начальная дата" value="{{ start_date }}">
+          <input type="date" name="end_date" id="end_date" class="form-control" placeholder="Конечная дата" value="{{ end_date }}">
 
           <button type="submit" class="btn btn-primary">Применить</button>
         </div>
@@ -66,15 +59,43 @@
     </div>
   </div>
 
+  <style>
+    @media print {
+      .btn, .input-group, .d-flex.justify-content-between {
+        display: none !important;
+      }
+      #printDates {
+        display: block !important;
+      }
+    }
+    #printDates {
+      display: none;
+    }
+  </style>
+
   <script>
     document.getElementById('printButton').addEventListener('click', function () {
-      const content = document.querySelector('.card-body').innerHTML;
+      const dateType = document.getElementById('date_type').value;
+      const dateTypeText = document.querySelector(`#date_type option[value="${dateType}"]`).textContent;
+      const startDate = document.getElementById('start_date').value;
+      const endDate = document.getElementById('end_date').value;
+      const formattedStartDate = startDate.split('-').reverse().join('.');
+      const formattedEndDate = endDate.split('-').reverse().join('.');
+
+      const printContent = document.querySelector('.card-body').cloneNode(true);
+      printContent.querySelector('.d-flex.justify-content-between').style.display = 'none';
+      printContent.querySelector('.input-group').style.display = 'none';
+
+      const printDates = document.createElement('div'); 
+      printDates.id = 'printDatesClone';
+      printDates.innerHTML = `<p>Отчёт по параметру "${dateTypeText}" в диапазоне дат: ${formattedStartDate} - ${formattedEndDate}</p>`;
+      printContent.insertBefore(printDates, printContent.querySelector('.table-responsive'));
+
       const printWindow = window.open('', '', 'height=600,width=800');
       printWindow.document.write('<html><head><title>Отчет по мероприятиям</title>');
-      printWindow.document.write('<link rel="stylesheet" href="/static/css/style.css">');  // Подключите стили при необходимости
-      printWindow.document.write('</head><body >');
-      printWindow.document.write(content);
-      printWindow.document.write('</body></html>');
+      printWindow.document.write('<link rel="stylesheet" href="/static/css/style.css">');
+      printWindow.document.write('</head><body>');
+      printWindow.document.write(printContent.innerHTML);
       printWindow.document.close();
       printWindow.print();
     });

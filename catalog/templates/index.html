@@ -14,44 +14,6 @@
           </div>
         </div>
       </div>
-      {#      <div class="row mb-2">#}
-      {#        <div class="col-md-6">#}
-      {#          <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm position-relative">#}
-      {#            <div class="col p-4 d-flex flex-column position-static">#}
-      {#              <strong class="d-inline-block mb-2 text-primary-emphasis">Мир литературы</strong>#}
-      {#              <h3 class="mb-0">Избранная публикация</h3>#}
-      {#              <div class="mb-1 text-body-secondary">12 ноября</div>#}
-      {#              <p class="card-text mb-auto">С гордостью представляем вам нашу новую книгу. Узнайте больше о ней и#}
-      {#                отправьтесь в захватывающее путешествие в мир слов.</p>#}
-      {#              <a href="#" class="icon-link icon-link-hover stretched-link">#}
-      {#                Продолжить чтение#}
-      {#              </a>#}
-      {#            </div>#}
-      {#            <div class="col-auto d-none d-lg-block">#}
-      {#              <img class="bd-placeholder-img" src="{% static 'images/1-original.png' %}" width="200" height="100%"#}
-      {#                   role="img" aria-label="Заполнитель: Эскиз">#}
-      {#            </div>#}
-      {#          </div>#}
-      {#        </div>#}
-      {#        <div class="col-md-6">#}
-      {#          <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm position-relative">#}
-      {#            <div class="col p-4 d-flex flex-column position-static">#}
-      {#              <strong class="d-inline-block mb-2 text-success-emphasis">Литературный дизайн</strong>#}
-      {#              <h3 class="mb-0">Заголовок публикации</h3>#}
-      {#              <div class="mb-1 text-body-secondary">11 ноября</div>#}
-      {#              <p class="mb-auto">Узнайте больше о творчестве наших авторов и их удивительных произведениях. Погрузитесь#}
-      {#                в мир искусства и вдохновения.</p>#}
-      {#              <a href="#" class="icon-link icon-link-hover stretched-link">#}
-      {#                Продолжить чтение#}
-      {#              </a>#}
-      {#            </div>#}
-      {#            <div class="col-auto d-none d-lg-block">#}
-      {#              <img class="bd-placeholder-img" src="{% static 'images/IMG-20210609-WA0014.jpg' %}" width="200"#}
-      {#                   height="100%" role="img" aria-label="Заполнитель: Эскиз">#}
-      {#            </div>#}
-      {#          </div>#}
-      {#        </div>#}
-      {#      </div>#}
       <div class="row g-5">
         <div class="col-md-8">
           <h2 class="pb-4 mb-4 fst-italic border-bottom"><a href="{% url 'news_list' %}" class="nav-link"
@@ -81,22 +43,8 @@
               <hr>
             {% endfor %}
           </article>
-          <article class="blog-post">
-            {#                        <h2 class="display-5 link-body-emphasis mb-1">Подборка книг</h2>#}
-            {#                        <p class="blog-post-meta">14 ноября 2023 года, автор: <a href="#">Библиотекарь</a></p>#}
-            {##}
-            {#                        <p>Это дополнительный абзац с заполнителем контента. Он написан для заполнения доступного места и показа,#}
-            {#                          как более длинный отрывок текста влияет на окружающий контент. Мы будем часто повторять его, чтобы#}
-            {#                          продемонстрировать, как этот текст влияет на окружающий контент.</p>#}
-            {#                        <blockquote>#}
-            {#                          <p>Длинная цитата и, возможно, с некоторым <strong>выделенным текстом</strong> посередине.</p>#}
-            {#                        </blockquote>#}
-            {#                        <p>Это дополнительный абзац с заполнителем контента. Он написан для заполнения доступного места и показа,#}
-            {#                          как более длинный отрывок текста влияет на окружающий контент. Мы будем часто повторять его, чтобы#}
-            {#                          продемонстрировать, как этот текст влияет на окружающий контент.</p>#}
+          <aricle class="blog-post">
             <h3>Новые пополнения в фонде библиотеке</h3>
-            {#                        <p>И не забывайте о таблицах в этих постах:</p>#}
-
             <table class="table">
               <thead>
               <tr>
@@ -120,34 +68,8 @@
               {% endfor %}
               </tbody>
             </table>
-
-
-            {#            <p>Это дополнительный абзац заполнителя контента. Это немного более короткая версия другого очень#}
-            {#              повторяющегося текста, используемого повсеместно.</p>#}
-          </article>
-
-          <article class="blog-post">
-            {#            <h2 class="display-5 link-body-emphasis mb-1">Новая функция</h2>#}
-            {#            <p class="blog-post-meta">14 декабря 2020 года, автор: <a href="#">Крис</a></p>#}
-            {##}
-            {#            <p>Это дополнительный абзац заполнителя контента. Он написан для заполнения доступного места и показа, как#}
-            {#              более длинный отрывок текста влияет на окружающий контент. Мы будем часто повторять его, чтобы#}
-            {#              продемонстрировать, как этот текст влияет на окружающий контент.</p>#}
-            {#            <ul>#}
-            {#              <li>Первый пункт списка</li>#}
-            {#              <li>Второй пункт списка с более длинным описанием</li>#}
-            {#              <li>Третий пункт списка для его завершения</li>#}
-            {#            </ul>#}
-            {#            <p>Это дополнительный абзац заполнителя контента. Это немного более короткая версия другого очень#}
-            {#              повторяющегося текста, используемого повсеместно.</p>#}
-          </article>
-          {##}
-          {#          <nav class="blog-pagination" aria-label="Навигация">#}
-          {#            <a class="btn btn-outline-primary rounded-pill" href="#">Старые записи</a>#}
-          {#            <a class="btn btn-outline-secondary rounded-pill disabled">Новые записи</a>#}
-{#          </nav>#}
+          </aricle>
         </div>
-
         <div class="col-md-4">
           <div class="position-sticky" style="top: 2rem;">
             <div class="p-4 mb-3 bg-body-tertiary rounded">
@@ -157,7 +79,6 @@
                 и антикварных изданий. Наша миссия - обеспечение равного доступа к знаниям и информации для всех
                 граждан.</p>
             </div>
-
             <div>
               <h4 class="fst-italic"><a href="{% url 'event_list_borrower' %}" class="nav-link" aria-current="page">Проводимые
                 мероприятия</a></h4>
@@ -185,8 +106,6 @@
                 {% endfor %}
               </ul>
             </div>
-
-
             <div class="p-4">
               <h4 class="fst-italic">Архив новостей</h4>
               <ol class="list-unstyled mb-0">
@@ -200,35 +119,11 @@
                 <li><a href="#">Март 2023</a></li>
                 <li><a href="#">Февраль 2023</a></li>
                 <li><a href="#">Январь 2023</a></li>
-
               </ol>
             </div>
-            {#        <div class="p-4">#}
-            {#            <h4 class="fst-italic">В других местах</h4>#}
-            {#            <ol class="list-unstyled">#}
-            {#                <li><a href="#">GitHub</a></li>#}
-            {#                <li><a href="#">Twitter</a></li>#}
-            {#                <li><a href="#">Facebook</a></li>#}
-            {#          </ol>#}
-            {#        </div>#}
           </div>
         </div>
       </div>
     </main>
-
-
-    {##}
-    {#    <h1>Главная страница</h1>#}
-    {#<p>Добро пожаловать в  <em> нашу библиотеку</em>.</p>#}
-    {##}
-    {#<p>В библиотеке имеется следующее количество записей:</p>#}
-    {#<ul>#}
-    {#    <li><strong>Книги:</strong> {{ num_books }}</li>#}
-    {#    <li><strong>Копии:</strong> {{ num_instances }}</li>#}
-    {#    <li><strong>Доступные копии:</strong> {{ num_instances_available }}</li>#}
-    {#    <li><strong>Авторы:</strong> {{ num_authors }}</li>#}
-    {#</ul>#}
   </div>
-
-
 {% endblock %}
